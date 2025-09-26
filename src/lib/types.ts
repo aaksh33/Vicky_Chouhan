@@ -14,3 +14,35 @@ export type Product = {
   image: string
   updatedAt: string
 }
+
+export type Address = {
+  fullName: string
+  street: string
+  city: string
+  province: string
+  postalCode: string
+  country: string
+  phone: string
+}
+
+export type PaymentMethod = "cod" | "paypal" | "stripe"
+
+export type OrderItem = {
+  productId: string
+  title: string
+  price: number
+  qty: number
+  image: string
+}
+
+export type Order = {
+  id: string
+  createdAt: string
+  items: OrderItem[]
+  total: number
+  status: "pending" | "paid" | "shipped" | "delivered"
+  address: Address
+  paymentMethod: PaymentMethod
+  deliveryDate: string
+  userEmail?: string
+}
