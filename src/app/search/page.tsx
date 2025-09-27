@@ -1,27 +1,128 @@
-import type { Metadata } from "next"
-import ProductGrid from "@/components/product-grid"
-import { searchProducts } from "@/lib/data/products"
+"use client";
 
-export const metadata: Metadata = {
-  title: "Search",
-  description: "Search products",
-  alternates: { canonical: "/search" },
-}
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
-export default function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
-  const q = searchParams.q || ""
-  const results = q ? searchProducts(q).filter((p) => p.status === "active") : []
+type Product = {
+  id: string;
+  slug: string;
+  name: string;
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  mrp?: number;
+  image: string;
+  brand?: string;
+  rating?: number;
+};
+
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  
+  const [query, setQuery] = useState(initialQuery);
+  const [results, setResults] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const searchProducts = async (searchQuery: string) => {
+    if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+      const results = await response.json();
+      setResults(results);
+    } catch (error) {
+      console.error("Search error:", error);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialQuery) {
+      searchProducts(initialQuery);
+    }
+  }, [initialQuery]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    searchProducts(query);
+  };
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-foreground text-balance">Search</h1>
-        <p className="text-sm text-muted-foreground leading-relaxed">Showing results for: {q || "—"}</p>
-      </header>
-      {q ? (
-        <ProductGrid items={results} />
-      ) : (
-        <p className="text-muted-foreground">Enter a search query in the URL, e.g., /search?q=watch</p>
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-4">Search Products</h1>
+      </div>
+
+      {loading && (
+        <div className="text-center py-8">
+          <p>Searching...</p>
+        </div>
       )}
-    </main>
-  )
+
+      {query && !loading && (
+        <div className="mb-4">
+          <p className="text-muted-foreground">
+            {results.length} results for "{query}"
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {results.map((product) => (
+          <Link
+            key={product.id}
+            href={`/products/${product.slug}`}
+            className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-4">
+              <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+              <p className="text-sm text-muted-foreground mb-2">{product.category}</p>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-lg">₹{product.price.toFixed(2)}</span>
+                  {product.mrp && product.mrp > product.price && (
+                    <span className="text-sm text-gray-500 line-through">
+                      ₹{product.mrp.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+                {product.brand && (
+                  <span className="text-sm text-blue-600">{product.brand}</span>
+                )}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {query && !loading && results.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-lg text-muted-foreground mb-4">
+            No products found for "{query}"
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Try searching for different keywords or browse our categories
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

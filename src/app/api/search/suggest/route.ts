@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
-import { searchProductsSuggestions } from "@/lib/mock-db"
+import { searchProducts } from "@/lib/data/products"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const q = searchParams.get("q") || ""
-  const results = searchProductsSuggestions(q, 8)
+  const results = searchProducts(q).slice(0, 8)
   return NextResponse.json({ suggestions: results })
 }
