@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { products } from "@/lib/data/products";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const data = await req.json();
-  const index = products.findIndex(p => p.id === params.id);
+  const index = products.findIndex(p => p.id === id);
   
   if (index === -1) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -13,8 +14,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   return NextResponse.json(products[index]);
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  const index = products.findIndex(p => p.id === params.id);
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const index = products.findIndex(p => p.id === id);
   
   if (index === -1) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
