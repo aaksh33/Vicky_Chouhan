@@ -30,7 +30,7 @@ export default function CartView() {
       {items.length === 0 ? (
         <div className="text-muted-foreground">
           Your cart is empty.{" "}
-          <Link href="/catalog" className="underline">
+          <Link href="/products" className="underline">
             Browse products
           </Link>
         </div>
@@ -39,33 +39,52 @@ export default function CartView() {
           <ul className="flex flex-col gap-4">
             {items.map((i) => (
               <li key={i.id} className="flex items-center gap-4 rounded-lg border p-3">
-                <img
-                  src={`${i.image}?height=72&width=72&query=cart-item`}
-                  alt={`${i.name} image`}
-                  className="h-16 w-16 rounded-md border object-cover"
-                />
+                <Link href={`/products/${i.slug}`} className="flex-shrink-0">
+                  <img
+                    src={`${i.image}?height=72&width=72&query=cart-item`}
+                    alt={`${i.name} image`}
+                    className="h-16 w-16 rounded-md border object-cover hover:opacity-80 transition-opacity"
+                  />
+                </Link>
                 <div className="flex-1">
-                  <div className="font-medium text-foreground">{i.name}</div>
-                  <div className="text-sm text-muted-foreground">${i.price.toFixed(2)}</div>
+                  <Link href={`/products/${i.slug}`} className="hover:underline">
+                    <div className="font-medium text-foreground">{i.name}</div>
+                  </Link>
+                  <div className="text-sm text-muted-foreground">₹{i.price.toFixed(2)}</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label htmlFor={`qty-${i.id}`} className="sr-only">
-                    Quantity for {i.name}
-                  </label>
-                  <Input
-                    id={`qty-${i.id}`}
-                    type="number"
-                    min={0}
-                    value={i.qty || 1}
-                    onChange={(e) => {
-                      const q = Math.max(0, Number(e.target.value || 0))
-                      updateQty(i.id, q)
-                      setItems(getCart())
-                    }}
-                    className="w-20"
-                  />
+                  <div className="flex items-center border rounded-md">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const newQty = Math.max(1, (i.qty || 1) - 1)
+                        updateQty(i.id, newQty)
+                        setItems(getCart())
+                      }}
+                      className="h-8 w-8 p-0 hover:bg-gray-100"
+                    >
+                      -
+                    </Button>
+                    <span className="px-3 py-1 text-sm font-medium min-w-[2rem] text-center">
+                      {i.qty || 1}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const newQty = (i.qty || 1) + 1
+                        updateQty(i.id, newQty)
+                        setItems(getCart())
+                      }}
+                      className="h-8 w-8 p-0 hover:bg-gray-100"
+                    >
+                      +
+                    </Button>
+                  </div>
                   <Button
                     variant="destructive"
+                    size="sm"
                     onClick={() => {
                       removeFromCart(i.id)
                       setItems(getCart())
@@ -80,7 +99,7 @@ export default function CartView() {
           </ul>
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="text-foreground">
-              Total: <span className="font-semibold">${total.toFixed(2)}</span>
+              Total: <span className="font-semibold">₹{total.toFixed(2)}</span>
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -92,7 +111,9 @@ export default function CartView() {
               >
                 Clear Cart
               </Button>
-              <Button>Checkout (mock)</Button>
+              <Link href="/checkout">
+              <Button>Checkout</Button>
+              </Link>
             </div>
           </div>
         </>
