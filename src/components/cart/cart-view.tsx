@@ -7,6 +7,7 @@ import { getCart, updateQty, removeFromCart, clearCart } from "@/lib/cart"
 import { useSession } from "next-auth/react"
 import { AuthDialog } from "@/components/auth-dialog"
 import Link from "next/link"
+import Image from "next/image"
 
 type CartItem = ReturnType<typeof getCart>[number]
 
@@ -47,9 +48,11 @@ export default function CartView() {
             {items.map((i) => (
               <li key={i.id} className="flex items-center gap-4 rounded-lg border p-3">
                 <Link href={`/products/${i.slug}`} className="flex-shrink-0">
-                  <img
-                    src={`${i.image}?height=72&width=72&query=cart-item`}
+                  <Image
+                    src={i.image}
                     alt={`${i.name} image`}
+                    width={64}
+                    height={64}
                     className="h-16 w-16 rounded-md border object-cover hover:opacity-80 transition-opacity"
                   />
                 </Link>
