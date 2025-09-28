@@ -46,35 +46,35 @@ export default function ProfilePage() {
     {
       label: 'Full Name',
       value: session.user?.name || 'Not provided',
-      editable: false
+      editable: false as const
     },
     {
       label: 'Email',
       value: session.user?.email,
-      editable: false
+      editable: false as const
     },
     {
       label: 'Phone',
       value: phone || 'Not provided',
-      editable: true,
+      editable: true as const,
       editing: editingPhone,
       setEditing: setEditingPhone,
       inputValue: phone,
       setInputValue: (value: string) => setPhone(value.replace(/\D/g, '')),
       save: savePhone,
-      type: 'tel',
+      type: 'tel' as const,
       placeholder: 'Enter phone number'
     },
     {
       label: 'Address',
       value: address || 'Not provided',
-      editable: true,
+      editable: true as const,
       editing: editingAddress,
       setEditing: setEditingAddress,
       inputValue: address,
       setInputValue: setAddress,
       save: saveAddress,
-      type: 'textarea',
+      type: 'textarea' as const,
       placeholder: 'Enter your address'
     }
   ]
@@ -164,9 +164,11 @@ export default function ProfilePage() {
                       ) : (
                         <>
                           <p className="text-gray-900 flex-1">{field.value}</p>
-                          <button onClick={() => field.setEditing(true)} className="text-blue-600 hover:text-blue-700">
-                            <Edit2 className="h-4 w-4" />
-                          </button>
+                          {field.editable && (
+                            <button onClick={() => field.setEditing(true)} className="text-blue-600 hover:text-blue-700">
+                              <Edit2 className="h-4 w-4" />
+                            </button>
+                          )}
                         </>
                       )}
                     </div>
