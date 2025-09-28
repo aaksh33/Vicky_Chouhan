@@ -20,14 +20,21 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function CategoryPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params
   const list = products.filter((p) => p.category.toLowerCase() === slug.toLowerCase() && p.status === "active")
-  if (list.length === 0) notFound()
-
+  
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-foreground text-balance">{slug}</h1>
+        <h1 className="text-2xl font-semibold text-foreground text-balance capitalize">{slug}</h1>
       </header>
-      <ProductGrid items={list} />
+      {list.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📦</div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Products Not Found</h2>
+          <p className="text-gray-600">No products are currently available in this category.</p>
+        </div>
+      ) : (
+        <ProductGrid items={list} />
+      )}
     </main>
   )
 }
