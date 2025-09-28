@@ -21,112 +21,88 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
-        
-        // Default admin for development
+
+        // Default admin
         if (credentials.email === 'admin@electronic.com') {
-          let admin = await prisma.user.findUnique({ where: { email: 'admin@electronic.com' } })
+          let admin = await prisma.user.findUnique({ where: { email: credentials.email } })
           if (!admin) {
             admin = await prisma.user.create({
               data: {
-                email: 'admin@electronic.com',
+                email: credentials.email,
                 name: 'Sonu',
                 phone: '9905757864',
                 role: 'admin',
                 password: await bcrypt.hash(credentials.password, 12)
               }
             })
-          } else {
-            // Update existing user to admin if not already
-            if (admin.role !== 'admin') {
-              admin = await prisma.user.update({
-                where: { email: 'admin@electronic.com' },
-                data: { role: 'admin', name: 'Sonu', phone: '9905757864' }
-              })
-            }
+          } else if (admin.role !== 'admin') {
+            admin = await prisma.user.update({
+              where: { email: credentials.email },
+              data: { role: 'admin', name: 'Sonu', phone: '9905757864' }
+            })
           }
-          
+
           if (admin.password && await bcrypt.compare(credentials.password, admin.password)) {
-            return {
-              id: admin.id,
-              email: admin.email,
-              name: admin.name,
-              role: admin.role
-            }
+            return { id: admin.id, email: admin.email, name: admin.name, role: admin.role }
           }
           return null
         }
-        
-        // Check existing user
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } })
-        
-        // If signing up, create new user
+
+        // Sign up new user
         if (credentials.isSignUp === 'true') {
-          if (user) {
-            return null // Will be handled as error in callback
-          }
-          try {
-            const newUser = await prisma.user.create({
-              data: {
-                email: credentials.email,
-                name: credentials.name || credentials.email.split('@')[0],
-                phone: credentials.phone || null,
-                password: await bcrypt.hash(credentials.password, 12),
-                role: 'user'
-              }
-            })
-            return {
-              id: newUser.id,
-              email: newUser.email,
-              name: newUser.name,
-              role: newUser.role
+          const existingUser = await prisma.user.findUnique({ where: { email: credentials.email } })
+          if (existingUser) return null
+          const newUser = await prisma.user.create({
+            data: {
+              email: credentials.email,
+              name: credentials.name || credentials.email.split('@')[0],
+              phone: credentials.phone || null,
+              password: await bcrypt.hash(credentials.password, 12),
+              role: 'user'
             }
-          } catch (error) {
-            return null
-          }
+          })
+          return { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role }
         }
-        
-        // If signing in, check user exists and password matches
-        if (!user) {
-          return null // Will be handled as error in callback
-        }
-        
-        if (!user.password || !await bcrypt.compare(credentials.password, user.password)) {
-          return null // Will be handled as error in callback
-        }
-        
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role
-        }
+
+        // Sign in existing user
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } })
+        if (!user || !user.password) return null
+        const isValid = await bcrypt.compare(credentials.password, user.password)
+        if (!isValid) return null
+
+        return { id: user.id, email: user.email, name: user.name, role: user.role }
       }
     })
   ],
+
   session: { strategy: 'jwt' },
-  pages: {
-    signIn: '/auth/signin'
-  },
+
+  pages: { signIn: '/auth/signin' },
+
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.role = user.role || (user.email === 'admin@electronic.com' ? 'admin' : 'user')
         token.id = user.id
+        token.role = user.role || (user.email === 'admin@electronic.com' ? 'admin' : 'user')
       }
       return token
     },
+
     async session({ session, token }) {
-      session.user.role = token.role as string
-      session.user.id = token.id as string
+      if (token) {
+        session.user.id = token.id as string
+        session.user.role = token.role as string
+      }
       return session
     },
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'google') {
-        const existingUser = await prisma.user.findUnique({ where: { email: user.email! } })
+
+    async signIn({ user, account }) {
+      if (account?.provider === 'google' && user.email) {
+        const existingUser = await prisma.user.findUnique({ where: { email: user.email } })
         if (!existingUser) {
           await prisma.user.create({
             data: {
-              email: user.email!,
+              email: user.email,
               name: user.name,
               image: user.image,
               phone: user.email === 'admin@electronic.com' ? '9905757864' : null,
@@ -134,7 +110,6 @@ export const authOptions: NextAuthOptions = {
             }
           })
         } else if (user.email === 'admin@electronic.com' && existingUser.role !== 'admin') {
-          // Update to admin if signing in with Google
           await prisma.user.update({
             where: { email: 'admin@electronic.com' },
             data: { role: 'admin', name: 'Sonu', phone: '9905757864' }

@@ -6,22 +6,24 @@ export default withAuth(
     const { pathname } = req.nextUrl
     const token = req.nextauth.token
 
-    // Redirect non-admin users trying to access admin pages to not-found
-    if (pathname.startsWith('/admin') && token?.role !== 'admin' && token?.email !== 'admin@electronic.com') {
-      return NextResponse.rewrite(new URL('/not-found', req.url))
+    // If accessing admin pages
+    if (pathname.startsWith('/admin')) {
+      // If not logged in or not admin
+      if (!token || (token.role !== 'admin' && token.email !== 'admin@electronic.com')) {
+        return NextResponse.rewrite(new URL('/not-found', req.url))
+      }
     }
+
+    // Allow access to all other routes
+    return NextResponse.next()
   },
   {
     callbacks: {
-      authorized: () => {
-        // Allow all requests to pass through middleware function
-        // We handle authorization in the middleware function above
-        return true
-      }
-    }
+      authorized: () => true, // Pass all requests to the middleware
+    },
   }
 )
 
 export const config = {
-  matcher: ['/admin/:path*', '/checkout/:path*']
+  matcher: ['/admin/:path*', '/checkout/:path*'],
 }
