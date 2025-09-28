@@ -69,8 +69,8 @@ const itemSchema = z.object({
   description: z.string().min(1, "Description is required"),
   coverImage: z.string().url("Must be a valid URL"),
   images: z.string().min(1, "At least one image is required"),
-  price: z.coerce.number().min(0, "Price is required"),
-  quantity: z.coerce.number().min(0, "Quantity is required"),
+  price: z.number().min(0, "Price is required"),
+  quantity: z.number().min(0, "Quantity is required"),
 });
 
 type ItemFormValues = z.infer<typeof itemSchema>;
@@ -89,12 +89,14 @@ export default function ProductTable() {
   const [addingNewType, setAddingNewType] = useState(false);
   const [newType, setNewType] = useState("");
 
-  const defaultValues: Partial<ItemFormValues> = {
+  const defaultValues: ItemFormValues = {
     name: "",
     type: "",
     description: "",
     coverImage: "",
     images: "",
+    price: 0,
+    quantity: 0,
   };
 
   const form = useForm<ItemFormValues>({
