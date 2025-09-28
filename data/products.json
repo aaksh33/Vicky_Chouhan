@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Gaming Laptop RTX 40650",
+    "title": "Gaming Laptop RTX 40650",
+    "slug": "gaming-laptop-rtx-40650",
+    "category": "Desktops",
+    "description": "jgsdfghsv",
+    "frontImage": "/uploads/1759063366800-Screenshot 2025-09-28 at 4.59.39 PM.png",
+    "images": [
+      "/uploads/1759063366807-profile_picture1.png",
+      "/uploads/1759063366811-Screenshot 2024-02-23 at 9.07.54 PM.png",
+      "/uploads/1759063366822-Screenshot 2024-02-23 at 9.31.51 PM.png",
+      "/uploads/1759063366827-Screenshot 2024-02-28 at 6.29.51 PM.png"
+    ],
+    "price": 565,
+    "quantity": 7,
+    "brand": "ASUS",
+    "status": "active",
+    "sku": "SKU-1759064135587",
+    "id": "1759063367097",
+    "createdAt": "2025-09-28T12:42:47.097Z",
+    "updatedAt": "2025-09-28T12:55:35.973Z"
+  }
+]
