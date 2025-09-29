@@ -290,13 +290,13 @@ export default function ProductTable() {
         const imagesToUpload = [];
         
         if (frontImage) {
-          const frontImageBase64 = await convertFileToBase64(frontImage, 600, 0.6);
+          const frontImageBase64 = await convertFileToBase64(frontImage, 2000, 0.9);
           imagesToUpload.push(frontImageBase64);
         }
         
         if (additionalImages.length > 0) {
           const additionalImagesBase64 = await Promise.all(
-            additionalImages.map(img => convertFileToBase64(img, 400, 0.5))
+            additionalImages.map(img => convertFileToBase64(img, 1500, 0.85))
           );
           imagesToUpload.push(...additionalImagesBase64);
         }

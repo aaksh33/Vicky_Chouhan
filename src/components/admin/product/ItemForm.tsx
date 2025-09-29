@@ -89,10 +89,10 @@ export default function ItemFormWithList() {
 
     setUploading(true);
     try {
-      // Convert images to compressed base64
-      const frontImageBase64 = await convertFileToBase64(frontImage, 600, 0.6);
+      // Convert images to high quality base64 (optimized for speed)
+      const frontImageBase64 = await convertFileToBase64(frontImage, 2000, 0.9);
       const additionalImagesBase64 = await Promise.all(
-        additionalImages.map(img => convertFileToBase64(img, 400, 0.5))
+        additionalImages.map(img => convertFileToBase64(img, 1500, 0.85))
       );
 
       const allImages = [frontImageBase64, ...additionalImagesBase64];
