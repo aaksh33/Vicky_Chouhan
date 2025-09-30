@@ -115,7 +115,7 @@ export function Navbar() {
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2" aria-label="Go to homepage">
             <img
-              src="/next.svg"
+              src="/logo.png"
               alt="Store logo"
               className="h-10 w-full rounded bg-transparent"
             />

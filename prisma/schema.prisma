@@ -48,6 +48,7 @@ model Order {
   address       Address
   paymentMethod String
   deliveryDate  DateTime
+  billUrl       String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }

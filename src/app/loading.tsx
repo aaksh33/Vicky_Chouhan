@@ -4,7 +4,7 @@
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const Loading = () => {
+export default function Loading (){
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/80 backdrop-blur-sm">
       <motion.div
@@ -38,4 +38,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+

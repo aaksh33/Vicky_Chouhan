@@ -4,8 +4,10 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { User, Package, MapPin, Phone, Mail, Calendar, Edit2, X } from 'lucide-react'
+import { User, Package, MapPin, Phone, Mail, Calendar, Edit2, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import Loading from '../loading'
+import Link from 'next/link'
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -14,29 +16,97 @@ export default function ProfilePage() {
   const [address, setAddress] = useState('')
   const [editingPhone, setEditingPhone] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
+  const [orders, setOrders] = useState<any[]>([])
+  const [loadingOrders, setLoadingOrders] = useState(false)
+  const [loadingProfile, setLoadingProfile] = useState(false)
 
-  const savePhone = () => {
-    setEditingPhone(false)
-    toast.success('Phone number updated successfully')
+  const savePhone = async () => {
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setEditingPhone(false)
+        toast.success('Phone number updated successfully')
+      } else {
+        console.error('API Error:', data)
+        toast.error(data.error || 'Failed to update phone number')
+      }
+    } catch (error) {
+      console.error('Network Error:', error)
+      toast.error('Failed to update phone number')
+    }
   }
 
-  const saveAddress = () => {
-    setEditingAddress(false)
-    toast.success('Address updated successfully')
+  const saveAddress = async () => {
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address })
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setEditingAddress(false)
+        toast.success('Address updated successfully')
+      } else {
+        console.error('API Error:', data)
+        toast.error(data.error || 'Failed to update address')
+      }
+    } catch (error) {
+      console.error('Network Error:', error)
+      toast.error('Failed to update address')
+    }
   }
 
   useEffect(() => {
     if (status === 'loading') return
     if (!session) {
       router.push('/auth/signin?callbackUrl=/profile')
+      return
     }
+    
+    const fetchProfile = async () => {
+      setLoadingProfile(true)
+      try {
+        const response = await fetch('/api/profile')
+        if (response.ok) {
+          const data = await response.json()
+          setPhone(data.phone || '')
+          setAddress(data.address || '')
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+      } finally {
+        setLoadingProfile(false)
+      }
+    }
+    
+    const fetchOrders = async () => {
+      setLoadingOrders(true)
+      try {
+        const response = await fetch('/api/orders')
+        if (response.ok) {
+          const data = await response.json()
+          setOrders(data.orders.slice(0, 3))
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+      } finally {
+        setLoadingOrders(false)
+      }
+    }
+    
+    fetchProfile()
+    fetchOrders()
   }, [session, status, router])
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
+          <Loading/>
     )
   }
 
@@ -55,7 +125,7 @@ export default function ProfilePage() {
     },
     {
       label: 'Phone',
-      value: phone || 'Not provided',
+      value: loadingProfile ? <span className="text-red-500">Loading...</span> : (phone || 'Not provided'),
       editable: true as const,
       editing: editingPhone,
       setEditing: setEditingPhone,
@@ -67,7 +137,7 @@ export default function ProfilePage() {
     },
     {
       label: 'Address',
-      value: address || 'Not provided',
+      value: loadingProfile ? <span className="text-red-500">Loading...</span> : (address || 'Not provided'),
       editable: true as const,
       editing: editingAddress,
       setEditing: setEditingAddress,
@@ -79,11 +149,7 @@ export default function ProfilePage() {
     }
   ]
 
-  const mockOrders = [
-    { id: '1', date: '2024-01-15', total: 1299, status: 'Delivered', items: 2 },
-    { id: '2', date: '2024-01-10', total: 899, status: 'Shipped', items: 1 },
-    { id: '3', date: '2024-01-05', total: 2499, status: 'Processing', items: 3 }
-  ]
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,7 +179,7 @@ export default function ProfilePage() {
               </p>
               <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
                 <Calendar className="h-4 w-4" />
-                Member since January 2024
+                Member since {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
@@ -164,7 +230,7 @@ export default function ProfilePage() {
                       ) : (
                         <>
                           <p className="text-gray-900 flex-1">{field.value}</p>
-                          {field.editable && (
+                          {field.editable && !loadingProfile && (
                             <button onClick={() => field.setEditing(true)} className="text-blue-600 hover:text-blue-700">
                               <Edit2 className="h-4 w-4" />
                             </button>
@@ -179,31 +245,48 @@ export default function ProfilePage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className='flex justify-between'>
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Package className="h-5 w-5" />
               Recent Orders
             </h2>
+            <Link href='/orders' className='hover:underline text-blue-600'>View All</Link>
+            </div>
             <div className="space-y-3">
-              {mockOrders.map((order) => (
-                <div key={order.id} className="border border-gray-200 rounded-lg p-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium text-gray-900">Order #{order.id}</p>
-                      <p className="text-sm text-gray-500">{order.date} • {order.items} items</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900">₹{order.total}</p>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                        order.status === 'Shipped' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {order.status}
-                      </span>
+              {loadingOrders ? (
+                <div className='text-red-500'>
+                  loading...
+                {/* // <div className="text-center py-4 flex items-center justify-center"> */}
+                  {/* <Loader2 className='h-8 w-8 animate-spin text-blue-600'/> */}
+                  {/* <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div> */}
+                </div>
+              ) : orders.length > 0 ? (
+                orders.map((order) => (
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-gray-900">Order #{order.id.slice(-8)}</p>
+                        <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} items</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900">₹{order.total}</p>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                          order.status === 'shipped' || order.status === 'out-for-delivery' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-500">No orders yet</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>

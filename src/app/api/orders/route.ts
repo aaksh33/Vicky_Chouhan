@@ -10,8 +10,25 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
   
-  const orders = await prisma.order.findMany({ where: { userId: session.user.id } })
-  return NextResponse.json({ orders })
+  try {
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
+    
+    if (!user) {
+      return NextResponse.json({ orders: [] })
+    }
+    
+    const orders = await prisma.order.findMany({ 
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' }
+    })
+    return NextResponse.json({ orders })
+  } catch (error) {
+    console.error('Orders fetch error:', error)
+    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
@@ -21,41 +38,64 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
   
-  const body = await request.json()
-  const { items, address, paymentMethod, deliveryDate } = body
-
-  if (!Array.isArray(items) || items.length === 0) {
-    return NextResponse.json({ error: "No items provided" }, { status: 400 })
-  }
-
-  const orderItems = []
-  let total = 0
-
-  for (const it of items) {
-    const product = await prisma.product.findUnique({ where: { id: it.productId } })
-    if (!product) return NextResponse.json({ error: `Invalid product ${it.productId}` }, { status: 400 })
+  try {
+    // Find or create user in database
+    let user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
     
-    const orderItem = {
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      qty: Math.max(1, Math.floor(it.qty || 1))
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: session.user.email,
+          name: session.user.name || '',
+          role: session.user.role || 'user'
+        }
+      })
     }
-    orderItems.push(orderItem)
-    total += orderItem.price * orderItem.qty
+    
+    const body = await request.json()
+    const { items, address, paymentMethod, deliveryDate } = body
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: "No items provided" }, { status: 400 })
+    }
+
+    const orderItems = []
+    let total = 0
+
+    for (const it of items) {
+      const product = await prisma.product.findUnique({ where: { id: it.productId } })
+      if (!product) return NextResponse.json({ error: `Product not Found` }, { status: 400 })
+      
+      const orderItem = {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        qty: Math.max(1, Math.floor(it.qty || 1))
+      }
+      orderItems.push(orderItem)
+      total += orderItem.price * orderItem.qty
+    }
+
+    const order = await prisma.order.create({
+      data: {
+        userId: user.id,
+        items: orderItems,
+        total,
+        status: paymentMethod === "cod" ? "pending" : "paid",
+        address,
+        paymentMethod,
+        deliveryDate: new Date(deliveryDate)
+      }
+    })
+
+    return NextResponse.json({ order }, { status: 201 })
+  } catch (error) {
+    console.error('Order creation error:', error)
+    return NextResponse.json({ 
+      error: "Failed to create order", 
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
-
-  const order = await prisma.order.create({
-    data: {
-      userId: session.user.id,
-      items: orderItems,
-      total,
-      status: paymentMethod === "cod" ? "pending" : "paid",
-      address,
-      paymentMethod,
-      deliveryDate: new Date(deliveryDate)
-    }
-  })
-
-  return NextResponse.json({ order }, { status: 201 })
 }

@@ -3,7 +3,8 @@
 import { useSession } from 'next-auth/react'
 import { notFound } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { Users, Shield, User, Crown, Search } from 'lucide-react'
+import { Users, Shield, User, Crown, Search, Loader2 } from 'lucide-react'
+import Loading from '@/app/loading'
 
 type UserType = {
   id: string
@@ -64,9 +65,7 @@ export default function AdminUsersPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+       <Loading/>
     )
   }
 
@@ -94,7 +93,7 @@ export default function AdminUsersPage() {
   const userCount = users.filter(u => u.role === 'user').length
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
@@ -156,7 +155,7 @@ export default function AdminUsersPage() {
           
           {loading ? (
             <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              {/* <Loader2 className='w-12 h-12'/> */}
               <p className="mt-2 text-gray-600">Loading users...</p>
             </div>
           ) : (
@@ -221,7 +220,7 @@ export default function AdminUsersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {updatingUser === user.id ? (
                           <div className="flex items-center gap-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                            <Loader2 className='animate-spin'/>
                             <span className="text-gray-500">Updating...</span>
                           </div>
                         ) : (

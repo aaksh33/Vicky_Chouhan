@@ -16,14 +16,14 @@ import {
   DollarSign
 } from 'lucide-react'
 
+import Loading from '../loading'
+
 export default function AdminPage() {
   const { data: session, status } = useSession()
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <Loading/>
     )
   }
 
@@ -36,7 +36,7 @@ export default function AdminPage() {
       title: 'Add Product',
       description: 'Add new products to your inventory',
       icon: Plus,
-      href: '/admin/products/add',
+      href: '/admin/products',
       color: 'bg-gradient-to-r from-green-500 to-green-600',
       hoverColor: 'hover:from-green-600 hover:to-green-700'
     },
@@ -90,7 +90,7 @@ export default function AdminPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -151,7 +151,7 @@ export default function AdminPage() {
           <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
-              href="/admin/products/add"
+              href="/admin/products"
               className="flex items-center gap-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors group"
             >
               <Plus className="h-5 w-5 text-green-600" />
