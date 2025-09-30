@@ -14,11 +14,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { id } = await params
     
     const order = await prisma.order.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        billUrl: true
-      }
+      where: { id }
     })
     
     if (!order) {
