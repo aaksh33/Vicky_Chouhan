@@ -30,9 +30,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const updatedOrder = await prisma.order.update({
       where: { id },
       data: { 
-        billUrl: billData,
+        billUrl: billData as string,
         updatedAt: new Date()
-      },
+      } as any,
       include: {
         user: {
           select: {
