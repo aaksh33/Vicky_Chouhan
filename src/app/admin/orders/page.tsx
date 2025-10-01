@@ -52,6 +52,37 @@ import {
 } from "@/components/ui/select";
 import Loading from "@/app/loading";
 
+// Component to fetch and display product image
+function ProductImage({ productId, productName }: { productId: string; productName: string }) {
+  const [imageSrc, setImageSrc] = useState<string>('https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop');
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(products => {
+        const product = products.find((p: any) => p.id === productId);
+        if (product && (product.frontImage || product.image)) {
+          setImageSrc(product.frontImage || product.image);
+        }
+      })
+      .catch(() => {});
+  }, [productId]);
+
+  return (
+    <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+      <img 
+        src={imageSrc}
+        alt={productName}
+        className="w-full h-full object-cover"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.src = 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop';
+        }}
+      />
+    </div>
+  );
+}
+
 type Order = {
   id: string;
   userId: string;
@@ -687,11 +718,10 @@ export default function AdminOrdersPage() {
                       {selectedOrder.items.map((item, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => window.open(`/products/${item.productId}`, '_blank')}
                         >
-                          <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <Package className="h-8 w-8 text-gray-400" />
-                          </div>
+                          <ProductImage productId={item.productId} productName={item.name} />
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900 mb-1">
                               {item.name}
