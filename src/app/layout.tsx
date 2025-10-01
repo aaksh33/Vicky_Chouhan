@@ -57,14 +57,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" 
-          // enableSystem
-          >
+          {/* <ThemeProvider attribute="class" defaultTheme="light" 
+          enableSystem
+          > */}
             <ConditionalLayout>
               {children}
             </ConditionalLayout>
             <Toaster />
-          </ThemeProvider>
+          {/* </ThemeProvider> */}
         </AuthProvider>
       </body>
     </html>

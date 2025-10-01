@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
+import { ShoppingCart } from "lucide-react";
 
 type Product = {
   id: string;
@@ -272,25 +273,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-4 pt-6 sm:hidden">
-            <div className="flex flex-col gap-2">
-              <button 
-                onClick={handleAddToCart}
-                className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={(product.stock || product.quantity) === 0}
-              >
-                Add to Cart
-              </button>
-              <button 
-                onClick={handleBuyNow}
-                className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={(product.stock || product.quantity) === 0}
-              >
-                Buy Now
-              </button>
-            </div>
-          </div>
+         
 
           {/* Service Features */}
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -309,6 +292,27 @@ export default function ProductPage() {
             <div className="flex items-center gap-2">
               <span className="text-green-600">✓</span>
               <span>Cash/Pay on Delivery</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-4 pt-6 bottom-0 sticky">
+            <div className="flex gap-2">
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 flex justify-center gap-2 items-center cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={(product.stock || product.quantity) === 0}
+              >
+                <ShoppingCart/>
+                <span>Add to Cart</span>
+              </button>
+              <button 
+                onClick={handleBuyNow}
+                className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={(product.stock || product.quantity) === 0}
+              >
+                Buy Now
+              </button>
             </div>
           </div>
 
@@ -438,22 +442,7 @@ export default function ProductPage() {
 
           {/* Action Buttons */}
           <div className="space-y-4 pt-6 hidden sm:block">
-            <div className="flex gap-4">
-              <button 
-                onClick={handleAddToCart}
-                className="flex-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={(product.stock || product.quantity) === 0}
-              >
-                Add to Cart
-              </button>
-              <button 
-                onClick={handleBuyNow}
-                className="flex-1 cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={(product.stock || product.quantity) === 0}
-              >
-                Buy Now
-              </button>
-            </div>
+           
             
             {/* Additional Services */}
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
