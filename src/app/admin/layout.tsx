@@ -9,6 +9,7 @@ import {
   User,
   Home,
   Settings,
+  UserSquare,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -45,6 +46,7 @@ const navItems = [
   { href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { href: "/admin/products", icon: Package, label: "Products" },
   { href: "/admin/users", icon: Users, label: "Users" },
+  { href: "/admin/Userhome", icon: UserSquare, label: "User Home" },
 ];
 
 export default function AdminLayout({
