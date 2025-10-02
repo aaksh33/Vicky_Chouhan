@@ -1019,9 +1019,9 @@ export default function AdminOrdersPage() {
                             onOpenChange={setShowBillDialog}
                           >
                             <DialogTrigger asChild>
-                              <button className="border border-blue-600 bg-blue-100 text-blue-700 px-3 py-1 hover:bg-blue-200 rounded-md text-sm cursor-pointer flex items-center gap-2">
+                              <button className="border border-blue-600 bg-blue-100 text-xs text-blue-700 px-2 py-1 hover:bg-blue-200 rounded cursor-pointer flex items-center gap-1">
                                 <Eye className="h-4 w-4" />
-                                View Bill
+                                View
                               </button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-6xl max-h-[95vh] overflow-hidden">
@@ -1064,7 +1064,7 @@ export default function AdminOrdersPage() {
                                       link.click();
                                       document.body.removeChild(link);
                                     }}
-                                    className="bg-green-600 text-white px-6 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2 transition-colors"
+                                    className="border border-green-600 bg-green-100 text-green-700 px-6 py-2 hover:bg-green-200 rounded-md text-xs cursor-pointer flex items-center gap-2"
                                   >
                                     <Download className="h-4 w-4" />
                                     Download Bill
@@ -1083,7 +1083,7 @@ export default function AdminOrdersPage() {
                               link.click();
                               document.body.removeChild(link);
                             }}
-                            className="border border-green-600 bg-green-100 text-green-700 px-3 py-1 hover:bg-green-200 rounded-md text-sm cursor-pointer flex items-center gap-2"
+                            className="border border-green-600 bg-green-100 text-green-700 px-2 py-1 hover:bg-green-200 rounded text-xs cursor-pointer flex items-center gap-1"
                           >
                             <Download className="h-4 w-4" />
                             Download
@@ -1092,7 +1092,7 @@ export default function AdminOrdersPage() {
                             <AlertDialogTrigger asChild>
                               <button
                                 disabled={removingBill}
-                                className="border border-red-600 bg-red-100 text-red-700 px-3 py-1 hover:bg-red-200 rounded-md text-sm cursor-pointer flex items-center gap-2 disabled:opacity-50"
+                                className="border border-red-600 bg-red-100 text-red-700 px-2 py-1 hover:bg-red-200 rounded text-xs cursor-pointer flex items-center gap-1 disabled:opacity-50"
                               >
                                 <Trash2 className="h-4 w-4" />
                                 {removingBill ? "Removing..." : "Remove"}
@@ -1136,7 +1136,7 @@ export default function AdminOrdersPage() {
                         />
                         <label
                           htmlFor="bill-upload-dialog"
-                          className={`cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium ${
+                          className={`cursor-pointer text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium ${
                             uploadingBill
                               ? "pointer-events-none opacity-50"
                               : ""
