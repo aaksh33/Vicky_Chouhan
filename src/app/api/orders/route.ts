@@ -16,19 +16,45 @@ export async function GET() {
     }
     
     // Find user by email
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email: session.user.email }
     })
     
+    // If user doesn't exist, create one
     if (!user) {
-      return NextResponse.json({ orders: [] })
+      user = await prisma.user.create({
+        data: {
+          email: session.user.email,
+          name: session.user.name || '',
+          role: session.user.role || 'user'
+        }
+      })
     }
     
-    const orders = await prisma.order.findMany({ 
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' }
+    // Use raw MongoDB query to avoid Prisma date parsing issues
+    const orders = await prisma.$runCommandRaw({
+      find: 'Order',
+      filter: {},
+      sort: { createdAt: -1 }
     })
-    return NextResponse.json({ orders })
+    
+    // Transform the raw data
+    const transformedOrders = (orders as any).cursor.firstBatch.map((order: any) => ({
+      id: order._id.$oid,
+      userId: order.userId.$oid,
+      items: order.items,
+      total: order.total,
+      status: order.status,
+      address: order.address,
+      paymentMethod: order.paymentMethod,
+      deliveryDate: order.deliveryDate.$date,
+      billUrl: order.billUrl,
+      createdAt: order.createdAt.$date,
+      updatedAt: typeof order.updatedAt === 'string' ? order.updatedAt : order.updatedAt.$date
+    }))
+    
+    console.log('Found orders:', transformedOrders.length)
+    return NextResponse.json({ orders: transformedOrders })
   } catch (error) {
     console.error('Orders fetch error:', error)
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 })
@@ -61,6 +87,8 @@ export async function POST(request: Request) {
         }
       })
     }
+    
+    console.log('Creating order for user:', user.id)
     
     const body = await request.json()
     const { items, address, paymentMethod, deliveryDate } = body
