@@ -398,6 +398,7 @@ export default function ProductTable() {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Input
+          className="w-96"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name, type, or description"
