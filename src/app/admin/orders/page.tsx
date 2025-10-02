@@ -256,14 +256,25 @@ export default function AdminOrdersPage() {
 
     setUploadingBill(true);
     try {
-      // Convert to base64 and store directly like products
+      // Convert to base64 with smaller size for bills
       const { convertFileToBase64 } = await import("@/lib/image-utils");
-      const base64 = await convertFileToBase64(file, 1200, 0.8);
+      const base64 = await convertFileToBase64(file, 800, 0.6);
+      
+      // Check if base64 is too large (MongoDB has 16MB document limit)
+      if (base64.length > 10 * 1024 * 1024) { // 10MB limit
+        throw new Error("Image too large after compression. Please use a smaller image.");
+      }
 
       // Update order with base64 bill directly
       const response = await fetch("/api/admin/orders", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Content-Length": JSON.stringify({
+            orderId: selectedOrder.id,
+            billUrl: base64,
+          }).length.toString()
+        },
         body: JSON.stringify({
           orderId: selectedOrder.id,
           billUrl: base64,
@@ -271,11 +282,22 @@ export default function AdminOrdersPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update order with bill");
+        let errorMessage = "Failed to update order with bill";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        throw new Error("Invalid response from server");
+      }
       const updatedOrder = data.order;
 
       setSelectedOrder(updatedOrder);

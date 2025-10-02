@@ -4,13 +4,13 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session || (session.user?.role !== "admin" && session.user?.email !== "admin@electronic.com")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-  
   try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session || (session.user?.role !== "admin" && session.user?.email !== "admin@electronic.com")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    
     const orders = await prisma.order.findMany({
       include: {
         user: {
@@ -27,20 +27,23 @@ export async function GET() {
     })
     
     return NextResponse.json({ orders })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin orders fetch error:', error)
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 })
+    return NextResponse.json({ 
+      error: error.message || "Failed to fetch orders",
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 })
   }
 }
 
 export async function PATCH(request: Request) {
-  const session = await getServerSession(authOptions)
-  
-  if (!session || (session.user?.role !== "admin" && session.user?.email !== "admin@electronic.com")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-  
   try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session || (session.user?.role !== "admin" && session.user?.email !== "admin@electronic.com")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    
     const body = await request.json()
     const { orderId, status, billUrl } = body
 
@@ -48,7 +51,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Order ID is required" }, { status: 400 })
     }
 
-    const updateData: any = {}
+    const updateData: any = { updatedAt: new Date() }
     if (status) updateData.status = status
     if (billUrl) updateData.billUrl = billUrl
 
@@ -69,8 +72,11 @@ export async function PATCH(request: Request) {
     })
 
     return NextResponse.json({ order })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Order update error:', error)
-    return NextResponse.json({ error: "Failed to update order" }, { status: 500 })
+    return NextResponse.json({ 
+      error: error.message || "Failed to update order",
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 })
   }
 }
