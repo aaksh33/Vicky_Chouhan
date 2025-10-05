@@ -41,7 +41,6 @@ export async function POST(req: Request) {
         stock: Number(data.quantity) || 0,
         quantity: Number(data.quantity) || 0,
         brand: data.brand || '',
-
         screenSize: data.screenSize || '',
         hardDiskSize: data.hardDiskSize || '',
         cpuModel: data.cpuModel || '',
@@ -51,7 +50,7 @@ export async function POST(req: Request) {
         offers: data.offers || '',
         status: data.status || 'active',
         sku: data.sku || `SKU-${Date.now()}`
-      }
+      } as any
     });
     
     return NextResponse.json(product, { status: 201 });
