@@ -604,15 +604,7 @@ export function Navbar() {
                 e.preventDefault();
                 if (searchQuery.trim()) {
                   setShowSuggestions(false);
-                  const query = searchQuery.trim().toLowerCase();
-                  const categories = ['laptops', 'laptop-accessories', 'chargers', 'keyboards', 'mouse', 'monitors'];
-                  const matchedCategory = categories.find(cat => cat.includes(query) || query.includes(cat));
-                  
-                  if (matchedCategory) {
-                    router.push(`/category/${matchedCategory}`);
-                  } else {
-                    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-                  }
+                  router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
                 }
               }}
               className="flex items-center relative"
@@ -1030,15 +1022,7 @@ export function Navbar() {
             e.preventDefault();
             if (searchQuery.trim()) {
               setShowSuggestions(false);
-              const query = searchQuery.trim().toLowerCase();
-              const categories = ['laptops', 'laptop-accessories', 'chargers', 'keyboards', 'mouse', 'monitors'];
-              const matchedCategory = categories.find(cat => cat.includes(query) || query.includes(cat));
-              
-              if (matchedCategory) {
-                router.push(`/category/${matchedCategory}`);
-              } else {
-                router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-              }
+              router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
             }
           }}
           className="relative"
