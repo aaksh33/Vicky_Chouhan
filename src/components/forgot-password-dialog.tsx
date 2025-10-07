@@ -46,7 +46,7 @@ export function ForgotPasswordDialog({ open, onOpenChange }: ForgotPasswordDialo
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold">Forgot Password</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Enter your email and we'll send you a reset link
+            Enter your email and we&apos;ll send you a reset link
           </p>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
