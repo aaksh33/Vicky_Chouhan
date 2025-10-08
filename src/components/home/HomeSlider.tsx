@@ -34,7 +34,7 @@ const HeaderSlider = () => {
   if (loading) {
     return (
       <div className="overflow-hidden relative w-full">
-        <div className="relative py-16 md:py-24 px-5 md:px-14 mt-6 sm:min-h-[450px] bg-gray-200 animate-pulse flex items-center">
+        <div className="relative py-16 md:py-24 px-5 md:px-14 mt-6 sm:h-[380px] bg-gray-200 animate-pulse flex items-center">
           <div className="relative z-10 max-w-2xl space-y-6">
             <div className="h-5 md:h-6 bg-gray-300 rounded w-48"></div>
             <div className="space-y-3">
