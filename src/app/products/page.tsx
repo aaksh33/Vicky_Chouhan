@@ -127,7 +127,7 @@ export default function ProductsPage() {
         )}
         
         {!loading && products.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 flex flex-col items-center justify-center min-h-[80vh]">
             <div className="text-gray-400 text-6xl mb-4">📦</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
             <p className="text-gray-600">Check back later for new arrivals!</p>

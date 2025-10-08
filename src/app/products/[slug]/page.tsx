@@ -285,7 +285,7 @@ export default function ProductPage() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-green-600">✓</span>
-              <span>10 days Service Centre Replacement</span>
+              <span>7 days Replacement</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-600">✓</span>

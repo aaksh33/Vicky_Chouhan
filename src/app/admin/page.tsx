@@ -166,21 +166,21 @@ export default function AdminDashboardPage() {
       color: 'from-purple-500 to-pink-500'
     },
     {
-      title: 'Revenue',
-      count: `₹${(stats.revenue / 1000).toFixed(1)}K`,
-      description: 'Total revenue earned',
-      icon: BarChart3,
-      href: '/admin/analytics',
-      color: 'from-orange-500 to-red-500'
-    },
-    {
       title: 'Settings',
-      count: '12',
+      count: '6',
       description: 'Configuration options',
       icon: Settings,
       href: '/admin/settings',
       color: 'from-gray-500 to-gray-700'
-    }
+    },
+    {
+      title: 'Revenue',
+      count: `₹${(stats.revenue / 1000).toFixed(1)}K`,
+      description: 'Total revenue earned',
+      icon: BarChart3,
+      href: '#',
+      color: 'from-orange-500 to-red-500'
+    },
   ]
 
   return (
@@ -196,20 +196,21 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
           {cards.map((card, index) => {
             const Icon = card.icon
+            const CardWrapper = card.href === '#' ? 'div' : Link
             return (
-              <Link key={index} href={card.href}>
+              <CardWrapper key={index} {...(card.href !== '#' && { href: card.href })}>
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                   <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
                     <div className={`p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl bg-gradient-to-r ${card.color} shadow-lg group-hover:scale-110 transition-transform`}>
                       <Icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                     </div>
-                    <span className="hidden sm:inline text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+                    {card.href !== '#' && <span className="hidden sm:inline text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">View →</span>}
                   </div>
                   <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-1">{card.title}</h3>
                   <p className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 overflow-hidden">{card.count}</p>
                   <p className="text-xs text-gray-600 hidden sm:block">{card.description}</p>
                 </div>
-              </Link>
+              </CardWrapper>
             )
           })}
         </div>
@@ -293,7 +294,7 @@ export default function AdminDashboardPage() {
                   <span className="text-sm sm:text-base font-semibold text-gray-900">{products.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm sm:text-base text-gray-600">New Users</span>
+                  <span className="text-sm sm:text-base text-gray-600">Users</span>
                   <span className="text-sm sm:text-base font-semibold text-gray-900">{users.length}</span>
                 </div>
               </div>
@@ -307,7 +308,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Products</h2>
-              <Link href="/admin/products" className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium hover:underline">View All →</Link>
+
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -337,7 +338,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Orders</h2>
-              <Link href="/admin/orders" className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium hover:underline">View All →</Link>
+
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -377,7 +378,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Users</h2>
-              <Link href="/admin/users" className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium hover:underline">View All →</Link>
+
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full">

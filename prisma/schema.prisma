@@ -92,3 +92,11 @@ type Address {
   state    String
   zip      String
 }
+
+model Setting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tag       String   @unique
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

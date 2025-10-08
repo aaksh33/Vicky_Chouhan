@@ -245,7 +245,7 @@ export default function ContactPage() {
                 <AccordionItem value="item-3">
                   <AccordionTrigger className="text-left">How long does shipping take?</AccordionTrigger>
                   <AccordionContent>
-                    Standard shipping takes 3-5 business days. Express shipping is available for 1-2 business days delivery.
+                    Standard shipping takes 7-10 business days. Express shipping is also available.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-4">

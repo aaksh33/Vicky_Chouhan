@@ -615,7 +615,7 @@ export default function ProductTable() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {categories.sort().map((type) => (
-                                    <SelectItem key={type} value={type} className="-ml-5">
+                                    <SelectItem key={type} value={type}>
                                       {type}
                                     </SelectItem>
                                   ))}

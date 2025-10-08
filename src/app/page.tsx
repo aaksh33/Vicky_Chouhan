@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/data/products";
 import { popularProducts } from "@/lib/data/popular-products";
 import HeaderSlider from "@/components/home/HomeSlider";
 import ProductCard from "@/components/product-card";
@@ -13,216 +12,202 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Hero Banner */}
-      <div className="bg-white dark:bg-gray-800">
-        <div className="mx-auto max-w-7xl sm:px-4 py-0 -mt-1.5 sm:pt-12 sm:pb-6 md:py-4">
+    <main className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Hero Slider */}
+      <section className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <div className="mx-auto max-w-[1400px]">
           <HeaderSlider />
         </div>
-      </div>
-
-      {/* Top Categories */}
-      <section className="bg-white dark:bg-gray-800 py-6 mt-1 sm:mt-2">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Top Categories
-            </h2>
-            <Link
-              href="/category"
-              className="text-blue-500 hover:text-blue-600 hover:underline text-sm font-medium"
-            >
-              VIEW ALL
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-5 sm:grid-cols-7 lg:grid-cols-10 gap-2 sm:gap-4">
-            {[...CATEGORIES.filter((c) => c !== "Show All"), "Show All"].map(
-              (category) => (
-                <Link
-                  key={category}
-                  href={category === "Show All" ? "/category" : category === "Laptop Accessories" ? "/category/laptop-accessories" : `/category/${category.toLowerCase()}`}
-                  className="flex flex-col items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <div className="w-13 h-13 sm:w-16 sm:h-16 bg-blue-50 dark:bg-blue-900 rounded-full flex items-center justify-center mb-2">
-                    <span className="text-2xl">
-                      {category === "Laptops"
-                        ? "💻"
-                        : category === "Laptop Accessories"
-                        ? "🎒"
-                        : category === "Chargers"
-                        ? "🔌"
-                        : category === "Keyboards"
-                        ? "⌨️"
-                        : category === "Mouse"
-                        ? "🖱️"
-                        : category === "Monitors"
-                        ? "🖥️"
-                        : category === "Show All"
-                        ? "📦"
-                        : "📦"}
-                    </span>
-                  </div>
-                  <span className="text-[10px] sm:tsxt-xs text-center text-gray-700 dark:text-gray-300 font-medium ">
-                    {category}
-                  </span>
-                </Link>
-              )
-            )}
-          </div>
-        </div>
       </section>
 
-      {/* Deals of the Day */}
-      <section className="bg-white dark:bg-gray-800 py-6 mt-1 sm:mt-2">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                Deals of the Day
-              </h2>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span>⏰</span>
-                <span>22h 15m Left</span>
-              </div>
-            </div>
-            <Link
-              href="/products"
-              className="text-blue-500 hover:text-blue-600 text-sm font-medium hover:underline"
-            >
-              VIEW ALL
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {popularProducts.map((product) => (
-              <div
-                key={product.id}
-                className="transform transition-all duration-300"
-              >
-                <ProductCard product={product} />
-              </div>
+      {/* Quick Categories */}
+      <section className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+        <div className="mx-auto max-w-[1400px] px-6 py-5">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {[
+              { name: 'Laptops', href: '/category/laptops' },
+              { name: 'Monitors', href: '/category/monitors' },
+              { name: 'Keyboards', href: '/category/keyboards' },
+              { name: 'Mouse', href: '/category/mouse' },
+              { name: 'Chargers', href: '/category/chargers' },
+              { name: 'Accessories', href: '/category/laptop-accessories' }
+            ].map((cat) => (
+              <Link key={cat.name} href={cat.href} className="group">
+                <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded p-4 text-center hover:bg-blue-50 dark:hover:bg-gray-800 hover:border-blue-400 transition-all">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">{cat.name}</h3>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Best of Electronics */}
-      <section className="bg-white dark:bg-gray-800 py-6 mt-1 sm:mt-2">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Best of Electronics
-            </h2>
-            <Link
-              href="/products"
-              className="text-blue-500 hover:text-blue-600 text-sm font-medium hover:underline "
-            >
-              VIEW ALL
-            </Link>
+      {/* Featured Products */}
+      <section className="py-10 bg-gray-50 dark:bg-gray-900">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Featured Products</h2>
+            <Link href="/products" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">View All →</Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {popularProducts.slice(6, 12).map((product) => (
-              <div
-                key={product.id}
-                className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:shadow-md transition-shadow bg-white dark:bg-gray-700"
-              >
-                <ProductCard product={product} />
-              </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 ">
+            {popularProducts.slice(0, 6).map((product) => (
+                <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Top Offers */}
-      <section className="bg-white dark:bg-gray-800 py-6 mt-1 sm:mt-2">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Top Offers
-            </h2>
-            <Link
-              href="/products"
-              className="text-blue-500 hover:text-blue-600 text-sm font-medium hover:underline"
-            >
-              VIEW ALL
+      {/* Promotional Banners */}
+      <section className="py-10 bg-white dark:bg-gray-800">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Link href="/category/laptops" className="relative overflow-hidden rounded bg-slate-900 p-12 hover:opacity-95 transition-opacity">
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">LAPTOPS</p>
+                <h3 className="text-4xl font-bold text-white mb-2">Up to 40% Off</h3>
+                <p className="text-gray-300 text-sm mb-6">Premium brands at best prices</p>
+                <span className="inline-flex items-center text-white font-semibold text-sm border-b-2 border-white pb-1">Shop Now →</span>
+              </div>
+            </Link>
+            <Link href="/category/monitors" className="relative overflow-hidden rounded bg-blue-600 p-12 hover:opacity-95 transition-opacity">
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-blue-100 uppercase tracking-widest mb-2">MONITORS</p>
+                <h3 className="text-4xl font-bold text-white mb-2">Starting ₹5,999</h3>
+                <p className="text-blue-50 text-sm mb-6">Full HD & 4K displays</p>
+                <span className="inline-flex items-center text-white font-semibold text-sm border-b-2 border-white pb-1">Explore →</span>
+              </div>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {popularProducts.map((product) => (
-              <div
-                key={product.id}
-                className="transform transition-all duration-300"
-              >
-                <ProductCard product={product} />
-              </div>
+        </div>
+      </section>
+
+      {/* Best Sellers */}
+      <section className="py-10 bg-gray-50 dark:bg-gray-900">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Best Sellers</h2>
+            <Link href="/products" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">View All →</Link>
+          </div>
+           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 ">
+            {popularProducts.slice(0, 6).map((product) => (
+                <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services */}
-      <section className="bg-white dark:bg-gray-800 py-8">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* Top Brands */}
+      <section className="py-10 bg-white dark:bg-gray-800 border-y border-gray-100 dark:border-gray-700">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Shop by Brand</h2>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {['Apple', 'Samsung', 'Dell', 'HP', 'Lenovo', 'Asus'].map((brand) => (
+              <Link key={brand} href="/products" className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded p-5 text-center hover:bg-white dark:hover:bg-gray-800 hover:border-blue-500 hover:shadow-md transition-all group">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">{brand}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trending Now */}
+      <section className="py-10 bg-gray-50">
+        <div className="mx-auto max-w-[1400px] px-6 ">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Trending Now</h2>
+            <Link href="/products" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">View All →</Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 ">
+            {popularProducts.slice(0, 6).map((product) => (
+                <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Deal of the Day */}
+      <section className="py-10 bg-gray-50">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Deal of the Day</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Limited time offers</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-red-500">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Ends in 12h 30m</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 ">
+            {popularProducts.slice(0, 6).map((product) => (
+                <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="py-10 bg-gray-50 dark:bg-gray-900">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">New Arrivals</h2>
+            <Link href="/products" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">View All →</Link>
+          </div>
+         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 ">
+            {popularProducts.slice(0, 6).map((product) => (
+                <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* Trust Badges */}
+      <section className="py-12 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+        <div className="mx-auto max-w-[1400px] px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 text-blue-500">
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-full h-full"
-                >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              <div className="w-14 h-14 mx-auto mb-3 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                Quality Assured
-              </h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Genuine Products</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">100% Authentic</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 text-blue-500">
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-full h-full"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              <div className="w-14 h-14 mx-auto mb-3 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                7 Day Return
-              </h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Secure Payment</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Safe & Encrypted</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 text-blue-500">
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-full h-full"
-                >
-                  <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm6 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" />
+              <div className="w-14 h-14 mx-auto mb-3 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                Free Delivery
-              </h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Free Shipping</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">On orders above ₹500</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 text-blue-500">
-                <svg
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-full h-full"
-                >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+              <div className="w-14 h-14 mx-auto mb-3 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                24x7 Support
-              </h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Easy Returns</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">7 Days Return Policy</p>
             </div>
           </div>
         </div>
       </section>
+
       <Footer />
     </main>
   );

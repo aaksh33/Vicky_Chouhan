@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Product } from "@/lib/types";
 import { addToCart } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
@@ -17,77 +16,57 @@ export default function ProductCard({ product }: { product: Product }) {
       : 0;
 
   return (
-    <Card>
-      <article>
-        <CardHeader className="gap-2">
-          <Link href={`/products/${product.slug}`} className="block">
-            <CardTitle className="text-pretty text-foreground hover:underline">
-              {product.name}
-            </CardTitle>
-          </Link>
-          <div className="text-sm text-muted-foreground">{product.brand}</div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Link href={`/products/${product.slug}`} className="block">
-            <CloudinaryImage
-              src={product.frontImage || product.image || "/no-image.svg"}
-              alt={`${product.name} image`}
-              width={400}
-              height={300}
-              className="h-48 w-full rounded-md border bg-card object-cover"
-            />
-          </Link>
-          <div>
-            {discounted && (
-              <>
-                <div className="flex flex-col items-baseline justify-between gap-2">
-                  <div className="space-x-2">
-                    <span className="font-semibold text-foreground">
-                      ₹{product.price.toFixed(2)}{" "}
-                    </span>
-                    <span className="text-muted-foreground line-through">
-                      ₹{product.mrp?.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="space-x-2">
-                    <span
-                      className="text-green-600 text-sm"
-                      aria-label={`${discountPct}% off`}
-                    >
-                      {discountPct}% off
-                    </span>
-                    <span
-                      className={
-                        product.quantity <= 5
-                          ? "text-amber-700 text-sm"
-                          : "text-muted-foreground text-sm"
-                      }
-                    >
-                      {product.quantity <= 5 ? "Low stock" : "In stock"}
-                    </span>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-          <Button
-            className="cursor-pointer hover:bg-blue-500"
-            aria-label={`Add ${product.name} to cart`}
-            onClick={() => {
-              addToCart({
-                id: product.id,
-                slug: product.slug,
-                name: product.name,
-                price: product.price,
-                image: product.frontImage || product.image,
-              });
-            }}
-            disabled={product.quantity <= 0}
-          >
-            Add to Cart
-          </Button>
-        </CardContent>
-      </article>
-    </Card>
+    <div className="bg-white p-4">
+      <Link href={`/products/${product.slug}`} className="block overflow-hidden mb-4">
+        <CloudinaryImage
+          src={product.frontImage || product.image || "/no-image.svg"}
+          alt={`${product.name} image`}
+          width={500}
+          height={300}
+          className="h-48 w-full object-contain transition-transform duration-300 hover:scale-110"
+        />
+      </Link>
+      <Link href={`/products/${product.slug}`} className="block">
+        <h3 className="text-sm font-medium text-gray-800 hover:text-blue-600 line-clamp-2">
+          {product.name}
+        </h3>
+      </Link>
+      <div className="text-xs text-gray-500 mb-3">{product.brand}</div>
+      <div className="mb-3">
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className="text-lg font-semibold text-gray-900">
+            ₹{product.price.toFixed(2)}
+          </span>
+          {discounted && (
+            <>
+              <span className="text-sm text-gray-400 line-through">
+                ₹{product.mrp?.toFixed(2)}
+              </span>
+              <span className="text-sm text-green-600 font-medium">
+                {discountPct}% off
+              </span>
+            </>
+          )}
+        </div>
+        <span className={product.quantity <= 5 ? "text-xs text-amber-600" : "text-xs text-gray-500"}>
+          {product.quantity <= 5 ? "Low stock" : "In stock"}
+        </span>
+      </div>
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-700"
+        onClick={() => {
+          addToCart({
+            id: product.id,
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            image: product.frontImage || product.image,
+          });
+        }}
+        disabled={product.quantity <= 0}
+      >
+        Add to Cart
+      </Button>
+    </div>
   );
 }
