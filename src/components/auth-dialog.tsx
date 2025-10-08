@@ -77,7 +77,7 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
     e.preventDefault();
 
     if (!email.endsWith('@gmail.com')) {
-      toast.error('Only @gmail.com emails are allowed');
+      toast.error('Only @gmail.com emails are allowed. Please use Continue with Google option.');
       return;
     }
 
@@ -145,7 +145,7 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
     }
 
     if (!email.endsWith('@gmail.com')) {
-      toast.error('Only @gmail.com emails are allowed');
+      toast.error('Only @gmail.com emails are allowed. Please use Continue with Google option.');
       return;
     }
 

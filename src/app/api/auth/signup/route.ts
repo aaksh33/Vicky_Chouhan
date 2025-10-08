@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     if (!email.endsWith('@gmail.com')) {
-      return NextResponse.json({ error: 'Only @gmail.com emails are allowed' }, { status: 400 })
+      return NextResponse.json({ error: 'Only @gmail.com emails are allowed. Please use Continue with Google option.' }, { status: 400 })
     }
 
     const existingUser = await prisma.user.findFirst({ 
