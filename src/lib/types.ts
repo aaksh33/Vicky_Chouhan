@@ -18,6 +18,12 @@ export type Product = {
   frontImage?: string
   images?: string[]
   updatedAt: string
+  screenSize?: string
+  hardDiskSize?: string
+  cpuModel?: string
+  ramMemory?: string
+  operatingSystem?: string
+  graphics?: string
 }
 
 export type User = {

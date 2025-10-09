@@ -114,6 +114,14 @@ export async function POST(request: Request) {
       }
       orderItems.push(orderItem)
       total += orderItem.price * orderItem.qty
+      
+      await prisma.product.update({
+        where: { id: product.id },
+        data: { 
+          quantity: Math.max(0, product.quantity - orderItem.qty),
+          stock: Math.max(0, product.stock - orderItem.qty)
+        } as any
+      })
     }
 
     const order = await prisma.order.create({

@@ -72,7 +72,6 @@ export function removeFromCart(id: string) {
 
 export function clearCart() {
   write([])
-  // Trigger cart update event to refresh navbar
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent("v0-cart-updated", { detail: { items: [] } }))
   }

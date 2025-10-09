@@ -3,6 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ShoppingCart, Zap } from "lucide-react";
+import { addToCart } from "@/lib/cart";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Product = {
   id: string;
@@ -31,14 +35,61 @@ const ProductSkeleton = () => (
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const handleAddToCart = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (product.quantity === 0) {
+      toast.error("Out of Stock", {
+        description: "This product is currently unavailable."
+      });
+      return;
+    }
+    addToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      image: product.coverImage
+    });
+    setProducts(products.map(p => 
+      p.id === product.id ? { ...p, quantity: p.quantity - 1 } : p
+    ));
+    toast.success("Added to cart", {
+      description: `${product.name} has been added to your cart.`
+    });
+  };
+
+  const handleBuyNow = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (product.quantity === 0) {
+      toast.error("Out of Stock", {
+        description: "This product is currently unavailable."
+      });
+      return;
+    }
+    addToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      image: product.coverImage
+    });
+    router.push("/cart");
+  };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        console.log('Raw API data:', data);
+        const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]");
         const mappedProducts = data.map((p: any) => {
-          console.log('Product frontImage:', p.frontImage);
+          const cartQty = cart.reduce((sum: number, item: any) => 
+            item.id === p.id ? sum + (item.qty || 1) : sum, 0
+          );
           return {
             id: p.id,
             slug: p.slug || p.name.toLowerCase().replace(/\s+/g, "-"),
@@ -48,10 +99,9 @@ export default function ProductsPage() {
             coverImage: p.frontImage,
             images: p.images || [p.frontImage],
             price: p.price,
-            quantity: p.quantity || p.stock
+            quantity: Math.max(0, (p.quantity || p.stock) - cartQty)
           };
         });
-        console.log('Mapped products:', mappedProducts);
         setProducts(mappedProducts);
       })
       .finally(() => setLoading(false));
@@ -68,60 +118,73 @@ export default function ProductsPage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {products.map((product) => (
-              <Link
+              <div
                 key={product.id}
-                href={`/products/${product.slug}`}
-                className="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-white rounded-sm transition-shadow duration-200 flex flex-col"
               >
-                <div className="aspect-[4/3] relative overflow-hidden bg-gray-100">
-                  <Image
-                    src={product.coverImage || "/placeholder.svg"}
-                    alt={product.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      console.log('Image load error:', product.coverImage);
-                      e.currentTarget.src = '/placeholder.svg';
-                    }}
-                  />
-                  {product.quantity > 0 ? (
-                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                      In Stock
-                    </div>
-                  ) : (
-                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                      Out of Stock
-                    </div>
-                  )}
-                </div>
+                <Link href={`/products/${product.slug}`} className="block">
+                  <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+                    <Image
+                      src={product.coverImage || "/placeholder.svg"}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-2"
+                      onError={(e) => {
+                        e.currentTarget.src = '/placeholder.svg';
+                      }}
+                    />
+                    {product.quantity === 0 && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <span className="bg-red-600 text-white px-4 py-2 font-bold text-sm">OUT OF STOCK</span>
+                      </div>
+                    )}
+                  </div>
+                </Link>
                 
-                <div className="p-4">
-                  <div className="mb-2">
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                      {product.type}
-                    </span>
+                <div className="p-4 flex-1 flex flex-col">
+                  <Link href={`/products/${product.slug}`} className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-800 line-clamp-2 mb-2 hover:text-blue-600 leading-snug">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 line-clamp-2 mb-3">
+                      {product.description}
+                    </p>
+                  </Link>
+                  
+                  <div className="mb-3">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ₹{product.price.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-green-600 font-medium">★★★★☆</span>
+                      <span className="text-xs text-gray-500">(4.2)</span>
+                    </div>
                   </div>
                   
-                  <h2 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">
-                    {product.name}
-                  </h2>
-                  
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2 ">
-                    {product.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-gray-900">
-                      ₹{product.price.toLocaleString()}
-                    </span>
-                    <span className="text-blue-600 font-medium group-hover:text-blue-700">
-                      View Details →
-                    </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => handleAddToCart(e, product)}
+                      disabled={product.quantity === 0}
+                      className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                    >
+                      {/* <ShoppingCart className="w-4 h-4 inline mr-1" /> */}
+                      ADD TO CART
+                    </button>
+                    <button
+                      onClick={(e) => handleBuyNow(e, product)}
+                      disabled={product.quantity === 0}
+                      className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                    >
+                      {/* <Zap className="w-4 h-4 inline mr-1" /> */}
+                      BUY NOW
+                    </button>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

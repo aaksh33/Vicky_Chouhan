@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Heart, Share2, Star, Truck, Shield, RotateCcw, CreditCard, Check, ChevronRight, Package, Award, Zap, Headphones, Copy, X } from "lucide-react";
+import Loading from "@/app/loading";
 
 type Product = {
   id: string;
@@ -26,6 +27,12 @@ type Product = {
   images?: string[];
   coverImage?: string;
   updatedAt: string;
+  screenSize?: string;
+  hardDiskSize?: string;
+  cpuModel?: string;
+  ramMemory?: string;
+  operatingSystem?: string;
+  graphics?: string;
 };
 
 export default function ProductPage() {
@@ -36,52 +43,98 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const handleAddToCart = () => {
     if (!product) return;
     
-    addToCart({
-      id: product.id,
-      slug: product.slug,
-      name: product.name,
-      price: product.price,
-      image: product.frontImage || product.image || product.coverImage || "/no-image.svg"
-    });
+    if (product.quantity === 0) {
+      toast.error("Out of Stock", {
+        description: "This product is currently unavailable.",
+      });
+      return;
+    }
     
-    toast.success(`Added to Cart`, {
-      description: `${product.name} has been added to your cart.`,
-      action: {
-        label: "View Cart",
-        onClick: () => router.push("/cart")
-      }
+    if (quantity > product.quantity) {
+      toast.error("Insufficient Stock", {
+        description: `Only ${product.quantity} items available.`,
+      });
+      return;
+    }
+    
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: product.id,
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        image: product.frontImage || product.image || product.coverImage || "/no-image.svg"
+      });
+    }
+    
+    setProduct({ ...product, quantity: product.quantity - quantity });
+    setQuantity(1);
+    
+    toast.success("Added to Cart", {
+      description: `${quantity} x ${product.name} added to your cart.`,
     });
   };
 
   const handleBuyNow = () => {
     if (!product) return;
     
-    addToCart({
-      id: product.id,
-      slug: product.slug,
-      name: product.name,
-      price: product.price,
-      image: product.frontImage || product.image || product.coverImage || "/no-image.svg"
-    });
+    if (product.quantity === 0) {
+      toast.error("Out of Stock", {
+        description: "This product is currently unavailable.",
+      });
+      return;
+    }
     
-    toast.success(`Redirecting to Cart`, {
-      description: `${product.name} added successfully.`,
-      icon: "🛒"
-    });
+    if (quantity > product.quantity) {
+      toast.error("Insufficient Stock", {
+        description: `Only ${product.quantity} items available.`,
+      });
+      return;
+    }
     
-    setTimeout(() => {
-      router.push("/cart");
-    }, 1000);
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: product.id,
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        image: product.frontImage || product.image || product.coverImage || "/no-image.svg"
+      });
+    }
+    
+    setProduct({ ...product, quantity: product.quantity - quantity });
+    
+    router.push("/cart");
+  };
+
+  // const handleWishlist = () => {
+  //   toast.success("Added to Wishlist", {
+  //     description: `${product?.name} has been added to your wishlist.`,
+  //   });
+  // };
+
+  const handleShare = () => {
+    setShowShareDialog(true);
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied!");
+    } catch (err) {
+      toast.error("Failed to copy");
+    }
   };
 
   useEffect(() => {
     if (!slug) return;
 
-    // First try to find by slug, then by ID
     fetch("/api/products")
       .then((res) => res.json())
       .then((products) => {
@@ -90,58 +143,37 @@ export default function ProductPage() {
           p.id === slug ||
           p.name.toLowerCase().replace(/\s+/g, "-") === slug
         );
+        
         if (found) {
-          setProduct(found);
-        } else {
-          setProduct(null);
+          const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]")
+          const cartQty = cart.reduce((sum: number, item: any) => 
+            item.id === found.id ? sum + (item.qty || 1) : sum, 0
+          )
+          found.quantity = Math.max(0, found.quantity - cartQty)
         }
+        
+        setProduct(found || null);
       })
-      .catch((err) => {
-        console.error(err);
-        setProduct(null);
-      })
+      .catch(() => setProduct(null))
       .finally(() => setLoading(false));
   }, [slug]);
 
   if (loading) return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="animate-pulse">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="aspect-square bg-gray-200 rounded-lg"></div>
-          <div className="space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-20 bg-gray-200 rounded"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+   <Loading/>
   );
   
   if (!product) return (
-    <div className="min-h-[90vh] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="text-center">
         <div className="text-6xl mb-4">📦</div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Product Not Found</h2>
-        <p className="text-gray-600 mb-6">The product you&apos;re looking for doesn&apos;t exist or has been removed.</p>
-        <div className="space-y-4">
-          <div className="text-sm text-gray-500">Error 404</div>
-          <div className="flex gap-4 justify-center">
-            <button 
-              onClick={() => router.push('/')}
-              className="border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg transition-colors"
-            >
-              🏠 Home
-            </button>
-            <button 
-              onClick={() => router.back()}
-              className="border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg transition-colors"
-            >
-              ← Go Back
-            </button>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
+        <p className="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
+        <button 
+          onClick={() => router.push('/')}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Back to Home
+        </button>
       </div>
     </div>
   );
@@ -153,286 +185,399 @@ export default function ProductPage() {
   if (product.coverImage && !allImages.includes(product.coverImage)) allImages.push(product.coverImage);
   
   const images = allImages.length > 0 ? allImages : ["/no-image.svg"];
+  const discount = product.mrp && product.mrp > product.price ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Product Images */}
-        <div className="space-y-4 lg:sticky lg:top-20 lg:h-fit">
-          {/* Main Image */}
-          <div className="aspect-square overflow-hidden rounded-lg border bg-gray-100 dark:bg-gray-800">
-            <img
-              src={images[selectedImage]}
-              alt={product.name}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            />
+    <>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Breadcrumb */}
+        <div className="bg-white rounded-lg px-4 py-3 mb-6 shadow-sm ">
+          <div className="text-sm text-gray-600 flex items-center flex-wrap">
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push('/')}>Home</span>
+            <ChevronRight className="w-4 h-4 mx-1" />
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push(`/category/${product.category.toLowerCase()}`)}>{product.category}</span>
+            <ChevronRight className="w-4 h-4 mx-1" />
+            <span className="text-gray-900 font-medium">{product.name}</span>
           </div>
-          
-          {/* Thumbnail Images */}
-          {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto scrollbar-hidden">
-              {images.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden transition-colors ${
-                    selectedImage === index ? 'border-blue-500' : 'border-gray-200 dark:border-gray-600'
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`${product.name} ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Product Details */}
-        <div className="space-y-6 lg:max-h-screen lg:overflow-y-auto scrollbar-hidden">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{product.name}</h1>
-            <p className="text-lg text-blue-600 dark:text-blue-400 mt-1">{product.category}</p>
-            {product.brand && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">by {product.brand}</p>
-            )}
-          </div>
-
-          {/* Rating */}
-          {product.rating && (
-            <div className="flex items-center gap-2">
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-lg">{i < Math.floor(product.rating!) ? '★' : '☆'}</span>
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Left: Images */}
+          <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm h-fit sticky top-24">
+            <div className="aspect-square bg-gray-50 rounded-lg mb-4 overflow-hidden border border-gray-200 relative group">
+              <img
+                src={images[selectedImage]}
+                alt={product.name}
+                className="w-full h-full object-contain p-4"
+              />
+              {discount > 0 && (
+                <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-md text-sm font-bold">
+                  {discount}% OFF
+                </div>
+              )}
+            </div>
+            
+            {images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto">
+                {images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden ${
+                      selectedImage === index ? 'border-blue-600' : 'border-gray-200'
+                    }`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
                 ))}
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-400">({product.rating})</span>
-            </div>
-          )}
+            )}
 
-          {/* Price */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-4">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                ₹{product.price.toLocaleString()}
-              </span>
-              {product.mrp && product.mrp > product.price && (
-                <>
-                  <span className="text-xl text-gray-500 line-through">
-                    ₹{product.mrp.toLocaleString()}
-                  </span>
-                  <span className="px-3 py-1 text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full font-medium">
-                    {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
-                  </span>
-                </>
-              )}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-              <p>Inclusive of all taxes</p>
-              <p>EMI starts at ₹{Math.round(product.price / 12)}. No Cost EMI available</p>
+            {/* Action Icons */}
+            <div className="flex gap-3 mt-4">
+              {/* <button onClick={handleWishlist} className="flex-1 py-2.5 border-2 border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 hover:text-red-600 flex items-center justify-center gap-2 transition-all font-medium">
+                <Heart className="w-5 h-5" />
+                <span className="text-sm">Wishlist</span>
+              </button> */}
+              <button onClick={handleShare} className="flex-1 py-2.5 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-2 transition-all font-medium">
+                <Share2 className="w-5 h-5" />
+                <span className="text-sm">Share</span>
+              </button>
             </div>
           </div>
 
-          {/* Stock Status */}
-          <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${
-              (product.stock || product.quantity) > 10 ? 'bg-green-500' : 
-              (product.stock || product.quantity) > 0 ? 'bg-yellow-500' : 'bg-red-500'
-            }`}></div>
-            <span className="text-sm font-medium">
-              {(product.stock || product.quantity) > 10 ? 'In Stock' : 
-               (product.stock || product.quantity) > 0 ? `Only ${product.stock || product.quantity} left` : 'Out of Stock'}
-            </span>
-          </div>
-
-          {/* Description */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Description</h3>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{product.description}</p>
-          </div>
-
-          {/* Offers & Services */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-            <h3 className="font-semibold mb-3 text-blue-800 dark:text-blue-200">Offers</h3>
-            <div className="space-y-2 text-sm">
-              {(product as any).offers ? (
-                <div className="whitespace-pre-line">{(product as any).offers}</div>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Bank Offer</span>
-                    <span>Upto ₹4,000 discount on SBI Credit Cards</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">No Cost EMI</span>
-                    <span>EMI starts at ₹{Math.round(product.price / 12)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">Cashback</span>
-                    <span>Upto ₹{Math.round(product.price * 0.03)} cashback with Amazon Pay</span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-         
-
-          {/* Service Features */}
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>7 days Replacement</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Free Delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>1 Year Warranty</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">✓</span>
-              <span>Cash/Pay on Delivery</span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-4 pt-6 bottom-0 sticky">
-  <div className="flex gap-2">
-    {/* Add to Cart */}
-    <button 
-      onClick={handleAddToCart}
-      disabled={(product.stock || product.quantity) === 0}
-      className="flex-1 flex justify-center items-center gap-2 
-                 cursor-pointer border border-blue-500 
-                 bg-blue-100 hover:bg-blue-200 text-blue-800 
-                 font-semibold py-4 px-6 rounded-lg 
-                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <ShoppingCart className="w-5 h-5" />
-      <span>Add to Cart</span>
-    </button>
-
-    {/* Buy Now */}
-    <button 
-      onClick={handleBuyNow}
-      disabled={(product.stock || product.quantity) === 0}
-      className="flex-1 flex justify-center items-center gap-2 
-                 cursor-pointer border border-green-500 
-                 bg-green-100 hover:bg-green-200 text-green-800 
-                 font-semibold py-4 px-6 rounded-lg 
-                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <span>Buy Now</span>
-    </button>
-  </div>
-</div>
-
-
-          {/* Product Specifications */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">Product Details</h3>
-            <div className="space-y-3 text-sm">
-              {product.brand && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">Brand</span>
-                  <span className="col-span-2">{product.brand}</span>
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-4">
-                <span className="text-gray-600 dark:text-gray-400 font-medium">Category</span>
-                <span className="col-span-2">{product.category}</span>
+          {/* Right: Details */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Product Info */}
+            <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="flex items-start justify-between mb-2">
+                <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
               </div>
-              {(product as any).screenSize && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">Screen Size</span>
-                  <span className="col-span-2">{(product as any).screenSize}</span>
+              
+              {product.brand && (
+                <p className="text-gray-600 mb-3">Brand: <span className="text-blue-600 font-medium">{product.brand}</span></p>
+              )}
+
+              {/* Rating */}
+              {product.rating && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded text-sm">
+                    <span>{product.rating}</span>
+                    <Star className="w-3 h-3 fill-current" />
+                  </div>
+                  <span className="text-sm text-gray-600">2,345 ratings</span>
                 </div>
               )}
-              {(product as any).hardDiskSize && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">Hard Disk Size</span>
-                  <span className="col-span-2">{(product as any).hardDiskSize}</span>
+
+              {/* Price */}
+              <div className="mb-4">
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-3xl font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
+                  {product.mrp && product.mrp > product.price && (
+                    <>
+                      <span className="text-lg text-gray-500 line-through">₹{product.mrp.toLocaleString()}</span>
+                      <span className="text-green-600 font-semibold">{discount}% off</span>
+                    </>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600">Inclusive of all taxes</p>
+              </div>
+
+              {/* Stock Status & Quantity */}
+              <div className="mb-6 space-y-4">
+                <div>
+                  {product.quantity === 0 ? (
+                    <span className="text-red-600 font-semibold flex items-center gap-1">
+                      <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+                      Out of Stock
+                    </span>
+                  ) : product.quantity <= 5 ? (
+                    <span className="text-orange-600 font-semibold flex items-center gap-1">
+                      <span className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></span>
+                      Only {product.quantity} left in stock - Order soon!
+                    </span>
+                  ) : (
+                    <span className="text-green-600 font-semibold flex items-center gap-1">
+                      <Check className="w-4 h-4" />
+                      In Stock - Ready to Ship
+                    </span>
+                  )}
+                </div>
+                
+                {product.quantity > 0 && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-700">Quantity:</span>
+                    <div className="flex items-center border border-gray-300 rounded-lg">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="px-3 py-1.5 hover:bg-gray-100 transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-1.5 border-x border-gray-300 min-w-[50px] text-center font-medium">{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.min(product.quantity, quantity + 1))}
+                        className="px-3 py-1.5 hover:bg-gray-100 transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Buttons */}
+              {product.quantity === 0 ? (
+                <div className="mb-6">
+                  <div className="py-3.5 bg-gray-100 border-2 border-gray-400 text-gray-600 font-bold rounded-lg flex items-center justify-center gap-2">
+                    <X className="w-5 h-5" />
+                    OUT OF STOCK
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3 mb-6">
+                  <button 
+                    type="button"
+                    onClick={handleAddToCart}
+                    className="flex-1 py-3.5 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                    ADD TO CART
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={handleBuyNow}
+                    className="flex-1 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-lg transition-all shadow-md hover:shadow-lg"
+                  >
+                    BUY NOW
+                  </button>
                 </div>
               )}
-              {(product as any).cpuModel && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">CPU Model</span>
-                  <span className="col-span-2">{(product as any).cpuModel}</span>
+
+              {/* Features */}
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t">
+                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                  <Truck className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">Free Delivery</div>
+                    <div className="text-xs text-gray-600">On orders above ₹500</div>
+                  </div>
                 </div>
-              )}
-              {(product as any).ramMemory && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">RAM Memory</span>
-                  <span className="col-span-2">{(product as any).ramMemory}</span>
+                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                  <RotateCcw className="w-5 h-5 text-green-600 mt-0.5" />
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">7 Days Return</div>
+                    <div className="text-xs text-gray-600">Easy return policy</div>
+                  </div>
                 </div>
-              )}
-              {(product as any).operatingSystem && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">Operating System</span>
-                  <span className="col-span-2">{(product as any).operatingSystem}</span>
+                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                  <Shield className="w-5 h-5 text-purple-600 mt-0.5" />
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">1 Year Warranty</div>
+                    <div className="text-xs text-gray-600">Manufacturer warranty</div>
+                  </div>
                 </div>
-              )}
-              {(product as any).graphics && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">Graphics</span>
-                  <span className="col-span-2">{(product as any).graphics}</span>
+                <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-orange-600 mt-0.5" />
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">Cash on Delivery</div>
+                    <div className="text-xs text-gray-600">Pay on delivery</div>
+                  </div>
                 </div>
-              )}
-              {product.sku && (
-                <div className="grid grid-cols-3 gap-4">
-                  <span className="text-gray-600 dark:text-gray-400 font-medium">SKU</span>
-                  <span className="col-span-2">{product.sku}</span>
+              </div>
+            </div>
+
+            {/* Offers */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border-2 border-green-100">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="w-5 h-5 text-green-600" />
+                <h3 className="font-bold text-lg text-gray-900">Available Offers</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex gap-3 p-3 bg-green-50 rounded-lg">
+                  <span className="text-green-600 font-bold text-lg">%</span>
+                  <div className="text-sm">
+                    <div className="font-semibold text-gray-900">Bank Offer</div>
+                    <div className="text-gray-600">10% instant discount on SBI Credit Cards, up to ₹1,500</div>
+                  </div>
                 </div>
-              )}
+                <div className="flex gap-3 p-3 bg-blue-50 rounded-lg">
+                  <span className="text-blue-600 font-bold text-lg">₹</span>
+                  <div className="text-sm">
+                    <div className="font-semibold text-gray-900">No Cost EMI</div>
+                    <div className="text-gray-600">Starting from ₹{Math.round(product.price / 12)}/month on all major credit cards</div>
+                  </div>
+                </div>
+                <div className="flex gap-3 p-3 bg-orange-50 rounded-lg">
+                  <span className="text-orange-600 font-bold text-lg">🎁</span>
+                  <div className="text-sm">
+                    <div className="font-semibold text-gray-900">Partner Offer</div>
+                    <div className="text-gray-600">Get extra ₹500 off on exchange of old products</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Why Buy */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Award className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-lg text-gray-900">Why Buy This?</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span>Genuine Product</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span>Fast Delivery</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span>Secure Payment</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <span>24/7 Support</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* About This Item */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">About this item</h3>
-            <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              {product.category === 'Laptops' && (
-                <>
-                  <li>• Processor: 13th Generation Intel Core i3-1305U (10MB, up to 4.50 GHz, 5 Core)</li>
-                  <li>• RAM: 16GB: 2x8GB, DDR4, 2666 MHz & Storage: 512GB SSD</li>
-                  <li>• Display: 15.6&quot; FHD WVA AG 120Hz 250 nits Narrow Border & Graphics: Intel UHD Graphics</li>
-                  <li>• Keyboard: Standard Keyboard & Software: Win 11 + Office H&S 2024</li>
-                  <li>• Ports: 1 USB 2.0 port, 1 Headset jack, 1 HDMI 1.4 port, 1 RJ-45 port, 1 SD card slot, USB 3.2 Gen 1 Type-C</li>
-                </>
-              )}
-              {product.category === 'Keyboards' && (
-                <>
-                  <li>• Mechanical switches provide tactile feedback and durability</li>
-                  <li>• RGB backlighting with customizable effects and colors</li>
-                  <li>• Programmable keys with macro support</li>
-                  <li>• Aluminum frame construction for premium feel</li>
-                  <li>• Compatible with Windows, Mac, and Linux</li>
-                </>
-              )}
-              {product.category === 'Monitors' && (
-                <>
-                  <li>• 4K UHD resolution (3840 x 2160) for crystal clear images</li>
-                  <li>• IPS panel technology for accurate colors and wide viewing angles</li>
-                  <li>• USB-C connectivity with power delivery support</li>
-                  <li>• VESA mount compatible for flexible positioning</li>
-                  <li>• Blue light reduction technology for eye comfort</li>
-                </>
-              )}
-              {!['Laptops', 'Keyboards', 'Monitors'].includes(product.category) && (
-                <li>• {product.description}</li>
-              )}
+        {/* Description & Specifications */}
+        <div className="mt-6 grid lg:grid-cols-3 gap-6">
+          {/* Description */}
+          <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4">Product Description</h2>
+            <p className="text-gray-700 leading-relaxed mb-6">{product.description}</p>
+            
+            <h3 className="text-lg font-semibold mb-3">Key Features</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex gap-2"><span className="text-green-600">✓</span> High-quality build with premium materials for durability</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Latest technology with advanced features and performance</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Energy efficient design that saves power and reduces costs</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Easy to use interface with intuitive controls</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Sleek and modern design that fits any workspace</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Reliable performance with consistent quality output</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Compatible with multiple devices and platforms</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Low maintenance with easy cleaning and care</li>
+            </ul>
+            
+            <h3 className="text-lg font-semibold mb-3 mt-6">What's in the Box</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex gap-2"><span className="text-blue-600">•</span> 1 x {product.name}</li>
+              <li className="flex gap-2"><span className="text-blue-600">•</span> 1 x User Manual</li>
+              <li className="flex gap-2"><span className="text-blue-600">•</span> 1 x Warranty Card</li>
+              <li className="flex gap-2"><span className="text-blue-600">•</span> 1 x Power Cable (if applicable)</li>
             </ul>
           </div>
 
+          {/* Specifications */}
+          <div className="bg-white rounded-lg p-6 shadow-sm h-fit">
+            <h2 className="text-xl font-bold mb-4">Specifications</h2>
+            <div className="space-y-3 text-sm">
+              {product.brand && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Brand</span>
+                  <span className="font-medium text-right">{product.brand}</span>
+                </div>
+              )}
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-gray-600">Model Name</span>
+                <span className="font-medium text-right">{product.name}</span>
+              </div>
+              {product.screenSize && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Screen Size</span>
+                  <span className="font-medium text-right">{product.screenSize}</span>
+                </div>
+              )}
+              {product.cpuModel && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Processor</span>
+                  <span className="font-medium text-right">{product.cpuModel}</span>
+                </div>
+              )}
+              {product.ramMemory && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">RAM</span>
+                  <span className="font-medium text-right">{product.ramMemory}</span>
+                </div>
+              )}
+              {product.hardDiskSize && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Storage</span>
+                  <span className="font-medium text-right">{product.hardDiskSize}</span>
+                </div>
+              )}
+              {product.graphics && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Graphics</span>
+                  <span className="font-medium text-right">{product.graphics}</span>
+                </div>
+              )}
+              {product.operatingSystem && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Operating System</span>
+                  <span className="font-medium text-right">{product.operatingSystem}</span>
+                </div>
+              )}
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-gray-600">Color</span>
+                <span className="font-medium text-right">Black</span>
+              </div>
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-gray-600">Warranty</span>
+                <span className="font-medium text-right">1 Year</span>
+              </div>
+              <div className="flex justify-between py-2 border-b">
+                <span className="text-gray-600">Warranty Type</span>
+                <span className="font-medium text-right">Manufacturer</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Certification</span>
+                <span className="font-medium text-right">ISI Certified</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    {/* Share Dialog */}
+    {showShareDialog && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowShareDialog(false)}>
+        <div className="bg-white rounded-lg max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold">Share Product</h3>
+            <button onClick={() => setShowShareDialog(false)} className="p-1 hover:bg-gray-100 rounded-full">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={typeof window !== 'undefined' ? window.location.href : ''}
+              readOnly
+              className="flex-1 px-3 py-2 border rounded-lg bg-gray-50 text-sm"
+            />
+            <button
+              onClick={copyLink}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 font-medium"
+            >
+              <Copy className="w-4 h-4" />
+              Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

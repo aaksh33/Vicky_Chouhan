@@ -36,6 +36,26 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   }
 }
 
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const { quantity } = await req.json();
+    
+    const product = await prisma.product.update({
+      where: { id },
+      data: { 
+        quantity: Number(quantity),
+        stock: Number(quantity)
+      } as any
+    });
+    
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('Stock update error:', error);
+    return NextResponse.json({ error: 'Failed to update stock' }, { status: 500 });
+  }
+}
+
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
