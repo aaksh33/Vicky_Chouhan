@@ -1,10 +1,10 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { User, Package, MapPin, Phone, Mail, Calendar, Edit2, X, Loader2 } from 'lucide-react'
+import { User, Package, MapPin, Phone, Mail, Calendar, Edit2, X, Loader2, LogOut, ShoppingBag } from 'lucide-react'
 import { toast } from 'sonner'
 import Loading from '../loading'
 import Link from 'next/link'
@@ -121,7 +121,7 @@ export default function ProfilePage() {
     {
       label: 'Email',
       value: (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span>{session.user?.email}</span>
           {session.user?.emailVerified ? (
             <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">Verified</span>
@@ -162,9 +162,10 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-6">
+      <div className="max-w-6xl mx-auto px-4 py-10 sm:py-6">
+        {/* Profile Header */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <div className="relative">
               {session.user?.image ? (
                 <Image
@@ -172,35 +173,46 @@ export default function ProfilePage() {
                   alt={session.user.name || 'User'}
                   width={80}
                   height={80}
-                  className="h-20 w-20 rounded-full object-cover"
+                  className="h-20 w-20 rounded-full object-cover border-2 border-gray-200"
                 />
               ) : (
-                <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <User className="h-10 w-10 text-white" />
                 </div>
               )}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{session.user?.name || 'User'}</h1>
-              <p className="text-gray-600 flex items-center gap-2 mt-1">
-                <Mail className="h-4 w-4" />
-                {session.user?.email}
+            <div className="flex-1 text-center sm:text-left min-w-0 ">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 truncate">{session.user?.name || 'User'}</h1>
+              <p className="text-sm sm:text-base text-gray-600 flex items-center justify-center sm:justify-start gap-2 mb-2 truncate ">
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{session.user?.email}</span>
               </p>
-              <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
-                <Calendar className="h-4 w-4" />
+              <p className="text-xs sm:text-sm text-gray-500 flex items-center justify-center sm:justify-start gap-2">
+                <Calendar className="h-4 w-4 flex-shrink-0" />
                 Member since {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
+            </div>
+            <div className="flex gap-2 justify-center w-full sm:w-auto">
+              <Link href="/orders" className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                <ShoppingBag className="h-4 w-4" />
+                <span className="sm:inline">Orders</span>
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="sm:inline">Sign Out</span>
+              </button>
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Personal Information
-            </h2>
-            <div className="space-y-4">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 overflow-hidden">
+          {/* Personal Information */}
+          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 ">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6 pb-3 border-b border-gray-200">Personal Information</h2>
+            <div className="space-y-4 ">
               {profileFields.map((field) => (
                 <div key={field.label}>
                   <label className="text-sm font-medium text-gray-700">{field.label}</label>
@@ -253,36 +265,33 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className='flex justify-between'>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Recent Orders
-            </h2>
-            <Link href='/orders' className='hover:underline text-blue-600'>View All</Link>
+          {/* Recent Orders */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+            <div className='flex justify-between items-center mb-4 sm:mb-6 pb-3 border-b border-gray-200'>
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recent Orders</h2>
+              <Link href='/orders' className='text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700'>View All →</Link>
             </div>
             <div className="space-y-3">
               {loadingOrders ? (
-                <div className='text-gray-500'>
-                  loading...
-                {/* // <div className="text-center py-4 flex items-center justify-center"> */}
-                  {/* <Loader2 className='h-8 w-8 animate-spin text-blue-600'/> */}
-                  {/* <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div> */}
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mx-auto"></div>
                 </div>
               ) : orders.length > 0 ? (
                 orders.map((order) => (
-                  <div key={order.id} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-gray-900">Order #{order.id.slice(-8)}</p>
-                        <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} items</p>
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-50 transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm sm:text-base font-medium text-gray-900 truncate">Order #{order.id.slice(-8)}</p>
+                        <p className="text-xs text-gray-500 mt-1">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} items</p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium text-gray-900">₹{order.total}</p>
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                          order.status === 'shipped' || order.status === 'out-for-delivery' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
+                      <div className="text-right ml-2">
+                        <p className="text-sm sm:text-base font-semibold text-gray-900">₹{order.total}</p>
+                        <span className={`text-xs px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap ${
+                          order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'out-for-delivery' ? 'bg-orange-100 text-orange-800' :
+                          order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                          order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                          'bg-green-100 text-green-800'
                         }`}>
                           {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
@@ -291,32 +300,19 @@ export default function ProfilePage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8">
-                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500">No orders yet</p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Package className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 font-medium">No orders yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Start shopping to see your orders here</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Settings</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left">
-              <h3 className="font-medium text-gray-900">Edit Profile</h3>
-              <p className="text-sm text-gray-500">Update your personal information</p>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left">
-              <h3 className="font-medium text-gray-900">Addresses</h3>
-              <p className="text-sm text-gray-500">Manage shipping addresses</p>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left">
-              <h3 className="font-medium text-gray-900">Security</h3>
-              <p className="text-sm text-gray-500">Change password & security</p>
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   )

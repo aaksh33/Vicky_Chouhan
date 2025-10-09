@@ -131,6 +131,7 @@ type Order = {
   }[];
   total: number;
   status: string;
+  cancelReason?: string;
   address: {
     fullName: string;
     phone: string;
@@ -442,7 +443,9 @@ export default function AdminOrdersPage() {
     .filter((order) => {
       const matchesStatus =
         statusFilter === "all" || 
-        (statusFilter === "out" ? order.status === "out-for-delivery" : order.status === statusFilter);
+        (statusFilter === "out" ? order.status === "out-for-delivery" : 
+         statusFilter === "cancelled" ? order.status === "cancelled" : 
+         order.status === statusFilter);
       const matchesSearch =
         searchQuery === "" ||
         order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -538,7 +541,7 @@ export default function AdminOrdersPage() {
 
       {/* Tabs */}
       <div className="flex text-sm overflow-x-auto gap-3 sm:gap-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200">
-        {["all", "pending", "shipped", "out", "delivered"].map((tab) => (
+        {["all", "pending", "shipped", "out", "delivered", "cancelled"].map((tab) => (
           <button
             key={tab}
             onClick={() => setStatusFilter(tab)}
@@ -553,6 +556,7 @@ export default function AdminOrdersPage() {
             {tab === "shipped" && "Shipped"}
             {tab === "out" && "Out of Delivery"}
             {tab === "delivered" && "Completed"}
+            {tab === "cancelled" && "Cancelled"}
           </button>
         ))}
       </div>
@@ -726,6 +730,8 @@ export default function AdminOrdersPage() {
                               ? "bg-orange-100 text-orange-800"
                               : order.status === "delivered"
                               ? "bg-green-100 text-green-800"
+                              : order.status === "cancelled"
+                              ? "bg-red-100 text-red-800"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
@@ -788,6 +794,12 @@ export default function AdminOrdersPage() {
                       month: "long",
                       year: "numeric",
                     }
+                  )} at {new Date(selectedOrder.createdAt).toLocaleTimeString(
+                    "en-IN",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
                   )}
                 </span>
                 <span
@@ -802,6 +814,8 @@ export default function AdminOrdersPage() {
                       ? "bg-yellow-100 text-yellow-800"
                       : selectedOrder.status === "processing"
                       ? "bg-yellow-100 text-yellow-800"
+                      : selectedOrder.status === "cancelled"
+                      ? "bg-red-100 text-red-800"
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
@@ -906,16 +920,16 @@ export default function AdminOrdersPage() {
                             {selectedOrder.address.line1}
                           </span>
                         </div>
-                        <div>
-                          <span className="text-sm text-gray-600">
-                            Address:
-                          </span>
-                          {selectedOrder.address.line2 && (
+                        {selectedOrder.address.line2 && (
+                          <div>
+                            <span className="text-sm text-gray-600">
+                              Address:
+                            </span>
                             <span className="text-gray-900 ml-1 font-medium break-words">
                               {selectedOrder.address.line2}
                             </span>
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div className="">
                           <div>
                             <span className="text-sm text-gray-600 font-medium">
@@ -957,6 +971,7 @@ export default function AdminOrdersPage() {
 
                 <div>
                   {/* Bill Management */}
+                  {selectedOrder.status !== 'cancelled' && (
                   <div className="bg-white rounded-xl border border-gray-100 p-6 h-fit">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Bill Management
@@ -1107,6 +1122,7 @@ export default function AdminOrdersPage() {
                       </div>
                     )}
                   </div>
+                  )}
 
                   {/* Order Status Timeline */}
                   <div className="bg-white rounded-xl border border-gray-100 p-6 mt-3">
@@ -1116,7 +1132,8 @@ export default function AdminOrdersPage() {
                     <div className="space-y-6">
                       {/* Horizontal Timeline */}
                       <div className="relative">
-                        <div className="flex justify-between items-start">
+                        {selectedOrder.status !== "cancelled" ? (
+                          <div className="flex justify-between items-start">
                           {/* Order Confirmed */}
                           <div className="flex flex-col items-center text-center flex-1">
                             <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mb-2">
@@ -1274,44 +1291,116 @@ export default function AdminOrdersPage() {
                                 })}
                               </p>
                             )}
+                            </div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Update Status */}
-                      <div className="border-t pt-4">
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Update Status
-                        </label>
-                        <Select
-                          value={selectedOrder.status}
-                          onValueChange={(newStatus) =>
-                            handleDialogStatusChange(newStatus)
-                          }
-                          disabled={updatingDialogStatus}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">
-                              Order Confirmed
-                            </SelectItem>
-                            <SelectItem value="shipped">Shipped</SelectItem>
-                            <SelectItem value="out-for-delivery">
-                              Out for Delivery
-                            </SelectItem>
-                            <SelectItem value="delivered">Delivered</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {updatingDialogStatus && (
-                          <div className="flex items-center gap-2 text-blue-600 mt-2">
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                            {/* <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div> */}
-                            <span className="text-sm">Updating...</span>
+                        ) : (
+                          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <CheckCircle className="h-5 w-5 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-red-900 text-sm">
+                                  Order Cancelled
+                                </h4>
+                                <p className="text-xs text-red-700">
+                                  {new Date(selectedOrder.updatedAt).toLocaleDateString("en-IN", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric"
+                                  })} at {new Date(selectedOrder.updatedAt).toLocaleTimeString("en-IN", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </p>
+                                {selectedOrder.cancelReason && (
+                                  <p className="text-xs text-red-800 mt-2">
+                                    <span className="font-medium">Reason:</span> {selectedOrder.cancelReason}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>
+
+                      {/* Update Status */}
+                      {selectedOrder.status !== 'cancelled' && selectedOrder.status !== 'delivered' && (
+                        <div className="border-t pt-4">
+                          <label className="block text-sm font-medium text-gray-900 mb-2">
+                            Update Status
+                          </label>
+                          <Select
+                            value={selectedOrder.status}
+                            onValueChange={(newStatus) =>
+                              handleDialogStatusChange(newStatus)
+                            }
+                            disabled={updatingDialogStatus}
+                          >
+                            <SelectTrigger className="w-full focus:ring-0 focus:ring-offset-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">
+                                Order Confirmed
+                              </SelectItem>
+                              <SelectItem value="shipped">Shipped</SelectItem>
+                              <SelectItem value="out-for-delivery">
+                                Out for Delivery
+                              </SelectItem>
+                              <SelectItem value="delivered">Delivered</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {updatingDialogStatus && (
+                            <div className="flex items-center gap-2 text-blue-600 mt-2">
+                              <Loader2 className="w-6 h-6 animate-spin" />
+                              <span className="text-sm">Updating...</span>
+                            </div>
+                          )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive" className="w-full mt-3">
+                                Cancel Order
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Cancel Order</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to cancel order #{selectedOrder.id}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>No, Keep Order</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={async () => {
+                                    try {
+                                      const res = await fetch(`/api/orders/${selectedOrder.id}/cancel`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ reason: 'Cancelled by admin' })
+                                      });
+                                      if (res.ok) {
+                                        const updatedOrder = { ...selectedOrder, status: 'cancelled', updatedAt: new Date().toISOString() };
+                                        setSelectedOrder(updatedOrder);
+                                        setOrders(orders.map(o => o.id === selectedOrder.id ? updatedOrder : o));
+                                        toast.success('Order cancelled successfully');
+                                      } else {
+                                        toast.error('Failed to cancel order');
+                                      }
+                                    } catch (error) {
+                                      toast.error('Failed to cancel order');
+                                    }
+                                  }}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Yes, Cancel Order
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -45,13 +45,13 @@ export function addToCart(item: CartItem) {
   } else {
     items.push({ ...item, qty: 1 })
   }
-  toast.success(`Added to Cart`, {
-    description: `${item.name} has been added to your cart.`,
-    action: {
-      label: "View Cart",
-      onClick: () => window.location.href = "/cart"
-    }
-  })
+  // toast.success(`Added to Cart`, {
+  //   description: `${item.name} has been added to your cart.`,
+  //   action: {
+  //     label: "View Cart",
+  //     onClick: () => window.location.href = "/cart"
+  //   }
+  // })
   write(items)
 }
 

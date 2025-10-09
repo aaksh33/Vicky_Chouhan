@@ -48,7 +48,7 @@ export async function GET() {
       status: order.status,
       address: order.address,
       paymentMethod: order.paymentMethod,
-      deliveryDate: order.deliveryDate.$date,
+      deliveryDate: order.deliveryDate?.$date,
       billUrl: order.billUrl,
       createdAt: order.createdAt.$date,
       updatedAt: typeof order.updatedAt === 'string' ? order.updatedAt : order.updatedAt.$date
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
         userId: user.id,
         items: orderItems,
         total,
-        status: paymentMethod === "cod" ? "pending" : "paid",
+        status: "pending",
         address,
         paymentMethod,
         deliveryDate: new Date(deliveryDate)
