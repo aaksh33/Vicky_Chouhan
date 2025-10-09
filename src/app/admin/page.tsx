@@ -367,16 +367,18 @@ export default function AdminDashboardPage() {
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 font-medium">#{order.id?.slice(-6)}</td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">
-                        <div className="truncate max-w-[100px]">{order.user?.name || order.user?.email}</div>
+                        <div className="truncate max-w-[100px]">{order.user?.name.slice(0,4) || `${order.user?.email.slice(0,4)}...`}</div>
                       </td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">₹{order.total?.toLocaleString()}</td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3">
                         <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs rounded-full ${
-                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                          order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'out-for-delivery' ? 'bg-orange-100 text-orange-800' :
                           order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
+                          order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                          'bg-green-100 text-green-800'
                         }`}>
-                          {order.status}
+                          {order.status === 'out-for-delivery' ? 'Out for delivery' : order.status === 'pending' ? 'Order confirmed' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       </td>
                     </tr>
@@ -408,7 +410,7 @@ export default function AdminDashboardPage() {
                         <div className="truncate max-w-[120px] sm:max-w-none">{user.name}</div>
                       </td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">
-                        <div className="truncate max-w-[150px]">{user.email}</div>
+                        <div className="truncate max-w-[150px]">{user.email.slice(0,13)}...</div>
                       </td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3">
                         <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs rounded-full ${
