@@ -34,6 +34,7 @@ function SearchContent() {
   
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<Product[]>([]);
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("relevance");
 
@@ -110,11 +111,13 @@ function SearchContent() {
   const searchProducts = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
+      setSuggestions([]);
       return;
     }
 
     setLoading(true);
     setResults([]);
+    setSuggestions([]);
     try {
       const response = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
       const data = await response.json();
@@ -129,9 +132,27 @@ function SearchContent() {
         };
       });
       setResults(mappedResults);
+      
+      // Fetch suggestions - always show related products
+      const suggestResponse = await fetch(`/api/products?limit=8`);
+      const suggestData = await suggestResponse.json();
+      const resultIds = new Set(mappedResults.map((p: any) => p.id));
+      const mappedSuggestions = suggestData
+        .filter((p: any) => !resultIds.has(p.id))
+        .map((p: any) => {
+          const cartQty = cart.reduce((sum: number, item: any) => 
+            item.id === p.id ? sum + (item.qty || 1) : sum, 0
+          );
+          return {
+            ...p,
+            quantity: Math.max(0, (p.quantity || p.stock || 0) - cartQty)
+          };
+        });
+      setSuggestions(mappedSuggestions);
     } catch (error) {
       console.error("Search error:", error);
       setResults([]);
+      setSuggestions([]);
     } finally {
       setLoading(false);
     }
@@ -270,22 +291,92 @@ function SearchContent() {
           </div>
         )}
 
-        {query && !loading && results.length === 0 && (
-          <div className="flex items-center justify-center min-h-[70vh]">
-            <div className="text-center">
-              <div className="text-7xl mb-6">🔍</div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-                No results found for &quot;{query}&quot;
-              </h2>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                We couldn&apos;t find any products matching your search. Try different keywords or browse our categories.
-              </p>
-              <Link href="/products" className="inline-block px-8 py-3 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors">
-                Browse All Products
-              </Link>
+                {query && !loading && results.length === 0 && (
+          <>
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+                  No results found for &quot;{query}&quot;
+                </h2>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                  We couldn&apos;t find any products matching your search. Try different keywords or browse our categories.
+                </p>
+                <Link href="/products" className="inline-block px-8 py-3 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition-colors">
+                  Browse All Products
+                </Link>
+              </div>
+            </div>
+
+          </>
+        )}
+
+        {query && !loading && suggestions.length > 0 && (
+          <div className="mt-12">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">{results.length === 0 ? 'You might also like' : 'Related Products'}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {suggestions.map((product) => (
+                <div key={product.id} className="bg-white rounded-sm hover:bg-gray-100 transition-shadow duration-200 flex flex-col">
+                  <Link href={`/products/${product.slug}`} className="block">
+                    <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100">
+                      <img
+                        src={product.frontImage || product.image || '/no-image.svg'}
+                        alt={product.name}
+                        className="w-full h-full object-contain"
+                      />
+                      {((product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0) && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <span className="bg-red-600 text-white px-4 py-2 font-bold text-sm">OUT OF STOCK</span>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                  
+                  <div className="p-3 sm:p-4 flex-1 flex flex-col">
+                    <Link href={`/products/${product.slug}`} className="flex-1">
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 sm:mb-2 hover:text-blue-600 leading-snug">
+                        {product.name}
+                      </h3>
+                      <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-2 mb-2 sm:mb-3">
+                        {product.description || 'High-quality product with premium features'}
+                      </p>
+                    </Link>
+                    
+                    <div className="mb-2 sm:mb-3">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg sm:text-xl font-bold text-gray-900">
+                          ₹{product.price?.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-[10px] sm:text-xs text-green-600 font-medium">★★★★☆</span>
+                        <span className="text-[10px] sm:text-xs text-gray-500">(4.2)</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-1 sm:gap-2">
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
+                        className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 text-[10px] sm:text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                      >
+                        ADD TO CART
+                      </button>
+                      <button
+                        onClick={(e) => handleBuyNow(e, product)}
+                        disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
+                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 text-[10px] sm:text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                      >
+                        BUY NOW
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
+
+
       </div>
     </div>
   );
