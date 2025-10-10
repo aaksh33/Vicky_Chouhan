@@ -3,12 +3,12 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ShoppingCart, Zap, ArrowUpDown } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
+import ProductCardWithShare from "@/components/ProductCardWithShare";
 
 type Product = {
   id: string;
@@ -69,7 +69,7 @@ function SearchContent() {
       slug: product.slug,
       name: product.name,
       price: product.price,
-      image: product.frontImage || product.image
+      image: product.frontImage || product.image || ""
     });
     setResults(results.map(p => {
       if (p.id === product.id) {
@@ -98,7 +98,7 @@ function SearchContent() {
       slug: product.slug,
       name: product.name,
       price: product.price,
-      image: product.frontImage || product.image
+      image: product.frontImage || product.image || ""
     });
     router.push("/cart");
   };
@@ -231,62 +231,12 @@ function SearchContent() {
         {!loading && results.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {sortProducts(results, sortBy).map((product) => (
-              <div key={product.id} className="bg-white rounded-sm hover:bg-gray-100 transition-shadow duration-200 flex flex-col">
-                <Link href={`/products/${product.slug}`} className="block">
-                  <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100">
-                    <img
-                      src={product.frontImage || product.image || '/no-image.svg'}
-                      alt={product.name}
-                      className="w-full h-full object-contain"
-                    />
-                    {((product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0) && (
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <span className="bg-red-600 text-white px-4 py-2 font-bold text-sm">OUT OF STOCK</span>
-                      </div>
-                    )}
-                  </div>
-                </Link>
-                
-                <div className="p-4 flex-1 flex flex-col">
-                  <Link href={`/products/${product.slug}`} className="flex-1">
-                    <h3 className="text-base font-semibold text-gray-800 line-clamp-2 mb-2 hover:text-blue-600 leading-snug">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2 mb-3">
-                      {product.description || 'High-quality product with premium features'}
-                    </p>
-                  </Link>
-                  
-                  <div className="mb-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-gray-900">
-                        ₹{product.price?.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs text-green-600 font-medium">★★★★☆</span>
-                      <span className="text-xs text-gray-500">(4.2)</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <button
-                      onClick={(e) => handleAddToCart(e, product)}
-                      disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
-                      className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-                    >
-                      ADD TO CART
-                    </button>
-                    <button
-                      onClick={(e) => handleBuyNow(e, product)}
-                      disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
-                      className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-                    >
-                      BUY NOW
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCardWithShare
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
+              />
             ))}
           </div>
         )}
@@ -315,62 +265,12 @@ function SearchContent() {
             <h3 className="text-2xl font-bold text-gray-900 mb-6">{results.length === 0 ? 'You might also like' : 'Related Products'}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {suggestions.map((product) => (
-                <div key={product.id} className="bg-white rounded-sm hover:bg-gray-100 transition-shadow duration-200 flex flex-col">
-                  <Link href={`/products/${product.slug}`} className="block">
-                    <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100">
-                      <img
-                        src={product.frontImage || product.image || '/no-image.svg'}
-                        alt={product.name}
-                        className="w-full h-full object-contain"
-                      />
-                      {((product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0) && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <span className="bg-red-600 text-white px-4 py-2 font-bold text-sm">OUT OF STOCK</span>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                  
-                  <div className="p-3 sm:p-4 flex-1 flex flex-col">
-                    <Link href={`/products/${product.slug}`} className="flex-1">
-                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 mb-1 sm:mb-2 hover:text-blue-600 leading-snug">
-                        {product.name}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-2 mb-2 sm:mb-3">
-                        {product.description || 'High-quality product with premium features'}
-                      </p>
-                    </Link>
-                    
-                    <div className="mb-2 sm:mb-3">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-lg sm:text-xl font-bold text-gray-900">
-                          ₹{product.price?.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className="text-[10px] sm:text-xs text-green-600 font-medium">★★★★☆</span>
-                        <span className="text-[10px] sm:text-xs text-gray-500">(4.2)</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-1 sm:gap-2">
-                      <button
-                        onClick={(e) => handleAddToCart(e, product)}
-                        disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
-                        className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 text-[10px] sm:text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-                      >
-                        ADD TO CART
-                      </button>
-                      <button
-                        onClick={(e) => handleBuyNow(e, product)}
-                        disabled={(product.quantity !== undefined ? product.quantity : (product.stock || 0)) <= 0}
-                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 text-[10px] sm:text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-                      >
-                        BUY NOW
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ProductCardWithShare
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  onBuyNow={handleBuyNow}
+                />
               ))}
             </div>
           </div>
