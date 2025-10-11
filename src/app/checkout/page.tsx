@@ -64,6 +64,8 @@ export default function CheckoutPage() {
   const [upiId, setUpiId] = useState("")
   const [selectedBank, setSelectedBank] = useState("")
   const [selectedWallet, setSelectedWallet] = useState("")
+  const [stockStatus, setStockStatus] = useState<{[key: string]: {available: number, requested: number}}>({})
+  const [hasStockIssue, setHasStockIssue] = useState(false)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -92,6 +94,37 @@ export default function CheckoutPage() {
     } catch {}
   }, [])
 
+  useEffect(() => {
+    if (items.length === 0) return
+    
+    async function checkStock() {
+      try {
+        const res = await fetch('/api/products')
+        const products = await res.json()
+        const status: {[key: string]: {available: number, requested: number}} = {}
+        let hasIssue = false
+        
+        for (const item of items) {
+          const product = products.find((p: any) => p.id === item.productId)
+          if (product) {
+            status[item.productId] = {
+              available: product.quantity,
+              requested: item.qty
+            }
+            if (product.quantity < item.qty) {
+              hasIssue = true
+            }
+          }
+        }
+        
+        setStockStatus(status)
+        setHasStockIssue(hasIssue)
+      } catch {}
+    }
+    
+    checkStock()
+  }, [items])
+
   const subtotal = items.reduce((sum, it) => sum + Number(it.price || 0) * Number(it.qty || 0), 0)
   const shipping = 0
   const total = subtotal + shipping
@@ -99,6 +132,7 @@ export default function CheckoutPage() {
   async function submitOrder(data: CheckoutForm) {
     setError(null)
     setSubmitting(true)
+    
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -116,6 +150,7 @@ export default function CheckoutPage() {
         throw new Error(j?.error || "Failed to place order")
       }
       clearCart()
+      sessionStorage.setItem('checkout_success', 'true')
       router.push("/checkout/success")
     } catch (err: any) {
       setError(err?.message || "Something went wrong")
@@ -491,20 +526,29 @@ export default function CheckoutPage() {
                 <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
                 
                 <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
-                  {items.map((it) => (
-                    <div key={it.productId} className="flex gap-3">
-                      <img
-                        src={it.image || "/placeholder.svg"}
-                        alt={it.title || "Product"}
-                        className="w-14 h-14 rounded object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/products/${it.productId}`} className="text-sm font-medium truncate hover:text-blue-600 block">{it.title}</Link>
-                        <p className="text-xs text-gray-500">Qty: {it.qty}</p>
-                        <p className="text-sm font-semibold text-blue-600">₹{(it.price || 0).toLocaleString()}</p>
+                  {items.map((it) => {
+                    const stock = stockStatus[it.productId]
+                    const isOutOfStock = stock && stock.available < stock.requested
+                    
+                    return (
+                      <div key={it.productId} className={`flex gap-3 ${isOutOfStock ? 'opacity-60' : ''}`}>
+                        <img
+                          src={it.image || "/placeholder.svg"}
+                          alt={it.title || "Product"}
+                          className="w-14 h-14 rounded object-cover"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/products/${it.productId}`} className="text-sm font-medium truncate hover:text-blue-600 block">{it.title}</Link>
+                          <p className="text-xs text-gray-500">Qty: {it.qty}</p>
+                          {isOutOfStock ? (
+                            <p className="text-xs font-semibold text-red-600">Out of Stock (Only {stock.available} available)</p>
+                          ) : (
+                            <p className="text-sm font-semibold text-blue-600">₹{(it.price || 0).toLocaleString()}</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <div className="border-t pt-4 space-y-2 mb-4">
@@ -521,7 +565,7 @@ export default function CheckoutPage() {
                     <span className="text-blue-600">₹{total.toLocaleString()}</span>
                   </div>
                 </div>
-
+                
                 {error && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
                     <p className="text-sm text-red-600">{error}</p>
@@ -530,7 +574,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || hasStockIssue}
                   className="w-full py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   {submitting ? (

@@ -19,6 +19,7 @@ export default function CartView() {
   const [products, setProducts] = useState<Product[]>([])
   const [showAuthDialog, setShowAuthDialog] = useState(false)
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
+  const [hasStockIssue, setHasStockIssue] = useState(false)
 
   useEffect(() => {
     setItems(getCart())
@@ -35,6 +36,20 @@ export default function CartView() {
       window.removeEventListener("v0-cart-updated", onCartUpdated as EventListener)
     }
   }, [])
+
+  useEffect(() => {
+    if (items.length === 0 || products.length === 0) {
+      setHasStockIssue(false)
+      return
+    }
+    
+    const hasIssue = items.some(item => {
+      const product = products.find(p => p.id === item.id)
+      return product && product.quantity < (item.qty || 1)
+    })
+    
+    setHasStockIssue(hasIssue)
+  }, [items, products])
 
   const total = useMemo(() => items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0), [items])
 
@@ -112,30 +127,45 @@ export default function CartView() {
                 </h2>
               </div>
               <ul className="divide-y">
-                {items.map((i) => (
-                  <li key={i.id} className="p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex gap-4">
-                      <Link href={`/products/${i.slug}`} className="flex-shrink-0">
-                        <Image
-                          src={i.image}
-                          alt={i.name}
-                          width={100}
-                          height={100}
-                          className="w-24 h-24 rounded-lg border object-cover hover:opacity-80 transition-opacity"
-                        />
-                      </Link>
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/products/${i.slug}`} className="hover:text-blue-600 transition-colors">
-                          <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{i.name}</h3>
+                {items.map((i) => {
+                  const product = products.find(p => p.id === i.id)
+                  const availableStock = product?.quantity || 0
+                  const isOutOfStock = availableStock < (i.qty || 1)
+                  
+                  return (
+                    <li key={i.id} className={`p-4 hover:bg-gray-50 transition-colors ${isOutOfStock ? 'bg-gray-50' : ''}`}>
+                      <div className="flex gap-4">
+                        <Link href={`/products/${i.slug}`} className="flex-shrink-0">
+                          <Image
+                            src={i.image}
+                            alt={i.name}
+                            width={100}
+                            height={100}
+                            className="w-24 h-24 rounded-lg border object-cover hover:opacity-80 transition-opacity"
+                          />
                         </Link>
-                        <p className="text-sm text-gray-500 mb-3">In Stock</p>
+                        <div className="flex-1 min-w-0">
+                          <Link href={`/products/${i.slug}`} className="hover:text-blue-600 transition-colors">
+                            <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{i.name}</h3>
+                          </Link>
+                          {isOutOfStock ? (
+                            <p className="text-sm text-red-600 font-semibold mb-3">Out of Stock (Only {availableStock} available)</p>
+                          ) : (
+                            <p className="text-sm text-green-600 mb-3">In Stock</p>
+                          )}
                         <div className="flex items-center gap-4 flex-wrap">
                           <div className="flex items-center border rounded-lg">
                             <button
                               onClick={() => {
-                                const newQty = Math.max(1, (i.qty || 1) - 1)
-                                updateQty(i.id, newQty)
-                                setItems(getCart())
+                                const currentQty = i.qty || 1
+                                if (currentQty === 1) {
+                                  removeFromCart(i.id)
+                                  setItems(getCart())
+                                  toast.success('Removed from cart')
+                                } else {
+                                  updateQty(i.id, currentQty - 1)
+                                  setItems(getCart())
+                                }
                               }}
                               className="p-2 hover:bg-gray-100 transition-colors"
                             >
@@ -177,10 +207,11 @@ export default function CartView() {
                       <div className="text-right">
                         <p className="text-lg font-bold text-gray-900">₹{(i.price * (i.qty || 1)).toLocaleString()}</p>
                         <p className="text-sm text-gray-500 mt-1">₹{i.price.toLocaleString()} each</p>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </div>
@@ -207,9 +238,18 @@ export default function CartView() {
                   <span className="text-2xl font-bold text-gray-900">₹{total.toLocaleString()}</span>
                 </div>
                 
+                {hasStockIssue && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600 font-semibold">Some items are out of stock. Please remove or update quantities.</p>
+                  </div>
+                )}
+                
                 {session ? (
-                  <Link href="/checkout" className="block">
-                    <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-base font-semibold">
+                  <Link href="/checkout" className={`block ${hasStockIssue ? 'pointer-events-none' : ''}`}>
+                    <Button 
+                      disabled={hasStockIssue}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                       Proceed to Checkout
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
@@ -217,7 +257,8 @@ export default function CartView() {
                 ) : (
                   <Button 
                     onClick={() => { setAuthMode('signin'); setShowAuthDialog(true) }}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-base font-semibold"
+                    disabled={hasStockIssue}
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Sign in to Checkout
                     <ArrowRight className="w-5 h-5 ml-2" />

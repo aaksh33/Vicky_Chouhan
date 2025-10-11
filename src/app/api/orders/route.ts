@@ -102,9 +102,27 @@ export async function POST(request: Request) {
     const orderItems = []
     let total = 0
 
+    // First, validate stock for all items
     for (const it of items) {
       const product = await prisma.product.findUnique({ where: { id: it.productId } })
-      if (!product) return NextResponse.json({ error: `Product not Found` }, { status: 400 })
+      if (!product) {
+        return NextResponse.json({ error: `Product not found` }, { status: 400 })
+      }
+      
+      const requestedQty = Math.max(1, Math.floor(it.qty || 1))
+      
+      // Check if enough stock is available
+      if (product.quantity < requestedQty) {
+        return NextResponse.json({ 
+          error: `"${product.name}" is out of stock. Only ${product.quantity} available.` 
+        }, { status: 400 })
+      }
+    }
+
+    // If all items have sufficient stock, proceed with order
+    for (const it of items) {
+      const product = await prisma.product.findUnique({ where: { id: it.productId } })
+      if (!product) return NextResponse.json({ error: `Product not found` }, { status: 400 })
       
       const orderItem = {
         productId: product.id,
@@ -115,6 +133,7 @@ export async function POST(request: Request) {
       orderItems.push(orderItem)
       total += orderItem.price * orderItem.qty
       
+      // Update stock
       await prisma.product.update({
         where: { id: product.id },
         data: { 

@@ -96,11 +96,11 @@ export default function ContactPage() {
               
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-red-600 mt-1" />
+                  <MapPin className="w-5 h-5 text-indigo-600 mt-1" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Address</h3>
-                  <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactSettings.address)}`} target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline">{contactSettings.address}</a>
+                  <span className="text-indigo-600">{contactSettings.address}</span>
                 </div>
               </div>
               
