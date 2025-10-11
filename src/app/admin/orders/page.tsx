@@ -1020,14 +1020,17 @@ export default function AdminOrdersPage() {
                                 </div>
                                 <div className="flex justify-center gap-3 pt-4 border-t">
                                   <button
-                                    onClick={() => {
+                                    onClick={async () => {
+                                      const response = await fetch(selectedOrder.billUrl!);
+                                      const blob = await response.blob();
+                                      const url = URL.createObjectURL(blob);
                                       const link = document.createElement("a");
-                                      link.href = selectedOrder.billUrl!;
+                                      link.href = url;
                                       link.download = `bill-order-${selectedOrder.id}.jpg`;
-                                      link.target = '_blank';
                                       document.body.appendChild(link);
                                       link.click();
                                       document.body.removeChild(link);
+                                      URL.revokeObjectURL(url);
                                     }}
                                     className="border border-green-600 bg-green-100 text-green-700 px-6 py-2 hover:bg-green-200 rounded-md text-xs cursor-pointer flex items-center gap-2"
                                   >
@@ -1041,14 +1044,17 @@ export default function AdminOrdersPage() {
                             </DialogContent>
                           </Dialog>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
+                              const response = await fetch(selectedOrder.billUrl!);
+                              const blob = await response.blob();
+                              const url = URL.createObjectURL(blob);
                               const link = document.createElement("a");
-                              link.href = selectedOrder.billUrl!;
+                              link.href = url;
                               link.download = `bill-order-${selectedOrder.id}.jpg`;
-                              link.target = '_blank';
                               document.body.appendChild(link);
                               link.click();
                               document.body.removeChild(link);
+                              URL.revokeObjectURL(url);
                             }}
                             className="border border-green-600 bg-green-100 text-green-700 px-2 py-1 hover:bg-green-200 rounded text-xs cursor-pointer flex items-center gap-1"
                           >
