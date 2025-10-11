@@ -144,6 +144,19 @@ export default function ProductTable() {
     defaultValues,
   });
 
+  // Watch MRP and price to auto-calculate discount
+  const mrp = form.watch("mrp");
+  const price = form.watch("price");
+
+  useEffect(() => {
+    if (mrp && price && mrp > 0) {
+      const calculatedDiscount = Math.round(((mrp - price) / mrp) * 100);
+      form.setValue("discount", calculatedDiscount >= 0 ? calculatedDiscount : 0);
+    } else {
+      form.setValue("discount", 0);
+    }
+  }, [mrp, price]);
+
   useEffect(() => {
     cachedFetch<any[]>("/api/products", { cache: "no-store" }, 10000)
       .then((products) => {
@@ -698,9 +711,10 @@ export default function ProductTable() {
                               <FormControl>
                                 <Input
                                   type="number"
-                                  placeholder="e.g. 18"
+                                  placeholder="Wrong Input"
                                   value={field.value === 0 ? "" : field.value}
-                                  onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                                  readOnly
+                                  className="bg-gray-100 cursor-not-allowed"
                                 />
                               </FormControl>
                               <FormMessage />
