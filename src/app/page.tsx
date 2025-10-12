@@ -17,7 +17,7 @@ import FeaturedSection from "@/components/home/FeaturedSection";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <main className="min-h-screen bg-gray-50/5 dark:bg-gray-900">
       {/* Hero Slider */}
       <section className="bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6">

@@ -43,9 +43,9 @@ const categories = [
 
 export default function PopularCategories() {
   return (
-    <section className="bg-white py-12">
+    <section className="py-12">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
-        <div className="border border-[#c1e5cf] dark:border-gray-600 rounded-lg p-8">
+        <div className="border border-[#c1e5cf] rounded-md p-8 pb-6">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white pb-3 border-b border-[#c1e5cf]">
               Popular Categories
@@ -57,7 +57,7 @@ export default function PopularCategories() {
               <Link
                 key={category.name}
                 href={category.href}
-                className="bg-[#f6f6f6] p-6 rounded-lg hover:bg-[#e7e7e7] transition-all duration-300 group"
+                className="bg-[#f6f6f6] p-6 rounded-md hover:bg-[#e7e7e7] transition-all duration-300 group"
               >
                 <div className="flex items-center gap-4">
                   {/* ✅ If it's "See All", show icon instead of image */}

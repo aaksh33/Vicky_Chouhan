@@ -18,7 +18,7 @@ const brands = [
 
 const ShopByBrands = () => {
   return (
-     <section className="bg-white py-12">
+     <section className="py-12">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-10">
         <div className="border border-[#c1e5cf] dark:border-gray-600 rounded-lg p-8">
           <div className="mb-8">

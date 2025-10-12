@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function BestSeller(){
     return (
-        <section className="bg-white dark:bg-gray-800 py-12">
+        <section className="py-12">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-10">
           <div className="flex items-center justify-between mb-8">
             <div>

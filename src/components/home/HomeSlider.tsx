@@ -35,7 +35,7 @@ const HeaderSlider = () => {
   if (loading) {
     return (
       <div className="overflow-hidden relative w-full">
-        <div className="relative py-16 md:py-24 px-5 md:px-14 mt-6 min-h-[200px] sm:min-h-[350px] md:min-h-[350px] xl:min-h-[450px] 2xl:min-h-[500px] bg-gray-200 animate-pulse flex items-center">
+        <div className="relative py-16 md:py-24 px-5 md:px-14 mt-6 bg-gray-200 animate-pulse flex items-center rounded-sm" style={{ height: '380px' }}>
           <div className="relative z-10 max-w-2xl space-y-6">
             <div className="h-5 md:h-6 bg-gray-300 rounded w-48"></div>
             <div className="space-y-3">
@@ -75,7 +75,8 @@ const HeaderSlider = () => {
                 backgroundImage: (slide as any).image ? `url(${(slide as any).image})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                backgroundColor: '#E6E9F2'
+                backgroundColor: '#E6E9F2',
+                // height: '280px'
               }}
             >
               {(slide as any).image && !loadedImages.has(slide.id) && (
