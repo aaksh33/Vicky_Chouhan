@@ -63,8 +63,8 @@ export function Navbar() {
   useEffect(() => {
     const syncWishlist = () => setWishlistCount(getWishlist().length);
     syncWishlist();
-    window.addEventListener('wishlist-updated', syncWishlist);
-    return () => window.removeEventListener('wishlist-updated', syncWishlist);
+    window.addEventListener("wishlist-updated", syncWishlist);
+    return () => window.removeEventListener("wishlist-updated", syncWishlist);
   }, []);
 
   // --- Fetch search suggestions ---
@@ -127,24 +127,24 @@ export function Navbar() {
         >
           {/* Left: brand + desktop category dropdown */}
           <div className="flex items-center gap-2 md:gap-2">
-             <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                <img
-              src="/logo.png"
-              alt="Store logo"
-              className="h-8 sm:h-10 w-full rounded bg-transparent"
-            />
-            
-              </div>
-             
             <Link
               href="/"
               className="flex items-center gap-2"
               aria-label="Go to homepage"
             >
-              <span className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Future of gadgets
-              </span>
-              
+              <>
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <img
+                    src="/logo.png"
+                    alt="Store logo"
+                    className="h-8 sm:h-10 w-full rounded bg-transparent"
+                  />
+                </div>
+
+                <span className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Future of gadgets
+                </span>
+              </>
             </Link>
 
             {/* Desktop nav */}
@@ -288,40 +288,40 @@ export function Navbar() {
               )}
             </form>
             <div className="flex space-x-3">
+              <Link
+                href="/wishlist"
+                aria-label="Open wishlist"
+                className="hidden sm:block relative"
+              >
+                <Heart
+                  className={`h-6 w-6 transition-colors cursor-pointer ${
+                    pathname === "/wishlist"
+                      ? "fill-pink-500 text-pink-500"
+                      : "text-gray-700 dark:text-gray-300 hover:text-pink-600 "
+                  }`}
+                />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-pink-500 text-xs font-semibold text-white flex items-center justify-center">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                )}
+              </Link>
 
-           
-            <Link
-              href="/wishlist"
-              aria-label="Open wishlist"
-              className="hidden sm:block relative"
-            >
-              <Heart
-                className={`h-6 w-6 transition-colors cursor-pointer ${
-                  pathname === "/wishlist"
-                    ? "fill-pink-500 text-pink-500"
-                    : "text-gray-700 dark:text-gray-300 hover:text-pink-600 "
-                }`}
-              />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-pink-500 text-xs font-semibold text-white flex items-center justify-center">
-                  {wishlistCount > 9 ? "9+" : wishlistCount}
-                </span>
-              )}
-            </Link>
-
-            <Link href="/cart" aria-label="Open cart" className="relative">
-                <ShoppingBag className={`h-6 w-6 transition-colors cursor-pointer ${
-                  pathname === "/cart"
-                    ? "text-blue-500"
-                    : "text-gray-700 dark:text-gray-300 hover:text-blue-600"
-                }`} />
+              <Link href="/cart" aria-label="Open cart" className="relative">
+                <ShoppingBag
+                  className={`h-6 w-6 transition-colors cursor-pointer ${
+                    pathname === "/cart"
+                      ? "text-blue-500"
+                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600"
+                  }`}
+                />
                 {count > 0 && (
                   <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-blue-600 text-xs font-semibold text-white flex items-center justify-center">
                     {count > 9 ? "9+" : count}
                   </span>
                 )}
-            </Link>
- </div>
+              </Link>
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="cursor-pointer">
                 <Button

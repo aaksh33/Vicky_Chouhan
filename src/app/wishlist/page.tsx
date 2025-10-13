@@ -49,7 +49,7 @@ export default function WishlistPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen mt-5 sm:mt-2 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center p-4">
+      <div className="min-h-screen mt-5 sm:mt-2 bg-white to-white flex items-center justify-center p-4">
         <div className="max-w-2xl w-full text-center">
           <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-6 sm:mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-pink-100 to-red-100 rounded-full animate-pulse" />
