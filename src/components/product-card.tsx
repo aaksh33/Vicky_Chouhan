@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Share2, Copy, X, Heart } from "lucide-react";
+import { Share2, Copy, X, Heart, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { toggleWishlist, isInWishlist } from "@/lib/wishlist";
@@ -144,6 +144,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
             </p>
           </Link>
           
+          <Link href={`/products/${product.slug}`} className="flex-1">
           <div className="mb-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 items-baseline sm:gap-2 sm:mb-1">
               <span className="text-2xl font-bold text-gray-900">
@@ -165,8 +166,11 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
               <span className="text-xs text-gray-500">(4.2)</span>
             </div>
           </div>
-          
+          </Link>
+
           {onAddToCart && onBuyNow && (
+<><div className="sm:hidden flex items-center text-sm text-orange-600"><span> Buy now 
+  </span><ChevronRight className="h-4 -left-4"/></div>
             <div className="hidden sm:flex gap-2">
               <button
                 onClick={(e) => onAddToCart(e, product)}
@@ -183,6 +187,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
                 BUY NOW
               </button>
             </div>
+            </>
           )}
         </div>
       </div>

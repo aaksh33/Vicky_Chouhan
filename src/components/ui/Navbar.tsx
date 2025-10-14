@@ -674,7 +674,7 @@ export function Navbar() {
               transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
               className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-2xl rounded-b-3xl will-change-transform"
             >
-              <div className="p-4 pb-6">
+              <div className="px-4 pt-4 pb-2">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Search
@@ -754,28 +754,7 @@ export function Navbar() {
                         </motion.button>
                       ))}
                     </motion.div>
-                  ) : searchQuery.length > 0 ? (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        <Search className="h-8 w-8 text-gray-400" />
-                      </div>
-                      <p className="text-gray-500 dark:text-gray-400">
-                        No products found
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex items-center justify-center">
-                        <Search className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        Start typing to search
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Find your favorite gadgets
-                      </p>
-                    </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </motion.div>

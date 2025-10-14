@@ -76,7 +76,7 @@ export default function BottomNav() {
           />
           <span className="text-[10px] font-medium">Wishlist</span>
           {wishlistCount > 0 && (
-            <span className="absolute top-1 right-2 h-4 w-4 rounded-full bg-pink-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+            <span className="absolute top-1 right-4 h-4 w-4 rounded-full bg-pink-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
               {wishlistCount > 9 ? "9+" : wishlistCount}
             </span>
           )}
