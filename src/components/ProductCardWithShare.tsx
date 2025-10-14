@@ -181,7 +181,7 @@ export default function ProductCardWithShare({ product, onAddToCart, onBuyNow }:
             <button
               onClick={(e) => onBuyNow(e, product)}
               disabled={currentQty === 0}
-              className="flex-1 bg-orange-500 hover:bg-orange-600 rounded-md text-white font-bold py-2 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+              className="flex-1 bg-orange-500 hover:bg-orange-600 hidden sm:block rounded-md text-white font-bold py-2 text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
             >
               BUY NOW
             </button>
