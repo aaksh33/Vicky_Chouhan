@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, Heart, ShoppingBag, X } from "lucide-react";
+import { Search, User, Heart, ShoppingBag, X, Headset } from "lucide-react";
 import { getWishlist } from "@/lib/wishlist";
 import { AuthDialog } from "../auth-dialog";
 
@@ -141,9 +141,18 @@ export function Navbar() {
                   />
                 </div>
 
-                <span className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="text-base hidden sm:block md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                   Future of gadgets
                 </span>
+
+                <div className="flex flex-col leading-[1rem] -space-y-1 sm:hidden">
+      <span className="text-xs md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        Future of
+      </span>
+      <span className="text-sm leading-5 md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        Gadgets
+      </span>
+    </div>
               </>
             </Link>
 
@@ -170,13 +179,36 @@ export function Navbar() {
           </div>
 
           {/* Mobile Search Icon */}
-          <button
-            onClick={() => setMobileSearchOpen(true)}
-            className="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Open search"
-          >
-            <Search className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </button>
+{/* Mobile Icons */}
+<div className="md:hidden flex items-center gap-1">
+  {/* Search Button */}
+  <button
+    onClick={() => setMobileSearchOpen(true)}
+    aria-label="Open search"
+    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+  >
+    <Search className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+  </button>
+  {/* Orders Button */}
+  <Link
+    href="/orders"
+    aria-label="View orders"
+    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+  >
+    <ShoppingBag className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+  </Link>
+
+  {/* Support Button */}
+  <Link
+    href="/support"
+    aria-label="Support"
+    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+  >
+    <Headset className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+  </Link>
+
+</div>
+
 
           {/* Center: search (desktop) */}
           <div className="hidden md:flex flex-1 max-w-xl gap-2 items-center justify-center">
