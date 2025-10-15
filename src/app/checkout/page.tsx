@@ -150,6 +150,7 @@ export default function CheckoutPage() {
         const j = await res.json().catch(() => ({}))
         throw new Error(j?.error || "Failed to place order")
       }
+      
       clearCart()
       sessionStorage.setItem('checkout_success', 'true')
       router.push("/checkout/success")

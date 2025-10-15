@@ -30,6 +30,7 @@ A modern e-commerce platform built with Next.js 14, featuring a clean Flipkart-i
 - **Cart Management**: Persistent cart with localStorage sync
 - **Empty States**: Friendly messages for empty cart/categories
 - **Order Tracking**: Order history with status indicators
+- **Email Notifications**: Automatic order notifications to admin email
 
 ### 🔧 Admin Features
 - **Admin Panel**: Product management for admin users

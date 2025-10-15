@@ -60,64 +60,103 @@ export async function sendEmail(to: string, subject: string, html: string) {
 
 export function getVerificationEmailTemplate(code: string, email: string): string {
   return `
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #2563eb; margin: 0;">Future Of Gadgets</h1>
-        <p style="color: #6b7280; margin: 5px 0;">Verify your email address</p>
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
+      <h1 style="color: #2563eb; margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">Future Of Gadgets</h1>
+      <p style="color: #64748b; margin: 0 0 40px 0; font-size: 16px;">Verify your email address</p>
+      
+      <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 22px; font-weight: 600;">Welcome!</h2>
+      <p style="color: #475569; margin: 0 0 32px 0; font-size: 15px; line-height: 1.6;">Thank you for signing up. Enter this verification code to complete your registration:</p>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <span style="display: inline-block; background: #2563eb; color: white; padding: 16px 32px; font-size: 36px; font-weight: 700; letter-spacing: 10px; border-radius: 6px;">${code}</span>
       </div>
       
-      <div style="background: #f9fafb; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-        <h2 style="color: #1f2937; margin-top: 0;">Welcome to Future Of Gadgets!</h2>
-        <p style="color: #4b5563; line-height: 1.6;">
-          Thank you for signing up. Use this verification code:
-        </p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px; font-size: 32px; font-weight: bold; letter-spacing: 8px;">
-            ${code}
-          </div>
-        </div>
-        
-        <p style="color: #6b7280; font-size: 14px; margin-bottom: 0; text-align: center;">
-          Enter this code in the verification form to complete your registration.
-        </p>
-      </div>
-      
-      <p style="color: #9ca3af; font-size: 12px; text-align: center;">
-        This code will expire in 10 minutes. If you didn't create an account, please ignore this email.
-      </p>
+      <p style="color: #94a3b8; font-size: 13px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">This code expires in 10 minutes. If you didn't create an account, ignore this email.</p>
     </div>
   `
 }
 
 export function getPasswordResetEmailTemplate(code: string, email: string): string {
   return `
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #2563eb; margin: 0;">Future Of Gadgets</h1>
-        <p style="color: #6b7280; margin: 5px 0;">Reset your password</p>
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
+      <h1 style="color: #2563eb; margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">Future Of Gadgets</h1>
+      <p style="color: #64748b; margin: 0 0 40px 0; font-size: 16px;">Reset your password</p>
+      
+      <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 22px; font-weight: 600;">Password Reset Request</h2>
+      <p style="color: #475569; margin: 0 0 32px 0; font-size: 15px; line-height: 1.6;">We received a request to reset your password. Enter this code to proceed:</p>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <span style="display: inline-block; background: #2563eb; color: white; padding: 16px 32px; font-size: 36px; font-weight: 700; letter-spacing: 10px; border-radius: 6px;">${code}</span>
       </div>
       
-      <div style="background: #f9fafb; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-        <h2 style="color: #1f2937; margin-top: 0;">Password Reset Request</h2>
-        <p style="color: #4b5563; line-height: 1.6;">
-          We received a request to reset your password. Use this verification code:
-        </p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <div style="background: #2563eb; color: white; padding: 20px; border-radius: 8px; font-size: 32px; font-weight: bold; letter-spacing: 8px;">
-            ${code}
-          </div>
+      <p style="color: #94a3b8; font-size: 13px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">This code expires in 10 minutes. If you didn't request this, ignore this email.</p>
+    </div>
+  `
+}
+
+export function getOrderNotificationTemplate(orderData: {
+  orderId: string
+  customerName: string
+  customerPhone: string
+  customerEmail?: string
+  items: Array<{ name: string; qty: number; price: number }>
+  total: number
+  address: string
+  paymentMethod: string
+}): string {
+  const itemsHtml = orderData.items
+    .map(item => `
+      <tr>
+        <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px;">${item.name}</td>
+        <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 14px;">×${item.qty}</td>
+        <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600;">₹${(item.price * item.qty).toLocaleString()}</td>
+      </tr>
+    `).join('')
+
+  return `
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
+      <h1 style="color: #2563eb; margin: 0 0 8px 0; font-size: 28px; font-weight: 600;">🛒 New Order</h1>
+      <p style="color: #64748b; margin: 0 0 12px 0; font-size: 15px;">Future of Gadgets</p>
+      <p style="color: #94a3b8; margin: 0 0 40px 0; font-size: 13px;">${new Date().toLocaleString('en-IN')}</p>
+      
+      <div style="margin-bottom: 32px;">
+        <p style="color: #64748b; margin: 0 0 4px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Order ID</p>
+        <p style="color: #0f172a; margin: 0; font-size: 16px; font-weight: 600;">${orderData.orderId}</p>
+      </div>
+      
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Customer</h2>
+        <p style="color: #475569; margin: 0 0 8px 0; font-size: 15px;">${orderData.customerName}</p>
+        <p style="color: #64748b; margin: 0 0 4px 0; font-size: 14px;">${orderData.customerPhone}</p>
+        ${orderData.customerEmail ? `<p style="color: #64748b; margin: 0; font-size: 14px;">${orderData.customerEmail}</p>` : ''}
+      </div>
+      
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Items</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tbody>${itemsHtml}</tbody>
+        </table>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid #0f172a;">
+          <table style="width: 100%;">
+            <tr>
+              <td style="color: #0f172a; font-size: 16px; font-weight: 600;">Total</td>
+              <td style="text-align: right; color: #2563eb; font-size: 20px; font-weight: 700;">₹${orderData.total.toLocaleString()}</td>
+            </tr>
+          </table>
         </div>
-        
-        <p style="color: #6b7280; font-size: 14px; margin-bottom: 0; text-align: center;">
-          Enter this code to reset your password.
-        </p>
       </div>
       
-      <p style="color: #9ca3af; font-size: 12px; text-align: center;">
-        This code will expire in 10 minutes. If you didn't request this reset, please ignore this email.
-      </p>
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #0f172a; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Delivery Address</h2>
+        <p style="color: #475569; margin: 0; font-size: 14px; line-height: 1.6;">${orderData.address}</p>
+      </div>
+      
+      <div style="margin-bottom: 32px;">
+        <h2 style="color: #0f172a; margin: 0 0 12px 0; font-size: 18px; font-weight: 600;">Payment</h2>
+        <p style="color: #475569; margin: 0; font-size: 14px;">${orderData.paymentMethod.toUpperCase()}</p>
+      </div>
+      
+      <p style="color: #94a3b8; font-size: 12px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">Automated notification from Future of Gadgets</p>
     </div>
   `
 }

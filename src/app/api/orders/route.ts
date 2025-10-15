@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { sendEmail, getOrderNotificationTemplate } from "@/lib/email"
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -154,6 +155,23 @@ export async function POST(request: Request) {
         deliveryDate: new Date(deliveryDate)
       }
     })
+
+    // Send order notification email to admin
+    const adminEmail = process.env.PROTECTED_ADMIN_EMAIL_ID || process.env.NEXT_PUBLIC_PROTECTED_ADMIN_EMAIL_ID
+    if (adminEmail) {
+      const emailHtml = getOrderNotificationTemplate({
+        orderId: order.id,
+        customerName: address.fullName,
+        customerPhone: address.phone,
+        customerEmail: body.userEmail,
+        items: orderItems.map(it => ({ name: it.name, qty: it.qty, price: it.price })),
+        total,
+        address: `${address.line1}, ${address.line2 ? address.line2 + ', ' : ''}${address.city}, ${address.state} - ${address.zip}`,
+        paymentMethod
+      })
+      
+      await sendEmail(adminEmail, `New Order #${order.id.slice(-8)}`, emailHtml)
+    }
 
     return NextResponse.json({ order }, { status: 201 })
   } catch (error) {

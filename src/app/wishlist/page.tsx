@@ -76,7 +76,7 @@ export default function WishlistPage() {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8 mt-5 sm:mt-2 animate-pulse">
           <div className="flex items-center gap-2 mb-4 sm:mb-6">
-            <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gray-200 rounded-full" />
+            {/* <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gray-200 rounded-full" /> */}
             <div className="h-6 sm:h-8 bg-gray-200 rounded w-48" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
@@ -159,7 +159,6 @@ export default function WishlistPage() {
       <div className="max-w-7xl mx-auto py-4 sm:py-8">
         <div className="flex items-center justify-between mb-4 sm:mb-6 px-3 sm:px-4">
           <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-pink-500 fill-pink-500" />
             My Wishlist ({items.length})
           </h1>
           <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
