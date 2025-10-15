@@ -97,7 +97,7 @@ export default function CheckoutPage() {
           price: Number(it.price || 0),
           image: it.image || '/placeholder.svg',
         }))
-        setItems(normalized.filter((it) => !!it.productId && it.price > 0))
+        setItems(normalized.filter((it) => !!it.productId && (it.price ?? 0) > 0))
       }
     } catch (err) {
       console.error('Cart parsing error:', err)

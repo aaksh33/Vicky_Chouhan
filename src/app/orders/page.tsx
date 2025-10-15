@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Package, Truck, CheckCircle, Clock, Eye, Download, Star, Loader } from 'lucide-react'
+import { Package, Truck, CheckCircle, Clock, Star, Loader } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import Loading from '../loading'
 import { toast } from 'sonner'
@@ -51,7 +51,7 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [showTrackingModal, setShowTrackingModal] = useState(false)
-  const [showBillDialog, setShowBillDialog] = useState(false)
+
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState('')
   const [cancelLoading, setCancelLoading] = useState(false)
@@ -91,7 +91,7 @@ export default function OrdersPage() {
         if (reviewsResponse.ok) {
           const reviewsData = await reviewsResponse.json()
             // Merge server reviews with any locally saved submitted markers
-            let merged = reviewsData.reviews || []
+            const merged = reviewsData.reviews || []
             try {
               const raw = localStorage.getItem('v0_submitted_reviews')
               if (raw) {
@@ -103,7 +103,7 @@ export default function OrdersPage() {
                   }
                 })
               }
-            } catch (e) {
+            } catch {
               // ignore localStorage issues
             }
             setReviews(merged)
@@ -140,7 +140,7 @@ export default function OrdersPage() {
         const local = JSON.parse(raw)
         if (local.some((r: any) => r.orderId === order.id && r.productId === productId)) return false
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
     return true
@@ -178,7 +178,7 @@ export default function OrdersPage() {
           const submitted = raw ? JSON.parse(raw) : []
           submitted.push({ orderId: reviewProduct.orderId, productId: reviewProduct.productId })
           localStorage.setItem(key, JSON.stringify(submitted))
-        } catch (e) {
+        } catch {
           // ignore localStorage errors
         }
         setShowReviewDialog(false)
@@ -198,43 +198,7 @@ export default function OrdersPage() {
 
 
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return <CheckCircle className="h-5 w-5 text-green-600" />
-      case 'out-for-delivery':
-        return <Truck className="h-5 w-5 text-orange-600" />
-      case 'shipped':
-        return <Truck className="h-5 w-5 text-blue-600" />
-      case 'processing':
-        return <Clock className="h-5 w-5 text-yellow-600" />
-      case 'pending':
-        return <CheckCircle className="h-5 w-5 text-green-600" />
-      case 'paid':
-        return <CheckCircle className="h-5 w-5 text-blue-600" />
-      default:
-        return <Package className="h-5 w-5 text-gray-600" />
-    }
-  }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800'
-      case 'out-for-delivery':
-        return 'bg-orange-100 text-orange-800'
-      case 'shipped':
-        return 'bg-blue-100 text-blue-800'
-      case 'processing':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'pending':
-        return 'bg-green-100 text-green-800'
-      case 'paid':
-        return 'bg-blue-100 text-blue-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gray-100 mt-1">
@@ -259,9 +223,6 @@ export default function OrdersPage() {
                     src={imageUrl} 
                     alt={firstItem?.name}
                     className="w-16 h-16 sm:w-24 sm:h-24 object-cover border border-gray-200"
-                    onError={(e) => {
-                      e.currentTarget.src = '/placeholder-product.jpg'
-                    }}
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2 line-clamp-2">{firstItem?.name}</h3>
@@ -347,9 +308,6 @@ export default function OrdersPage() {
                                           src={imageUrl} 
                                           alt={item.name}
                                           className="w-16 h-16 sm:w-20 sm:h-20 object-cover border rounded"
-                                          onError={(e) => {
-                                            e.currentTarget.src = '/placeholder-product.jpg'
-                                          }}
                                         />
                                         <div className="flex-1 min-w-0">
                                           <Link href={`/products/${item.name?.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm sm:text-base font-medium text-gray-900 mb-1 line-clamp-2 hover:text-blue-600 block">{item.name}</Link>
