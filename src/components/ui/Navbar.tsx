@@ -122,7 +122,7 @@ export function Navbar() {
         }`}
       >
         <nav
-          className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3"
+          className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-2 py-3"
           aria-label="Primary"
         >
           {/* Left: brand + desktop category dropdown */}
@@ -178,31 +178,36 @@ export function Navbar() {
 
           {/* Mobile Search Icon */}
 {/* Mobile Icons */}
-<div className="md:hidden flex items-center gap-1">
+<div className="md:hidden flex items-center gap-0.5">
   {/* Search Button */}
   <button
     onClick={() => setMobileSearchOpen(true)}
     aria-label="Open search"
-    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
   >
-    <Search className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+    <Search className="w-5 h-5 text-gray-700" />
   </button>
-  {/* Orders Button */}
+  {/* Wishlist Button */}
   <Link
-    href="/orders"
-    aria-label="View orders"
-    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    href="/wishlist"
+    aria-label="View wishlist"
+    className="relative rounded-full hover:bg-gray-100 transition-colors"
   >
-    <ShoppingBag className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+    <Heart className="w-5 h-5 text-gray-700" />
+    {wishlistCount > 0 && (
+      <span className="absolute -top-1.5 -right-1 h-4 w-4 rounded-full bg-pink-500 text-white text-[8px] font-bold flex items-center justify-center">
+        {wishlistCount > 9 ? "9+" : wishlistCount}
+      </span>
+    )}
   </Link>
 
   {/* Support Button */}
   <Link
     href="/contact"
     aria-label="Support"
-    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
   >
-    <Headset className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+    <Headset className="w-5 h-5 text-gray-700" />
   </Link>
 
 </div>
