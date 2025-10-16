@@ -113,7 +113,7 @@ export default function NewArrivals(){
   return (
     <section className="py-6 sm:py-10">
       <div className="mx-auto max-w-[1440px] sm:px-6 lg:px-11">
-        <div className="flex items-center justify-between mb-4 sm:mb-6 px-3 sm:px-0">
+        <div className="flex items-center justify-between mb-4 sm:mb-6 px-3 xl:px-0">
           <div>
             <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">New Arrivals</h2>
             <p className="hidden sm:block sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">Fresh products just In</p>

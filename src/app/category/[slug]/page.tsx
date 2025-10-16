@@ -100,11 +100,11 @@ export default function CategorySlugPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="w-full mx-auto sm:px-4">
-        <div className="mb-6 px-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-6 px-4 xl:px-0 flex items-center justify-between">
           <div className="">
             <h1 className="text-2xl font-bold">{categoryName}</h1>
-            <p className="text-gray-600 text-sm mt-1">{products.length} products</p>
+            <p className="text-gray-600 text-sm ml-1">{products.length} products</p>
           </div>
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-32 sm:w-[120px]">

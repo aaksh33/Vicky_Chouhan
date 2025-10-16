@@ -186,7 +186,7 @@ function SearchContent() {
       <div className="mx-auto max-w-7xl pt-10 pb-3">
         {query && !loading && (
           <div className="mb-8">
-            <div className="flex items-center justify-between px-4 sm:px-0">
+            <div className="flex items-center justify-between px-4 xl:px-0">
               <div className="">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Search Results</h1>
                 <p className="text-gray-600 ">{results.length} products found for <span className="font-semibold">&quot;{query}&quot;</span></p>
