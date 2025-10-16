@@ -241,7 +241,7 @@ export default function SettingsPage() {
             
               <LoadingButton onClick={() => handleSave('Section products', 'sectionProducts', sectionProducts)} loading={isLoading} className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
-                Save Product Assignments
+                Save Section
               </LoadingButton>
             </div>
           </div>
