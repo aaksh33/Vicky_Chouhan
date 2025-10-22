@@ -14,7 +14,8 @@ export default function AdminDashboardPage() {
     products: 0,
     orders: 0,
     users: 0,
-    revenue: 0
+    revenue: 0,
+    reviews: 0
   })
   const [products, setProducts] = useState<any[]>([])
   const [orders, setOrders] = useState<any[]>([])
@@ -24,15 +25,17 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [productsRes, ordersRes, usersRes] = await Promise.all([
+        const [productsRes, ordersRes, usersRes, reviewsRes] = await Promise.all([
           fetch('/api/products'),
           fetch('/api/admin/orders'),
-          fetch('/api/admin/users')
+          fetch('/api/admin/users'),
+          fetch('/api/reviews')
         ])
         
         const productsData = await productsRes.json()
         const ordersData = await ordersRes.json()
         const usersData = await usersRes.json()
+        const reviewsData = await reviewsRes.json()
         
         const totalRevenue = ordersData.orders?.reduce((sum: number, order: any) => sum + order.total, 0) || 0
         
@@ -49,7 +52,8 @@ export default function AdminDashboardPage() {
           products: productsData?.length || 0,
           orders: ordersData.orders?.length || 0,
           users: Array.isArray(usersData) ? usersData.length : 0,
-          revenue: totalRevenue
+          revenue: totalRevenue,
+          reviews: reviewsData.reviews?.length || 0
         })
         
         // Generate chart data for last 7 days
@@ -167,7 +171,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: 'Reviews',
-      count: '0',
+      count: stats.reviews.toString(),
       description: 'Customer reviews',
       icon: BarChart3,
       href: '/admin/reviews',
