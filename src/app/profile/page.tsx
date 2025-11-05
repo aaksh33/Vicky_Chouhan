@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<any[]>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [loadingProfile, setLoadingProfile] = useState(false)
+  const [memberSince, setMemberSince] = useState<Date | null>(null)
 
   const savePhone = async () => {
     try {
@@ -77,6 +78,7 @@ export default function ProfilePage() {
           const data = await response.json()
           setPhone(data.phone || '')
           setAddress(data.address || '')
+          setMemberSince(data.createdAt ? new Date(data.createdAt) : null)
         }
       } catch (error) {
         console.error('Error fetching profile:', error)
@@ -187,7 +189,7 @@ export default function ProfilePage() {
               </p>
               <p className="text-[10px] sm:text-sm text-gray-500 flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
                 <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                Member since {new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                Member since {memberSince ? memberSince.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Loading...'}
               </p>
             </div>
             <div className="flex gap-2 justify-center w-full sm:w-auto">

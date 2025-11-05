@@ -16,12 +16,13 @@ export async function GET() {
 
     const user = await prisma.user.findFirst({
       where: { email: session.user.email },
-      select: { phone: true, id: true }
+      select: { phone: true, id: true, createdAt: true }
     })
     
     return NextResponse.json({
       phone: user?.phone || '',
-      address: userAddresses.get(session.user.email) || ''
+      address: userAddresses.get(session.user.email) || '',
+      createdAt: user?.createdAt
     })
   } catch (error) {
     console.error('Profile GET error:', error)
