@@ -11,6 +11,7 @@ import DealoftheDay from "@/components/home/DealoftheDay";
 import NewArrivals from "@/components/home/NewArrivals";
 import FeaturedSection from "@/components/home/FeaturedSection";
 import { GitCompareArrows, Headset, ShieldCheck, Truck } from "lucide-react";
+import Review from "@/components/home/review";
 
 export default function HomePage() {
 
@@ -55,8 +56,9 @@ export default function HomePage() {
         <BestSeller />
         <ShopByBrands />
         <TrendingNow />
+        <Review/>
       </div>
-          <section className="py-6 sm:py-10">
+          {/* <section className="py-6 sm:py-10">
       <div className="mx-auto max-w-[1400px] px-3 sm:px-6 lg:px-8">
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {extraData?.map((item, index) => (
@@ -79,7 +81,7 @@ export default function HomePage() {
           ))}
         </div>
         </div>
-        </section> 
+        </section>  */}
       <Footer />
     </main>
   );
