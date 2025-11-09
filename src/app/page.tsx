@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import HeaderSlider from "@/components/home/HomeSlider";
 import { Footer } from "@/components/Footer";
 import ShopByBrands from "@/components/home/ShopByBrands";
@@ -13,8 +14,25 @@ import FeaturedSection from "@/components/home/FeaturedSection";
 import { GitCompareArrows, Headset, ShieldCheck, Truck } from "lucide-react";
 import Laptopcarousal from "@/components/home/laptop-carousal";
 import CustomerReview from "@/components/home/CustomerReview";
+import Loading from "./loading";
 
 export default function HomePage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <Loading/>
+      // <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 gap-4">
+      //   <img src="/logo.png" alt="Logo" className="w-20 h-20 animate-pulse rounded-full" />
+      //   <p className="text-xl font-semibold text-gray-700 animate-pulse">Future of Gadgets is loading...</p>
+      // </div>
+    );
+  }
 
 
   const extraData = [
@@ -41,7 +59,7 @@ export default function HomePage() {
   ];
 
   return (
-     <main className="min-h-screen bg-gray-50/5">
+    <main className="min-h-screen bg-gray-50/5">
       {/* Hero Slider */}
       <section className="bg-white dark:bg-gray-800">
         <div className="mx-auto max-w-[1400px] sm:px-6 sm:pb-6">
