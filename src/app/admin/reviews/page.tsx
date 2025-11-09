@@ -524,11 +524,49 @@ export default function AdminReviewsPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Review Image</label>
+              <label className="text-sm font-medium mb-2 block">Review Image (Max 10MB)</label>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setCustomerImage(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  
+                  if (file.size > 10485760) {
+                    toast.error('File too large. Maximum is 10MB')
+                    e.target.value = ''
+                    return
+                  }
+                  
+                  if (file.size <= 6291456) {
+                    setCustomerImage(file)
+                    return
+                  }
+                  
+                  const img = new Image()
+                  img.src = URL.createObjectURL(file)
+                  img.onload = () => {
+                    const canvas = document.createElement('canvas')
+                    const ctx = canvas.getContext('2d')!
+                    canvas.width = img.width
+                    canvas.height = img.height
+                    ctx.drawImage(img, 0, 0)
+                    
+                    const compress = (quality: number) => {
+                      canvas.toBlob((blob) => {
+                        if (blob && blob.size > 6291456 && quality > 0.5) {
+                          compress(quality - 0.05)
+                        } else if (blob && blob.size > 6291456) {
+                          toast.error('Image too large after compression')
+                          e.target.value = ''
+                        } else if (blob) {
+                          setCustomerImage(new File([blob], file.name, { type: 'image/jpeg' }))
+                        }
+                      }, 'image/jpeg', quality)
+                    }
+                    compress(0.95)
+                  }
+                }}
                 className="w-full px-3 py-2 border rounded-lg text-sm"
               />
               {customerImage ? (
