@@ -403,7 +403,7 @@ export default function SettingsPage() {
                         </Link>
                       ) : (
                         <Input 
-                          placeholder="Enter category section name (e.g., Gaming, Tablets)" 
+                          placeholder="Enter category name (e.g., Laptop, Accessories)" 
                           value={section.title}
                           onChange={(e) => {
                             const updated = [...categorySections]
