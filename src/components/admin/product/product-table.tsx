@@ -1135,7 +1135,7 @@ export default function ProductTable() {
                         {/* Box Contents */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <FormLabel>What's in the Box</FormLabel>
+                          <FormLabel>What&apos;s in the Box</FormLabel>
                           <Button
                             type="button"
                             size="sm"
