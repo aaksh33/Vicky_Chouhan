@@ -128,3 +128,16 @@ model CustomerReview {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model PromoCode {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  code        String   @unique
+  description String
+  discount    Int
+  type        String   @default("all")
+  productIds  String[]
+  isActive    Boolean  @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

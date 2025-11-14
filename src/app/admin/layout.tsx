@@ -12,6 +12,7 @@ import {
   UserSquare,
   SettingsIcon,
   Star,
+  BadgePercent
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -47,6 +48,7 @@ const navItems = [
   { href: "/admin", icon: Home, label: "Dashboard" },
   { href: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { href: "/admin/products", icon: Package, label: "Products" },
+  { href: "/admin/promocodes", icon: BadgePercent, label: "Promocodes" },
   { href: "/admin/users", icon: Users, label: "Users" },
   { href: "/admin/reviews", icon: Star, label: "Reviews" },
   { href: "/admin/settings", icon: SettingsIcon, label: "Settings" },
@@ -303,7 +305,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="text-[10px] mt-0.5">{item.label}</span>
+                {/* <span className="text-[10px] mt-0.5">{item.label}</span> */}
               </Link>
             );
           })}

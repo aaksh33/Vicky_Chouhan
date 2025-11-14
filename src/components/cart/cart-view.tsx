@@ -9,9 +9,11 @@ import { useSession } from "next-auth/react"
 import { AuthDialog } from "@/components/auth-dialog"
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingBag, Trash2, Plus, Minus, Tag, Lock, Truck, ArrowRight } from "lucide-react"
+import { ShoppingBag, Trash2, Plus, Minus, Tag, Lock, Truck, ArrowRight, X } from "lucide-react"
 import CartSkeleton from "@/components/skeletons/CartSkeleton"
 import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 type CartItem = {
   id: string
@@ -36,25 +38,36 @@ export default function CartView() {
   const { data: session } = useSession()
   const router = useRouter()
   const [items, setItems] = useState<CartItem[]>([])
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<any[]>([])
   const [showAuthDialog, setShowAuthDialog] = useState(false)
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
   const [hasStockIssue, setHasStockIssue] = useState(false)
   const [loading, setLoading] = useState(true)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [promoCode, setPromoCode] = useState("")
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; description: string } | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('appliedPromo')
+      return saved ? JSON.parse(saved) : null
+    }
+    return null
+  })
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [availablePromos, setAvailablePromos] = useState<any[]>([])
 
   useEffect(() => {
     setItems(getCart())
     fetch('/api/products')
       .then(res => res.json())
-      .then(data => setProducts(data.map((p: any) => ({ 
-        id: p.id, 
-        quantity: p.quantity,
-        ramOptions: p.ramOptions || [],
-        storageOptions: p.storageOptions || []
-      }))))
+      .then(data => setProducts(data))
       .catch(() => {})
       .finally(() => setLoading(false))
+    
+    fetch('/api/promocodes')
+      .then(res => res.json())
+      .then(data => setAvailablePromos(data.filter((p: any) => p.isActive)))
+      .catch(() => {})
+    
     const onStorage = () => setItems(getCart())
     const onCartUpdated = () => setItems(getCart())
     window.addEventListener("storage", onStorage)
@@ -95,7 +108,51 @@ export default function CartView() {
     setHasStockIssue(hasIssue)
   }, [items, products])
 
-  const total = useMemo(() => items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0), [items])
+  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * (i.qty || 1), 0), [items])
+  const total = useMemo(() => subtotal - (appliedPromo?.discount || 0), [subtotal, appliedPromo])
+
+  const applyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      toast.error("Please enter a promo code")
+      return
+    }
+
+    setPromoLoading(true)
+    try {
+      const res = await fetch("/api/promocodes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode, cartItems: items })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || "Invalid promo code")
+        return
+      }
+
+      const promoData = {
+        code: promoCode.toUpperCase(),
+        discount: data.discount,
+        description: data.description
+      }
+      setAppliedPromo(promoData)
+      localStorage.setItem('appliedPromo', JSON.stringify(promoData))
+      toast.success("Promo code applied!")
+    } catch (error) {
+      toast.error("Failed to apply promo code")
+    } finally {
+      setPromoLoading(false)
+    }
+  }
+
+  const removePromoCode = () => {
+    setAppliedPromo(null)
+    setPromoCode("")
+    localStorage.removeItem('appliedPromo')
+    toast.success("Promo code removed")
+  }
 
   if (loading) {
     return <CartSkeleton />
@@ -329,11 +386,123 @@ export default function CartView() {
             <div className="bg-white sm:rounded-lg sm:shadow-sm sm:border p-4 sm:p-6 lg:sticky lg:top-24 space-y-3 sm:space-y-4">
               <h2 className="text-base sm:text-lg font-semibold border-b pb-2 sm:pb-3">Order Summary</h2>
               
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-3">
+                {availablePromos.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-xs text-gray-600">{availablePromos.length} Available Promo Codes</Label>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {availablePromos.map((promo) => {
+                        const applicableProducts = promo.type === "product" && promo.productIds?.length > 0
+                          ? products.filter(p => promo.productIds.includes(p.id)).map(p => p.name).slice(0, 2).join(", ")
+                          : null
+                        return (
+                        <div key={promo.id} className="p-2 border rounded hover:border-blue-500 transition-colors">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono font-semibold text-sm text-blue-600">{promo.code}</span>
+                            <span className="text-xs font-semibold text-green-600">{promo.discount}% OFF</span>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-2">{promo.description.slice(0,30)}...</p>
+                          {applicableProducts && (
+                            <p className="text-xs text-gray-500 mb-2">For: {applicableProducts}{promo.productIds.length > 2 && '...'}</p>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            className="w-full h-7 text-xs"
+                            onClick={async () => {
+                              setPromoCode(promo.code)
+                              setPromoLoading(true)
+                              try {
+                                const res = await fetch("/api/promocodes/validate", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ code: promo.code, cartItems: items })
+                                })
+                                const data = await res.json()
+                                if (!res.ok) {
+                                  toast.error(data.error || "Invalid promo code")
+                                  return
+                                }
+                                const promoData = {
+                                  code: promo.code,
+                                  discount: data.discount,
+                                  description: data.description
+                                }
+                                setAppliedPromo(promoData)
+                                localStorage.setItem('appliedPromo', JSON.stringify(promoData))
+                                toast.success("Promo code applied!")
+                              } catch (error) {
+                                toast.error("Failed to apply promo code")
+                              } finally {
+                                setPromoLoading(false)
+                              }
+                            }}
+                            disabled={!!appliedPromo || promoLoading}
+                          >
+                            Apply Code
+                          </Button>
+                        </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <Label className="text-xs text-gray-600">Have a promo code?</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      disabled={!!appliedPromo}
+                      className="text-sm"
+                    />
+                    {appliedPromo ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removePromoCode}
+                        className="gap-1"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={applyPromoCode}
+                        disabled={promoLoading}
+                      >
+                        {promoLoading ? "..." : "Apply"}
+                      </Button>
+                    )}
+                  </div>
+                  {appliedPromo && (
+                    <div className="p-2 bg-green-50 border border-green-200 rounded text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-green-700">{appliedPromo.code}</span>
+                        <span className="text-green-600">-₹{appliedPromo.discount.toLocaleString()}</span>
+                      </div>
+                      <p className="text-gray-600 mt-1">{appliedPromo.description.slice(0,30)}...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2 sm:space-y-3 border-t pt-3">
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-600">Subtotal ({items.reduce((sum, i) => sum + (i.qty || 1), 0)} items)</span>
-                  <span className="font-medium">₹{total.toLocaleString()}</span>
+                  <span className="font-medium">₹{subtotal.toLocaleString()}</span>
                 </div>
+                {appliedPromo && (
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="text-gray-600">Discount</span>
+                    <span className="font-medium text-green-600">-₹{appliedPromo.discount.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-600">Shipping</span>
                   <span className="font-medium text-green-600">FREE</span>

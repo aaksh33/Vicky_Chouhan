@@ -15,7 +15,9 @@ import { CreditCard, Smartphone, Building2, Wallet, Banknote, MapPin, User, Mail
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import LoadingButton from "@/components/ui/loading-button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Loading from "../loading"
+import { indianStates, getCitiesByState, isCODAvailable } from "@/lib/indian-locations"
 
 type CartItem = { productId: string; qty: number; title?: string; price?: number; image?: string; color?: string; selectedRam?: string; selectedStorage?: string; warranty?: { duration: string; price: number } }
 
@@ -25,8 +27,8 @@ const checkoutSchema = z.object({
   email: z.string().email("Invalid email").optional().or(z.literal("")),
   line1: z.string().min(5, "Address is required"),
   line2: z.string().optional(),
-  city: z.string().min(2, "City is required"),
   state: z.string().min(2, "State is required"),
+  city: z.string().min(2, "City is required"),
   zip: z.string().min(5, "Valid PIN code required"),
   deliveryDate: z.date(),
 })
@@ -41,10 +43,14 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null)
   const [showAuthDialog, setShowAuthDialog] = useState(false)
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin')
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "upi" | "netbanking" | "wallet" | "cod" | "razorpay">("cod")
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "upi" | "netbanking" | "wallet" | "cod" | "razorpay">("razorpay")
   const [showCalendar, setShowCalendar] = useState(false)
+  const [selectedState, setSelectedState] = useState("")
+  const [selectedCity, setSelectedCity] = useState("")
+  const [availableCities, setAvailableCities] = useState<string[]>([])
+  const [codAvailable, setCodAvailable] = useState(false)
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<CheckoutForm>({
+  const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       fullName: "",
@@ -52,17 +58,40 @@ export default function CheckoutPage() {
       email: "",
       line1: "",
       line2: "",
-      city: "",
       state: "",
+      city: "",
       zip: "",
       deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     }
   })
 
+  const watchState = watch("state")
+  const watchCity = watch("city")
+
+  useEffect(() => {
+    if (watchState) {
+      const cities = getCitiesByState(watchState)
+      setAvailableCities(cities)
+      if (!cities.includes(watchCity)) {
+        setValue("city", "")
+        setSelectedCity("")
+      }
+    }
+  }, [watchState, watchCity, setValue])
+
+  useEffect(() => {
+    const isAvailable = isCODAvailable(watchState, watchCity)
+    setCodAvailable(isAvailable)
+    if (!isAvailable && paymentMethod === "cod") {
+      setPaymentMethod("razorpay")
+    }
+  }, [watchState, watchCity, paymentMethod])
+
   const [stockStatus, setStockStatus] = useState<{[key: string]: {available: number, requested: number}}>({})
   const [hasStockIssue, setHasStockIssue] = useState(false)
   const [razorpayLoaded, setRazorpayLoaded] = useState(false)
   const [products, setProducts] = useState<any[]>([])
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; description: string } | null>(null)
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -109,6 +138,11 @@ export default function CheckoutPage() {
         console.log('Normalized items:', normalized)
         setItems(normalized.filter((it) => !!it.productId && (it.price ?? 0) > 0))
       }
+      
+      const savedPromo = localStorage.getItem('appliedPromo')
+      if (savedPromo) {
+        setAppliedPromo(JSON.parse(savedPromo))
+      }
     } catch (err) {
       console.error('Cart parsing error:', err)
     }
@@ -131,7 +165,8 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((sum, it) => sum + Number(it.price || 0) * Number(it.qty || 0), 0)
   const shipping = 0
-  const total = subtotal + shipping
+  const discount = appliedPromo?.discount || 0
+  const total = subtotal + shipping - discount
 
   async function handleRazorpayPayment(data: CheckoutForm) {
     try {
@@ -213,7 +248,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: items.map((it) => ({ productId: String(it.productId), qty: Number(it.qty || 1), color: it.color, selectedRam: it.selectedRam, selectedStorage: it.selectedStorage, warranty: it.warranty })),
-          address: { fullName: data.fullName, phone: data.phone, line1: data.line1, line2: data.line2, city: data.city, state: data.state, zip: data.zip },
+          address: { fullName: data.fullName, phone: data.phone, line1: data.line1, line2: data.line2, state: data.state, city: data.city,  zip: data.zip },
           paymentMethod,
           deliveryDate: new Date(data.deliveryDate).toISOString(),
           userEmail: data.email || undefined,
@@ -401,14 +436,32 @@ export default function CheckoutPage() {
                     <Input {...register("line2")} placeholder="Near..." className="h-10 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1.5">City</label>
-                    <Input {...register("city")} placeholder="City" className="h-10 text-sm" />
-                    {errors.city && <p className="text-xs text-red-600 mt-1">{errors.city.message}</p>}
+                    <label className="block text-xs font-medium text-gray-600 mb-1.5">State</label>
+                    <Select value={watchState} onValueChange={(value) => setValue("state", value)}>
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Select State" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {indianStates.map((state) => (
+                          <SelectItem key={state.name} value={state.name}>{state.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.state && <p className="text-xs text-red-600 mt-1">{errors.state.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1.5">State</label>
-                    <Input {...register("state")} placeholder="State" className="h-10 text-sm" />
-                    {errors.state && <p className="text-xs text-red-600 mt-1">{errors.state.message}</p>}
+                    <label className="block text-xs font-medium text-gray-600 mb-1.5">City</label>
+                    <Select value={watchCity} onValueChange={(value) => setValue("city", value)} disabled={!watchState}>
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Select City" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableCities.map((city) => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.city && <p className="text-xs text-red-600 mt-1">{errors.city.message}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">PIN Code</label>
@@ -502,6 +555,12 @@ export default function CheckoutPage() {
                     <span className="text-gray-600">Subtotal</span>
                     <span className="text-gray-900">₹{subtotal.toLocaleString()}</span>
                   </div>
+                  {appliedPromo && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Discount ({appliedPromo.code})</span>
+                      <span className="text-green-600 font-medium">-₹{discount.toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
                     <span className="text-green-600 font-medium">FREE</span>
@@ -516,10 +575,13 @@ export default function CheckoutPage() {
                 <div className="pt-4">
                   <h3 className="text-xs font-semibold text-gray-900 mb-3 uppercase tracking-wide">Payment</h3>
                   <div className="space-y-2">
-                    <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${paymentMethod === 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                      <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="w-4 h-4 text-blue-600" />
+                    <label className={`flex items-center gap-3 p-3 border rounded-lg transition ${codAvailable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'} ${paymentMethod === 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => codAvailable && setPaymentMethod('cod')} disabled={!codAvailable} className="w-4 h-4 text-blue-600" />
                       <Banknote className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-900">Cash on Delivery</span>
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-gray-900">Cash on Delivery</span>
+                        {!codAvailable && <p className="text-xs text-red-600 mt-0.5">Only available in New Delhi</p>}
+                      </div>
                     </label>
                     <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${paymentMethod !== 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
                       <input type="radio" name="paymentMethod" value="razorpay" checked={paymentMethod === 'razorpay'} onChange={() => setPaymentMethod('razorpay')} className="w-4 h-4 text-blue-600" />
