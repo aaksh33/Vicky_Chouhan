@@ -6,7 +6,7 @@ export default function AlwaysWithYou() {
     <section className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] bg-[#0c1a2a] overflow-hidden flex items-center">
       <div className="absolute inset-0">
         <Image
-          src="/home-new-bg-free-img.png"
+          src="/home-new-bg-free-img.jpg"
           alt="Laptop Background"
           fill
           className="object-cover opacity-100"
