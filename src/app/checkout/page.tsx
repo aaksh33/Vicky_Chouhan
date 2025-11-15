@@ -580,7 +580,7 @@ export default function CheckoutPage() {
                       <Banknote className="w-5 h-5 text-gray-600" />
                       <div className="flex-1">
                         <span className="text-sm font-medium text-gray-900">Cash on Delivery</span>
-                        {!codAvailable && <p className="text-xs text-red-600 mt-0.5">Only available in New Delhi</p>}
+                        {!codAvailable && <p className="text-xs text-red-600 mt-0.5">Only available in Delhi NCR</p>}
                       </div>
                     </label>
                     <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${paymentMethod !== 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>

@@ -32,5 +32,6 @@ export function getCitiesByState(stateName: string): string[] {
 }
 
 export function isCODAvailable(state: string, city: string): boolean {
-  return state === "New Delhi"
+  const codCities = ["Central Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi", "North East Delhi", "North West Delhi", "South East Delhi", "South West Delhi", "Faridabad", "Gurgaon", "Ghaziabad", "Noida"]
+  return state === "New Delhi" || (state === "Haryana" && ["Faridabad", "Gurgaon"].includes(city)) || (state === "Uttar Pradesh" && ["Ghaziabad", "Noida"].includes(city))
 }
