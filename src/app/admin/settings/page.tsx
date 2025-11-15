@@ -75,6 +75,10 @@ export default function SettingsPage() {
     facebook: ''
   })
 
+  const [youtubeVideos, setYoutubeVideos] = useState<{ id: number; url: string; saved: boolean }[]>([])
+  const [editingVideo, setEditingVideo] = useState<number | null>(null)
+  const [videoLoading, setVideoLoading] = useState<Record<number, boolean>>({})
+
   // Custom category sections
   const [customCategories, setCustomCategories] = useState<{ name: string; slug: string; image: string; heading: string }[]>([])
   const [customFiles, setCustomFiles] = useState<(File | null)[]>([])
@@ -170,6 +174,7 @@ export default function SettingsPage() {
       }
       if ((data as any).about) setAboutSettings((data as any).about)
       if ((data as any).contact) setContactSettings((data as any).contact)
+      if ((data as any).youtubeVideos) setYoutubeVideos((data as any).youtubeVideos.map((v: any) => ({ ...v, saved: true })))
       if ((data as any).sectionProducts) {
         const { newArrivals, trendingNow, ...rest } = (data as any).sectionProducts
         setSectionProducts(rest)
@@ -232,7 +237,11 @@ export default function SettingsPage() {
                 </div>
               ))}
 
-              <LoadingButton onClick={() => handleSave('Section products', 'sectionProducts', sectionProducts)} loading={isLoading} className="flex items-center gap-2">
+              <LoadingButton onClick={async () => {
+                setSectionSaveLoading(true)
+                await handleSave('Section products', 'sectionProducts', sectionProducts)
+                setSectionSaveLoading(false)
+              }} loading={sectionSaveLoading} className="flex items-center gap-2">
                 Save Section
               </LoadingButton>
             </div>
@@ -555,56 +564,149 @@ export default function SettingsPage() {
 
       case 'contact':
         return (
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Mail className="h-6 w-6 text-purple-600" />
-              <Link target='blank' href='/contact' className="text-xl font-semibold text-gray-900 hover:underline-offset-2">Contact Page Settings</Link>
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <Input type="email" value={contactSettings.email} onChange={(e) => setContactSettings({ ...contactSettings, email: e.target.value })} placeholder="contact@example.com" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <Input value={contactSettings.phone} onChange={(e) => setContactSettings({ ...contactSettings, phone: e.target.value })} placeholder="+91 9876543210" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                  <Input value={contactSettings.address} onChange={(e) => setContactSettings({ ...contactSettings, address: e.target.value })} placeholder="Store address" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Business Hours</label>
-                  <Input value={contactSettings.hours} onChange={(e) => setContactSettings({ ...contactSettings, hours: e.target.value })} placeholder="Mon-Fri: 9AM-6PM" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">YouTube URL</label>
-                  <Input value={contactSettings.youtube || ''} onChange={(e) => setContactSettings({ ...contactSettings, youtube: e.target.value })} placeholder="https://youtube.com/@channel" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Twitter URL</label>
-                  <Input value={contactSettings.twitter || ''} onChange={(e) => setContactSettings({ ...contactSettings, twitter: e.target.value })} placeholder="https://twitter.com/username" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
-                  <Input value={contactSettings.instagram || ''} onChange={(e) => setContactSettings({ ...contactSettings, instagram: e.target.value })} placeholder="https://instagram.com/username" />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
-                  <Input value={contactSettings.facebook || ''} onChange={(e) => setContactSettings({ ...contactSettings, facebook: e.target.value })} placeholder="https://facebook.com/page" />
-                </div>
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Mail className="h-6 w-6 text-purple-600" />
+                <Link target='blank' href='/contact' className="text-xl font-semibold text-gray-900 hover:underline-offset-2">Contact Page Settings</Link>
               </div>
 
-              <LoadingButton onClick={() => handleSave('Contact page', 'contact', contactSettings)} loading={isLoading} className="flex items-center gap-2">Save Contact</LoadingButton>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <Input type="email" value={contactSettings.email} onChange={(e) => setContactSettings({ ...contactSettings, email: e.target.value })} placeholder="contact@example.com" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <Input value={contactSettings.phone} onChange={(e) => setContactSettings({ ...contactSettings, phone: e.target.value })} placeholder="+91 9876543210" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                    <Input value={contactSettings.address} onChange={(e) => setContactSettings({ ...contactSettings, address: e.target.value })} placeholder="Store address" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Hours</label>
+                    <Input value={contactSettings.hours} onChange={(e) => setContactSettings({ ...contactSettings, hours: e.target.value })} placeholder="Mon-Fri: 9AM-6PM" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">YouTube URL</label>
+                    <Input value={contactSettings.youtube || ''} onChange={(e) => setContactSettings({ ...contactSettings, youtube: e.target.value })} placeholder="https://youtube.com/@channel" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Twitter URL</label>
+                    <Input value={contactSettings.twitter || ''} onChange={(e) => setContactSettings({ ...contactSettings, twitter: e.target.value })} placeholder="https://twitter.com/username" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
+                    <Input value={contactSettings.instagram || ''} onChange={(e) => setContactSettings({ ...contactSettings, instagram: e.target.value })} placeholder="https://instagram.com/username" />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
+                    <Input value={contactSettings.facebook || ''} onChange={(e) => setContactSettings({ ...contactSettings, facebook: e.target.value })} placeholder="https://facebook.com/page" />
+                  </div>
+                </div>
+
+                <LoadingButton onClick={async () => {
+                  setContactLoading(true)
+                  await handleSave('Contact page', 'contact', contactSettings)
+                  setContactLoading(false)
+                }} loading={contactLoading} className="flex items-center gap-2">Save Contact</LoadingButton>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">YouTube Video Links</h3>
+                <Button onClick={() => {
+                  const newVideo = { id: Date.now(), url: '', saved: false }
+                  setYoutubeVideos([...youtubeVideos, newVideo])
+                  setEditingVideo(newVideo.id)
+                }}>+ Add Video</Button>
+              </div>
+
+              <div className="space-y-3">
+                {youtubeVideos.map((video, idx) => (
+                  <div key={video.id} className="flex items-center gap-2 rounded-lg">
+                    {video.saved && editingVideo !== video.id ? (
+                      <>
+                        <Input value={video.url} disabled className="flex-1" />
+                        <Button size="sm" onClick={() => setEditingVideo(video.id)}>Edit</Button>
+                      </>
+                    ) : (
+                      <>
+                        <Input 
+                          value={video.url} 
+                          onChange={(e) => {
+                            const updated = [...youtubeVideos]
+                            updated[idx].url = e.target.value
+                            setYoutubeVideos(updated)
+                          }}
+                          placeholder="https://youtube.com/watch?v=..."
+                          className="flex-1"
+                        />
+                        <LoadingButton 
+                          size="sm"
+                          loading={videoLoading[video.id] || false}
+                          disabled={!video.url.trim()}
+                          onClick={async () => {
+                            if (!video.url.trim()) {
+                              toast.error('Please enter a video URL')
+                              return
+                            }
+                            const isDuplicate = youtubeVideos.some((v, i) => i !== idx && v.url === video.url)
+                            if (isDuplicate) {
+                              toast.error('This video link already exists')
+                              return
+                            }
+                            setVideoLoading(prev => ({ ...prev, [video.id]: true }))
+                            try {
+                              const updated = [...youtubeVideos]
+                              updated[idx].saved = true
+                              const videosToSave = updated.map(({ saved, ...rest }) => rest)
+                              await handleSave('YouTube videos', 'youtubeVideos', videosToSave)
+                              setYoutubeVideos(updated)
+                              setEditingVideo(null)
+                            } finally {
+                              setVideoLoading(prev => ({ ...prev, [video.id]: false }))
+                            }
+                          }}
+                        >
+                          Save
+                        </LoadingButton>
+                      </>
+                    )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">Delete</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Video Link?</AlertDialogTitle>
+                          <AlertDialogDescription>This will permanently delete this video link.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <Button variant="destructive" onClick={async () => {
+                            const updated = youtubeVideos.filter((_, i) => i !== idx)
+                            const videosToSave = updated.map(({ saved, ...rest }) => rest)
+                            await handleSave('YouTube videos', 'youtubeVideos', videosToSave)
+                            setYoutubeVideos(updated)
+                            toast.success('Video deleted')
+                          }}>Delete</Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )
