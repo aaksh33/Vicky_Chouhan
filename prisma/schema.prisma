@@ -12,6 +12,7 @@ model User {
   email     String
   name      String?
   phone     String?
+  address   UserAddress?
   image     String?
   role      String   @default("user")
   provider  String
@@ -86,6 +87,15 @@ type OrderItem {
   color     String?
   selectedRam String?
   selectedStorage String?
+  warranty    Json?
+}
+
+type UserAddress {
+  line1    String
+  line2    String?
+  city     String
+  state    String
+  zip      String
 }
 
 type Address {

@@ -872,7 +872,7 @@ export default function AdminOrdersPage() {
                             )}
                             {(item as any).warranty && (
                               <p className="text-sm text-gray-600">
-                                Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})
+                                Ext Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})
                               </p>
                             )}
                             <p className="text-sm text-gray-600">
@@ -1111,37 +1111,44 @@ export default function AdminOrdersPage() {
                             Download
                             </span>
                           </button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <button
-                                disabled={removingBill}
-                                className="border border-red-600 bg-red-100 text-red-700 px-2 py-1 hover:bg-red-200 rounded text-xs cursor-pointer flex items-center gap-1 disabled:opacity-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                <span className="hidden sm:block">
-                                {removingBill ? "Removing..." : "Remove"}
-                                </span>
-                              </button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Remove Bill</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to remove the bill for order #{selectedOrder.id}? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={handleBillRemove}
-                                  className="bg-red-600 hover:bg-red-700"
-                                ><span>
-                                  Remove Bill
-                                </span>
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          {(() => {
+                            const billUploadTime = new Date(selectedOrder.updatedAt).getTime();
+                            const oneDayInMs = 24 * 60 * 60 * 1000;
+                            const canRemove = Date.now() - billUploadTime < oneDayInMs;
+                            return canRemove ? (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <button
+                                    disabled={removingBill}
+                                    className="border border-red-600 bg-red-100 text-red-700 px-2 py-1 hover:bg-red-200 rounded text-xs cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="hidden sm:block">
+                                    {removingBill ? "Removing..." : "Remove"}
+                                    </span>
+                                  </button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Remove Bill</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to remove the bill for order #{selectedOrder.id}? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={handleBillRemove}
+                                      className="bg-red-600 hover:bg-red-700"
+                                    ><span>
+                                      Remove Bill
+                                    </span>
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            ) : null;
+                          })()}
                         </div>
                       </div>
                     ) : (

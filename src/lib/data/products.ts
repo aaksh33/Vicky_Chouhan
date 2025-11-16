@@ -21,6 +21,8 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   "Monitors": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop"
 }
 
+// TESTING/MOCK DATA - Comment out for production
+/* 
 export const products: Product[] = [
   {
     id: "prod_001",
@@ -124,6 +126,9 @@ export const products: Product[] = [
     updatedAt: new Date().toISOString(),
   }
 ]
+*/
+
+export const products: Product[] = []
 
 export function getProductBySlug(slug: string) {
   return products.find((p) => p.slug === slug)

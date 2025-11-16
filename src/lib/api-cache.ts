@@ -1,4 +1,5 @@
-// Simple in-memory cache for API responses
+// TESTING: Simple in-memory cache for API responses
+// Note: This cache is cleared on server restart. Use Redis or similar for production.
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>()
 
 export function getCachedData<T>(key: string): T | null {

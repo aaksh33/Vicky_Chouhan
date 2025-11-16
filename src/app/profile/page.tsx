@@ -8,20 +8,50 @@ import { User, Package, MapPin, Phone, Mail, Calendar, Edit2, X, Loader2, LogOut
 import { toast } from 'sonner'
 import ProfileSkeleton from '@/components/skeletons/ProfileSkeleton'
 import Link from 'next/link'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { indianStates, getCitiesByState } from '@/lib/indian-locations'
+import LoadingButton from '@/components/ui/loading-button'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+
+const addressSchema = z.object({
+  line1: z.string().min(5, 'Address is required'),
+  line2: z.string().optional(),
+  state: z.string().min(2, 'State is required'),
+  city: z.string().min(2, 'City is required'),
+  zip: z.string().min(6, 'Valid PIN code required')
+})
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState('')
+  const [addressData, setAddressData] = useState<any>(null)
   const [editingPhone, setEditingPhone] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
   const [orders, setOrders] = useState<any[]>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [loadingProfile, setLoadingProfile] = useState(false)
+  const [savingAddress, setSavingAddress] = useState(false)
+  const [savingPhone, setSavingPhone] = useState(false)
   const [memberSince, setMemberSince] = useState<Date | null>(null)
+  const [addressForm, setAddressForm] = useState({
+    line1: '',
+    line2: '',
+    state: '',
+    city: '',
+    zip: ''
+  })
+  const [availableCities, setAvailableCities] = useState<string[]>([])
 
   const savePhone = async () => {
+    if (!phone || phone.length < 10) {
+      toast.error('Phone must be at least 10 digits')
+      return
+    }
+    setSavingPhone(true)
     try {
       const response = await fetch('/api/profile', {
         method: 'PATCH',
@@ -33,24 +63,40 @@ export default function ProfilePage() {
         setEditingPhone(false)
         toast.success('Phone number updated successfully')
       } else {
-        console.error('API Error:', data)
         toast.error(data.error || 'Failed to update phone number')
       }
     } catch (error) {
-      console.error('Network Error:', error)
       toast.error('Failed to update phone number')
+    } finally {
+      setSavingPhone(false)
     }
   }
 
   const saveAddress = async () => {
+    const validation = addressSchema.safeParse(addressForm)
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || 'Please fill all required fields')
+      return
+    }
+    if (!phone) {
+      toast.error('Please add phone number first')
+      return
+    }
+    setSavingAddress(true)
     try {
+      const fullAddress = {
+        ...addressForm,
+        fullName: session?.user?.name || '',
+        phone: phone
+      }
       const response = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address })
+        body: JSON.stringify({ address: fullAddress })
       })
       const data = await response.json()
       if (response.ok) {
+        setAddressData(fullAddress)
         setEditingAddress(false)
         toast.success('Address updated successfully')
       } else {
@@ -60,8 +106,20 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Network Error:', error)
       toast.error('Failed to update address')
+    } finally {
+      setSavingAddress(false)
     }
   }
+
+  useEffect(() => {
+    if (addressForm.state) {
+      const cities = getCitiesByState(addressForm.state)
+      setAvailableCities(cities)
+      if (!cities.includes(addressForm.city)) {
+        setAddressForm(prev => ({ ...prev, city: '' }))
+      }
+    }
+  }, [addressForm.state, addressForm.city])
 
   useEffect(() => {
     if (status === 'loading') return
@@ -77,7 +135,10 @@ export default function ProfilePage() {
         if (response.ok) {
           const data = await response.json()
           setPhone(data.phone || '')
-          setAddress(data.address || '')
+          setAddressData(data.address || null)
+          if (data.address) {
+            setAddressForm(data.address)
+          }
           setMemberSince(data.createdAt ? new Date(data.createdAt) : null)
         }
       } catch (error) {
@@ -138,23 +199,28 @@ export default function ProfilePage() {
       editable: true as const,
       editing: editingPhone,
       setEditing: setEditingPhone,
-      inputValue: phone,
-      setInputValue: (value: string) => setPhone(value.replace(/\D/g, '')),
       save: savePhone,
-      type: 'tel' as const,
-      placeholder: 'Enter phone number'
+      type: 'phone' as const
     },
     {
       label: 'Address',
-      value: loadingProfile ? <span className="text-gray-500">loading...</span> : (address || 'Not provided'),
+      value: loadingProfile ? <span className="text-gray-500">loading...</span> : (addressData ? `${addressData.line1}${addressData.line2 ? ', ' + addressData.line2 : ''}, ${addressData.city}, ${addressData.state} - ${addressData.zip}` : 'Not provided'),
       editable: true as const,
       editing: editingAddress,
-      setEditing: setEditingAddress,
-      inputValue: address,
-      setInputValue: setAddress,
+      setEditing: (val: boolean) => {
+        setEditingAddress(val)
+        if (val && addressData) {
+          setAddressForm({
+            line1: addressData.line1,
+            line2: addressData.line2 || '',
+            state: addressData.state,
+            city: addressData.city,
+            zip: addressData.zip
+          })
+        }
+      },
       save: saveAddress,
-      type: 'textarea' as const,
-      placeholder: 'Enter your address'
+      type: 'address' as const
     }
   ]
 
@@ -215,50 +281,18 @@ export default function ProfilePage() {
             <div className="space-y-3 sm:space-y-4">
               {profileFields.map((field) => (
                 <div key={field.label}>
-                  <label className="text-xs sm:text-sm font-medium text-gray-700">{field.label}</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs sm:text-sm font-medium text-gray-700">{field.label}</label>
+                    {field.editable && !loadingProfile && (
+                      <Button variant="secondary" size="sm" onClick={() => field.setEditing(true)} className="text-blue-600 hover:text-blue-700 border bg-white hover:cursor-pointer">
+                        Edit
+                      </Button>
+                    )}
+                  </div>
                   {!field.editable ? (
                     <div className="text-xs sm:text-base text-gray-900 mt-1">{field.value}</div>
                   ) : (
-                    <div className="flex items-center gap-2 mt-1">
-                      {field.editing ? (
-                        <>
-                          {field.type === 'textarea' ? (
-                            <textarea
-                              value={field.inputValue}
-                              onChange={(e) => field.setInputValue(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), field.save())}
-                              className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm resize-none"
-                              placeholder={field.placeholder}
-                              rows={2}
-                            />
-                          ) : (
-                            <input
-                              type={field.type}
-                              value={field.inputValue}
-                              onChange={(e) => field.setInputValue(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && field.save()}
-                              className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm"
-                              placeholder={field.placeholder}
-                            />
-                          )}
-                          <button onClick={field.save} className="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-md hover:bg-blue-700">
-                            Save
-                          </button>
-                          <button onClick={() => field.setEditing(false)} className="text-gray-500 hover:text-gray-700">
-                            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <p className="text-xs sm:text-base text-gray-900 flex-1">{field.value}</p>
-                          {field.editable && !loadingProfile && (
-                            <button onClick={() => field.setEditing(true)} className="text-blue-600 hover:text-blue-700">
-                              <Edit2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            </button>
-                          )}
-                        </>
-                      )}
-                    </div>
+                    <p className="text-xs sm:text-base text-gray-900 mt-1 break-all">{field.value}</p>
                   )}
                 </div>
               ))}
@@ -273,8 +307,21 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-2 sm:space-y-3">
               {loadingOrders ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-2 border-blue-600 border-t-transparent mx-auto"></div>
+                <div className="space-y-2 sm:space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="border border-gray-200 rounded-lg p-2.5 sm:p-4 animate-pulse">
+                      <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                        <div className="flex-1">
+                          <div className="h-3 sm:h-4 bg-gray-200 rounded w-24 sm:w-32 mb-1.5 sm:mb-2"></div>
+                          <div className="h-2 sm:h-3 bg-gray-200 rounded w-20 sm:w-28"></div>
+                        </div>
+                        <div className="text-right ml-2">
+                          <div className="h-3 sm:h-4 bg-gray-200 rounded w-12 sm:w-16 mb-1.5 sm:mb-2 ml-auto"></div>
+                          <div className="h-4 sm:h-5 bg-gray-200 rounded w-16 sm:w-20 ml-auto"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : orders.length > 0 ? (
                 orders.map((order) => (
@@ -314,6 +361,100 @@ export default function ProfilePage() {
 
 
       </div>
+
+      {/* Address Edit Dialog */}
+      <Dialog open={editingAddress} onOpenChange={setEditingAddress}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Address</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Street Address</label>
+              <Input value={addressForm.line1} onChange={(e) => setAddressForm(prev => ({ ...prev, line1: e.target.value }))} placeholder="House no, Building name" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Landmark (Optional)</label>
+              <Input value={addressForm.line2} onChange={(e) => setAddressForm(prev => ({ ...prev, line2: e.target.value }))} placeholder="Near..." />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">State</label>
+                <Select value={addressForm.state} onValueChange={(value) => setAddressForm(prev => ({ ...prev, state: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select State" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {indianStates.map((state) => (
+                      <SelectItem key={state.name} value={state.name}>{state.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">City</label>
+                <Select value={addressForm.city} onValueChange={(value) => setAddressForm(prev => ({ ...prev, city: value }))} disabled={!addressForm.state}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select City" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableCities.map((city) => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">PIN Code</label>
+              <Input 
+                value={addressForm.zip} 
+                onChange={(e) => setAddressForm(prev => ({ ...prev, zip: e.target.value.replace(/\D/g, '') }))} 
+                onKeyDown={(e) => !/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.preventDefault()}
+                placeholder="123456" 
+                maxLength={6} 
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+               <button onClick={() => setEditingAddress(false)} disabled={savingAddress} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50">
+                Cancel
+              </button>
+              <LoadingButton onClick={saveAddress} loading={savingAddress} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                Save Address
+              </LoadingButton>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Phone Edit Dialog */}
+      <Dialog open={editingPhone} onOpenChange={setEditingPhone}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Phone Number</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+              <Input 
+                value={phone} 
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} 
+                onKeyDown={(e) => !/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.preventDefault()}
+                placeholder="+91 99XXXXXXXX" 
+                maxLength={10} 
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+              <button onClick={() => setEditingPhone(false)} disabled={savingPhone} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50">
+                Cancel
+              </button>
+              <LoadingButton onClick={savePhone} loading={savingPhone} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                Save Phone
+              </LoadingButton>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }  

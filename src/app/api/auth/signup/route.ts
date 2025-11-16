@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       expires
     })
 
-    console.log('✅ Pending user stored:', email)
+    // console.log('✅ Pending user stored:', email) // TESTING
 
     try {
       await sendEmail(
@@ -70,14 +70,14 @@ export async function POST(req: Request) {
         'Verify your email - Future Of Gadgets',
         getVerificationEmailTemplate(code, email)
       )
-      console.log('✅ Email sent to:', email)
+      // console.log('✅ Email sent to:', email) // TESTING
     } catch (err) {
-      console.log('⚠️ Email send failed:', err)
+      // console.log('⚠️ Email send failed:', err) // Keep for error tracking
     }
 
     return NextResponse.json({ success: true, message: 'Verification code sent to your email!' })
   } catch (error: any) {
-    console.error('❌ Signup error:', error.message || error)
+    // console.error('❌ Signup error:', error.message || error)
     return NextResponse.json({ error: error.message || 'Failed to create account' }, { status: 500 })
   }
 }

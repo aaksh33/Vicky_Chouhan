@@ -1,7 +1,9 @@
-// data.ts
+// TESTING/MOCK DATA - Comment out for production
+// This file contains mock data for testing purposes only
 import type { Product, Order, User } from "./types"
 
 // --------------------- PRODUCTS ---------------------
+/* 
 export const products: Product[] = [
   {
     id: "p1",
@@ -49,8 +51,12 @@ export const products: Product[] = [
     updatedAt: new Date().toISOString(),
   },
 ]
+*/
+
+export const products: Product[] = []
 
 // --------------------- USERS ---------------------
+/* 
 export const users: User[] = [
   {
     id: "u1",
@@ -77,6 +83,9 @@ export const users: User[] = [
     lastActiveAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
   },
 ]
+*/
+
+export const users: User[] = []
 
 // --------------------- ORDERS ---------------------
 export const orders: Order[] = []

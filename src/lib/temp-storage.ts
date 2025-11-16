@@ -1,3 +1,6 @@
+// TESTING/TEMPORARY STORAGE - For development only
+// This should be replaced with proper database storage in production
+
 interface TempUser {
   email: string
   password: string

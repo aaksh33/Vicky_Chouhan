@@ -277,9 +277,16 @@ export default function CartView() {
                           <Link href={`/products/${i.slug}`}>
                             <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-blue-600">{i.name}</h3>
                           </Link>
-                          {i.color && (
+                           {(i as any).color && (
+                              <p className="text-xs text-gray-600 flex items-center gap-1">
+                                Color:
+                                <span className="inline-block w-3 h-3 rounded-full border" style={{ backgroundColor: (i as any).color.toLowerCase() }}></span>
+                                 {(i as any).color}
+                              </p>
+                            )}
+                          {/* {i.color && (
                             <p className="text-xs text-gray-600 mb-1">Color: {i.color}</p>
-                          )}
+                          )} */}
                           {i.selectedRam && (() => {
                             const ramOption = product?.ramOptions?.find((r: any) => r.size === i.selectedRam)
                             const ramPrice = ramOption?.price || 0

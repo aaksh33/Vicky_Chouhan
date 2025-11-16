@@ -55,7 +55,7 @@ export async function GET() {
       updatedAt: typeof order.updatedAt === 'string' ? order.updatedAt : order.updatedAt.$date
     }))
     
-    console.log('Found orders:', transformedOrders.length, 'for user:', user.id)
+    // console.log('Found orders:', transformedOrders.length, 'for user:', user.id) // TESTING
     return NextResponse.json({ orders: transformedOrders })
   } catch (error) {
     console.error('Orders fetch error:', error)
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       })
     }
     
-    console.log('Creating order for user:', user.id)
+    // console.log('Creating order for user:', user.id) // TESTING
     
     const body = await request.json()
     const { items, address, paymentMethod, deliveryDate, razorpayPaymentId, razorpayOrderId } = body
@@ -125,15 +125,32 @@ export async function POST(request: Request) {
       const product = await prisma.product.findUnique({ where: { id: it.productId } })
       if (!product) return NextResponse.json({ error: `Product not found` }, { status: 400 })
       
+      let itemPrice = product.price
+      
+      if (it.selectedRam && product.ramOptions) {
+        const ramOption = (product.ramOptions as any[]).find((r: any) => r.size === it.selectedRam)
+        if (ramOption?.price) itemPrice += ramOption.price
+      }
+      
+      if (it.selectedStorage && product.storageOptions) {
+        const storageOption = (product.storageOptions as any[]).find((s: any) => s.size === it.selectedStorage)
+        if (storageOption?.price) itemPrice += storageOption.price
+      }
+      
+      if (it.warranty?.price) {
+        itemPrice += it.warranty.price
+      }
+      
       const orderItem: any = {
         productId: product.id,
         name: product.name,
-        price: product.price,
+        price: itemPrice,
         qty: Math.max(1, Math.floor(it.qty || 1))
       }
       if (it.color) orderItem.color = it.color
       if (it.selectedRam) orderItem.selectedRam = it.selectedRam
       if (it.selectedStorage) orderItem.selectedStorage = it.selectedStorage
+      if (it.warranty) orderItem.warranty = it.warranty
       orderItems.push(orderItem)
       total += orderItem.price * orderItem.qty
       
@@ -198,7 +215,7 @@ export async function POST(request: Request) {
     // Send emails asynchronously without blocking
     setImmediate(async () => {
       try {
-        console.log('Order items for email:', JSON.stringify(orderItems, null, 2))
+        // console.log('Order items for email:', JSON.stringify(orderItems, null, 2)) // TESTING
         
         const adminEmail = process.env.PROTECTED_ADMIN_EMAIL_ID || process.env.NEXT_PUBLIC_PROTECTED_ADMIN_EMAIL_ID
         if (adminEmail) {

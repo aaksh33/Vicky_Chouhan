@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     })
 
     pendingUsers.delete(email)
-    console.log('✅ User created and verified:', newUser.email)
+    // console.log('✅ User created and verified:', newUser.email) // TESTING
 
     return NextResponse.json({ success: true, user: { email: newUser.email, name: newUser.name } })
   } catch (error) {

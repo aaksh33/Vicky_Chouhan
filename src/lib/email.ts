@@ -18,12 +18,13 @@ export function generateCodeExpiry(): Date {
 }
 
 export async function sendEmail(to: string, subject: string, html: string) {
+  // TESTING: Log email details when SMTP is not configured
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('📧 Email would be sent to:', to)
-    console.log('📧 Subject:', subject)
+    // console.log('📧 Email would be sent to:', to)
+    // console.log('📧 Subject:', subject)
     const codeMatch = html.match(/<div[^>]*>\s*(\d{6})\s*<\/div>/)
     if (codeMatch) {
-      console.log('📧 Verification Code:', codeMatch[1])
+      // console.log('📧 Verification Code:', codeMatch[1])
     }
     return true
   }
@@ -46,13 +47,14 @@ export async function sendEmail(to: string, subject: string, html: string) {
       html
     })
 
-    console.log('✅ Email sent to:', to)
+    // console.log('✅ Email sent to:', to) // TESTING
     return true
   } catch (error: any) {
-    console.log('⚠️ Email failed, logging to console instead')
+    // TESTING: Fallback logging when email fails
+    // console.log('⚠️ Email failed, logging to console instead')
     const codeMatch = html.match(/<div[^>]*>\s*(\d{6})\s*<\/div>/)
     if (codeMatch) {
-      console.log('📧 Verification Code:', codeMatch[1])
+      // console.log('📧 Verification Code:', codeMatch[1])
     }
     return true
   }

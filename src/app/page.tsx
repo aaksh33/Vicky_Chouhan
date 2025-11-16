@@ -19,6 +19,8 @@ import AlwaysWithYou from "@/components/home/AlwaysWithYou";
 import YoutubeSection from "@/components/home/YoutubeSection";
 
 export default function HomePage() {
+  // TESTING: Artificial loading delay - Remove for production
+  /* 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,14 +29,9 @@ export default function HomePage() {
   }, []);
 
   if (loading) {
-    return (
-      <Loading/>
-      // <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 gap-4">
-      //   <img src="/logo.png" alt="Logo" className="w-20 h-20 animate-pulse rounded-full" />
-      //   <p className="text-xl font-semibold text-gray-700 animate-pulse">Future of Gadgets is loading...</p>
-      // </div>
-    );
+    return <Loading/>;
   }
+  */
 
 
   const extraData = [
@@ -82,30 +79,33 @@ export default function HomePage() {
         <YoutubeSection />
         <CustomerReview/>
       </div>
-          {/* <section className="py-6 sm:py-10">
-      <div className="mx-auto max-w-[1400px] px-3 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {extraData?.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center sm:text-left"
-            >
-              <div className="text-blue-600 dark:text-blue-400 flex-shrink-0">
-                {item?.icon}
+      {/* TESTING: Extra features section - Commented out */}
+      {/* 
+      <section className="py-6 sm:py-10">
+        <div className="mx-auto max-w-[1400px] px-3 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {extraData?.map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center sm:text-left"
+              >
+                <div className="text-blue-600 dark:text-blue-400 flex-shrink-0">
+                  {item?.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-base">
+                    {item?.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
+                    {item?.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white text-xs sm:text-base">
-                  {item?.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-[10px] sm:text-xs mt-0.5 sm:mt-1">
-                  {item?.description}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        </div>
-        </section>  */}
+      </section>
+      */}
       <Footer />
     </main>
   );

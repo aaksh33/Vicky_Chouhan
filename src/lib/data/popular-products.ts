@@ -1,5 +1,7 @@
 import type { Product } from "@/lib/types"
 
+// TESTING/MOCK DATA - Comment out for production
+/* 
 export const popularProducts: Product[] = [
   {
     id: "pop_001",
@@ -78,3 +80,6 @@ export const popularProducts: Product[] = [
     updatedAt: new Date().toISOString(),
   }
 ]
+*/
+
+export const popularProducts: Product[] = []

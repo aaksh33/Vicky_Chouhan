@@ -314,6 +314,14 @@ export default function OrdersPage() {
                                         <div className="flex-1 min-w-0">
                                           <Link href={`/products/${item.name?.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm sm:text-base font-medium text-gray-900 mb-1 line-clamp-2 hover:text-blue-600 block">{item.name}</Link>
                                           <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Qty: {item.qty}</p>
+                                           {(item as any).color && (
+                              <p className="text-sm text-gray-600 flex items-center gap-1">
+                                Color:
+                                <span className="inline-block w-3 h-3 rounded-full border" style={{ backgroundColor: (item as any).color.toLowerCase() }}></span>
+                                 {(item as any).color}
+                              </p>
+                            )}
+                                          {/* {(item as any).color && <p className="text-xs sm:text-sm text-gray-600 mb-1">Color: {(item as any).color}</p>} */}
                                           {(item as any).selectedRam && (() => {
                                             const prod = allProducts.find(p => p.id === item.productId)
                                             const ramOption = prod?.ramOptions?.find((r: any) => r.size === (item as any).selectedRam)
@@ -326,7 +334,7 @@ export default function OrdersPage() {
                                             const storagePrice = storageOption?.price || 0
                                             return <p className="text-xs sm:text-sm text-gray-600 mb-1">Storage: {(item as any).selectedStorage}{storagePrice !== 0 && ` (+₹${storagePrice.toLocaleString()})`}</p>
                                           })()}
-                                          {(item as any).warranty && <p className="text-xs sm:text-sm text-gray-600 mb-1">Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})</p>}
+                                          {(item as any).warranty && <p className="text-xs sm:text-sm text-gray-600 mb-1">Ext Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})</p>}
                                           <p className="text-base sm:text-lg font-semibold mb-2">₹{item.price.toLocaleString()}</p>
                                           {showReview && (
                                             <button

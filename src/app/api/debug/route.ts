@@ -1,7 +1,15 @@
+// DEBUG API ROUTE - FOR TESTING ONLY
+// This route should be disabled or removed in production
+
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: "Debug route disabled in production" }, { status: 403 })
+  }
+
   try {
     const users = await prisma.user.findMany()
     const orders = await prisma.order.findMany()

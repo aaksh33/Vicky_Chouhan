@@ -35,9 +35,9 @@ export async function POST(req: Request) {
         'Reset your password - Future Of Gadgets',
         getPasswordResetEmailTemplate(code, email)
       )
-      console.log('✅ Email sent to:', email)
+      // console.log('✅ Email sent to:', email) // TESTING
     } catch (err) {
-      console.log('⚠️ Email send failed:', err)
+      // console.log('⚠️ Email send failed:', err) // Keep for error tracking
     }
 
     return NextResponse.json({ success: true })

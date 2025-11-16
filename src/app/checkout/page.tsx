@@ -24,7 +24,7 @@ type CartItem = { productId: string; qty: number; title?: string; price?: number
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
   phone: z.string().min(10, "Phone must be at least 10 digits"),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  email: z.string().email("Invalid email").endsWith("@gmail.com", "Only Gmail addresses allowed").optional().or(z.literal("")),
   line1: z.string().min(5, "Address is required"),
   line2: z.string().optional(),
   state: z.string().min(2, "State is required"),
@@ -49,6 +49,8 @@ export default function CheckoutPage() {
   const [selectedCity, setSelectedCity] = useState("")
   const [availableCities, setAvailableCities] = useState<string[]>([])
   const [codAvailable, setCodAvailable] = useState(false)
+  const [savedAddress, setSavedAddress] = useState<any>(null)
+  const [useSavedAddress, setUseSavedAddress] = useState(false)
 
   const { register, handleSubmit, control, formState: { errors }, setValue, watch } = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
@@ -119,10 +121,10 @@ export default function CheckoutPage() {
       const raw = localStorage.getItem("v0_cart") || localStorage.getItem("cart")
       if (raw) {
         const parsed = JSON.parse(raw)
-        console.log('Raw cart data:', parsed)
+        // console.log('Raw cart data:', parsed) // TESTING
         const cartItems = Array.isArray(parsed) ? parsed : (parsed?.items || [])
         const normalized: CartItem[] = cartItems.map((it: any) => {
-          console.log('Cart item:', it)
+          // console.log('Cart item:', it) // TESTING
           return {
             productId: it.id || it.productId || it.slug,
             qty: Number(it.qty || it.quantity || 1),
@@ -135,7 +137,7 @@ export default function CheckoutPage() {
             warranty: it.warranty,
           }
         })
-        console.log('Normalized items:', normalized)
+        // console.log('Normalized items:', normalized) // TESTING
         setItems(normalized.filter((it) => !!it.productId && (it.price ?? 0) > 0))
       }
       
@@ -147,6 +149,19 @@ export default function CheckoutPage() {
       console.error('Cart parsing error:', err)
     }
   }, [])
+
+  useEffect(() => {
+    if (session) {
+      fetch('/api/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data.address) {
+            setSavedAddress({ ...data.address, phone: data.phone })
+          }
+        })
+        .catch(err => console.error('Failed to fetch profile:', err))
+    }
+  }, [session])
 
   useEffect(() => {
     if (items.length === 0) return
@@ -410,6 +425,53 @@ export default function CheckoutPage() {
               {/* Delivery Address */}
               <div className="bg-white border-b lg:border lg:rounded-lg px-4 py-4 sm:p-5">
                 <h2 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wide">Delivery Information</h2>
+                
+                {savedAddress && (
+                  <div className="mb-4 p-3 border rounded-lg">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={useSavedAddress} 
+                        onChange={(e) => {
+                          setUseSavedAddress(e.target.checked)
+                          if (e.target.checked) {
+                            setValue('fullName', session?.user?.name || '')
+                            setValue('email', session?.user?.email || '')
+                            setValue('phone', savedAddress.phone || '')
+                            setValue('line1', savedAddress.line1)
+                            setValue('line2', savedAddress.line2 || '')
+                            setValue('state', savedAddress.state)
+                            setSelectedState(savedAddress.state)
+                            setTimeout(() => {
+                              setValue('city', savedAddress.city)
+                              setSelectedCity(savedAddress.city)
+                            }, 0)
+                            setValue('zip', savedAddress.zip)
+                          } else {
+                            setValue('fullName', '')
+                            setValue('email', '')
+                            setValue('phone', '')
+                            setValue('line1', '')
+                            setValue('line2', '')
+                            setValue('state', '')
+                            setSelectedState('')
+                            setValue('city', '')
+                            setSelectedCity('')
+                            setValue('zip', '')
+                          }
+                        }}
+                        className="mt-1 w-4 h-4 text-blue-600"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">Use saved address</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {savedAddress.line1}{savedAddress.line2 ? ', ' + savedAddress.line2 : ''}, {savedAddress.city}, {savedAddress.state} - {savedAddress.zip}
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                )}
+                
                 <div className="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Full Name</label>
@@ -418,12 +480,22 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Phone</label>
-                    <Input {...register("phone")} type="number" placeholder="+91 99XXXXXXXX" className="h-10 text-sm" />
+                    <Input 
+                      {...register("phone", {
+                        onChange: (e) => {
+                          e.target.value = e.target.value.replace(/\D/g, '')
+                        }
+                      })} 
+                      onKeyDown={(e) => !/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.preventDefault()}
+                      placeholder="+91 99XXXXXXXX" 
+                      className="h-10 text-sm" 
+                      maxLength={10}
+                    />
                     {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone.message}</p>}
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Email (Optional)</label>
-                    <Input {...register("email")} type="email" placeholder="john@example.com" className="h-10 text-sm" />
+                    <Input {...register("email")} type="email" placeholder="john@gmail.com" className="h-10 text-sm" />
                     {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email.message}</p>}
                   </div>
                   <div className="sm:col-span-2">
@@ -465,7 +537,17 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">PIN Code</label>
-                    <Input {...register("zip")} placeholder="123456" className="h-10 text-sm" />
+                    <Input 
+                      {...register("zip", {
+                        onChange: (e) => {
+                          e.target.value = e.target.value.replace(/\D/g, '')
+                        }
+                      })} 
+                      onKeyDown={(e) => !/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.preventDefault()}
+                      placeholder="123456" 
+                      className="h-10 text-sm" 
+                      maxLength={6}
+                    />
                     {errors.zip && <p className="text-xs text-red-600 mt-1">{errors.zip.message}</p>}
                   </div>
                   <div>
@@ -538,7 +620,14 @@ export default function CheckoutPage() {
                           <Link href={`/products/${it.productId}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2">{it.title}</Link>
                           <div className="flex flex-col gap-1 mt-1">
                             <span className="text-xs text-gray-500">Qty: {it.qty}</span>
-                            {it.color && <span className="text-xs text-gray-500">Color: {it.color}</span>}
+                             {(it as any).color && (
+                              <p className="text-sm text-gray-600 flex items-center gap-1">
+                                Color:
+                                <span className="inline-block w-3 h-3 rounded-full border" style={{ backgroundColor: (it as any).color.toLowerCase() }}></span>
+                                 {(it as any).color}
+                              </p>
+                            )}
+                            {/* {it.color && <span className="text-xs text-gray-500">Color: {it.color}</span>} */}
                             {(it as any).selectedRam && <span className="text-xs text-gray-500">RAM: {(it as any).selectedRam}{ramPrice !== 0 && ` (+₹${ramPrice.toLocaleString()})`}</span>}
                             {(it as any).selectedStorage && <span className="text-xs text-gray-500">Storage: {(it as any).selectedStorage}{storagePrice !== 0 && ` (+₹${storagePrice.toLocaleString()})`}</span>}
                             {it.warranty && <span className="text-xs text-gray-600">Ext Warranty: {it.warranty.duration} (+₹{it.warranty.price.toLocaleString()})</span>}

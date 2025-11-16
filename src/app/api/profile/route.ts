@@ -3,9 +3,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-// Mock address storage since it's not in the User model
-const userAddresses = new Map<string, string>()
-
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
@@ -16,12 +13,12 @@ export async function GET() {
 
     const user = await prisma.user.findFirst({
       where: { email: session.user.email },
-      select: { phone: true, id: true, createdAt: true }
+      select: { phone: true, address: true, createdAt: true }
     })
     
     return NextResponse.json({
       phone: user?.phone || '',
-      address: userAddresses.get(session.user.email) || '',
+      address: user?.address || null,
       createdAt: user?.createdAt
     })
   } catch (error) {
@@ -41,27 +38,25 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json()
     const { phone, address } = body
 
-    let updatedPhone = ''
+    const user = await prisma.user.findFirst({ where: { email: session.user.email }, select: { id: true } })
+    if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     
-    if (phone !== undefined) {
-      const user = await prisma.user.findFirst({ where: { email: session.user.email }, select: { id: true } })
-      if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-      
-      const updatedUser = await prisma.user.update({
-        where: { id: user.id },
-        data: { phone },
-        select: { phone: true }
-      })
-      updatedPhone = updatedUser.phone || ''
-    }
-    
+    const updateData: any = {}
+    if (phone !== undefined) updateData.phone = phone
     if (address !== undefined) {
-      userAddresses.set(session.user.email, address)
+      const { line1, line2, city, state, zip } = address
+      updateData.address = { set: { line1, line2, city, state, zip } }
     }
+    
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: updateData,
+      select: { phone: true, address: true }
+    })
     
     return NextResponse.json({
-      phone: updatedPhone || (await prisma.user.findFirst({ where: { email: session.user.email }, select: { phone: true } }))?.phone || '',
-      address: userAddresses.get(session.user.email) || ''
+      phone: updatedUser.phone || '',
+      address: updatedUser.address || null
     })
   } catch (error) {
     console.error('Profile PATCH error:', error)
