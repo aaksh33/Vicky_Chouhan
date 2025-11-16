@@ -20,7 +20,7 @@ import { Search, User, Heart, ShoppingBag, X, Headset } from "lucide-react";
 import { getWishlist } from "@/lib/wishlist";
 import { AuthDialog } from "../auth-dialog";
 
-export function Navbar() {
+export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
   const { data: session, status } = useSession();
   const [count, setCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
@@ -117,7 +117,8 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur-lg transition-transform duration-300 ${
+        style={{ top: offsetTop }}
+        className={`fixed left-0 right-0 z-40 border-b bg-background/95 backdrop-blur-lg transition-all duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >

@@ -20,7 +20,6 @@ import YoutubeSection from "@/components/home/YoutubeSection";
 
 export default function HomePage() {
   // TESTING: Artificial loading delay - Remove for production
-  /* 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +30,7 @@ export default function HomePage() {
   if (loading) {
     return <Loading/>;
   }
-  */
+  
 
 
   const extraData = [

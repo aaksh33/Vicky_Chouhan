@@ -189,7 +189,7 @@ export default function ContactPage() {
                 <AccordionItem value="item-6">
                   <AccordionTrigger className="text-left">What payment methods do you accept?</AccordionTrigger>
                   <AccordionContent>
-                    We accept all major credit cards, PayPal, and Cash on Delivery (COD) for eligible orders.
+                    We accept all major credit cards, PayPal, and Cash on Delivery (COD) available in Delhi NCR.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
