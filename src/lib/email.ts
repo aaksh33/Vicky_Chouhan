@@ -61,39 +61,79 @@ export async function sendEmail(to: string, subject: string, html: string) {
 }
 
 export function getVerificationEmailTemplate(code: string, email: string): string {
-  return `
-    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
-      <h1 style="color: #2563eb; margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">Future Of Gadgets</h1>
-      <p style="color: #64748b; margin: 0 0 40px 0; font-size: 16px;">Verify your email address</p>
-      
-      <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 22px; font-weight: 600;">Welcome!</h2>
-      <p style="color: #475569; margin: 0 0 32px 0; font-size: 15px; line-height: 1.6;">Thank you for signing up. Enter this verification code to complete your registration:</p>
-      
-      <div style="text-align: center; margin: 32px 0;">
-        <span style="display: inline-block; background: #2563eb; color: white; padding: 16px 32px; font-size: 36px; font-weight: 700; letter-spacing: 10px; border-radius: 6px;">${code}</span>
-      </div>
-      
-      <p style="color: #94a3b8; font-size: 13px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">This code expires in 10 minutes. If you didn't create an account, ignore this email.</p>
-    </div>
-  `
+  return `<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; color: #000;">
+
+  <p style="font-size: 20px; font-weight: bold; margin: 0 0 20px 0;">
+    Verify your account
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
+    Please enter this code to verify your account and complete your sign-up to Future of Gadgets.
+  </p>
+
+  <p style="font-size: 16px; margin: 0 0 10px 0;">
+    <strong>Verification code:</strong>
+  </p>
+
+  <div style="font-size: 40px; font-weight: bold; letter-spacing: 8px; margin: 10px 0;">
+    ${code}
+  </div>
+
+  <p style="font-size: 14px; color: #555; margin: 0 0 30px 0;">
+    (This code is valid for 10 minutes)
+  </p>
+
+  <p style="font-size: 16px; margin: 0 0 20px 0;">
+    For additional help, contact Future of Gadgets Support:<br>
+    <a href="https://electronic-web.vercel.app/contact" style="color: #1a73e8; text-decoration: none;">
+      Click here
+    </a>
+  </p>
+
+  <p style="font-size: 14px; line-height: 1.5; margin: 20px 0 0 0; color: #555;">
+    Future of Gadgets will never ask for your password, credit card, or banking details in an email.  
+    If you receive a suspicious message with a link to update your account, do not click it.
+  </p>
+
+</div>`
 }
 
 export function getPasswordResetEmailTemplate(code: string, email: string): string {
-  return `
-    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
-      <h1 style="color: #2563eb; margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">Future Of Gadgets</h1>
-      <p style="color: #64748b; margin: 0 0 40px 0; font-size: 16px;">Reset your password</p>
-      
-      <h2 style="color: #0f172a; margin: 0 0 16px 0; font-size: 22px; font-weight: 600;">Password Reset Request</h2>
-      <p style="color: #475569; margin: 0 0 32px 0; font-size: 15px; line-height: 1.6;">We received a request to reset your password. Enter this code to proceed:</p>
-      
-      <div style="text-align: center; margin: 32px 0;">
-        <span style="display: inline-block; background: #2563eb; color: white; padding: 16px 32px; font-size: 36px; font-weight: 700; letter-spacing: 10px; border-radius: 6px;">${code}</span>
-      </div>
-      
-      <p style="color: #94a3b8; font-size: 13px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">This code expires in 10 minutes. If you didn't request this, ignore this email.</p>
-    </div>
-  `
+  return `<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; color: #000;">
+
+  <p style="font-size: 20px; font-weight: bold; margin: 0 0 20px 0;">
+    Reset your password
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
+    Please enter this code to reset your password and complete your sign-in to Future of Gadgets.
+  </p>
+
+  <p style="font-size: 16px; margin: 0 0 10px 0;">
+    <strong>Verification code:</strong>
+  </p>
+
+  <div style="font-size: 40px; font-weight: bold; letter-spacing: 8px; margin: 10px 0;">
+    ${code}
+  </div>
+
+  <p style="font-size: 14px; color: #555; margin: 0 0 30px 0;">
+    (This code is valid for 10 minutes)
+  </p>
+
+  <p style="font-size: 16px; margin: 0 0 20px 0;">
+    For additional help, contact Future of Gadgets Support:<br>
+    <a href="https://electronic-web.vercel.app/contact" style="color: #1a73e8; text-decoration: none;">
+      Click here
+    </a>
+  </p>
+
+  <p style="font-size: 14px; line-height: 1.5; margin: 20px 0 0 0; color: #555;">
+    Future of Gadgets will never ask for your password, credit card, or banking details in an email.  
+    If you receive a suspicious message with a link to update your account, do not click it.
+  </p>
+
+</div>`
 }
 
 export function getOrderNotificationTemplate(orderData: {
