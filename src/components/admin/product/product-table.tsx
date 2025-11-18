@@ -142,6 +142,7 @@ export default function ProductTable() {
     price: 0,
     mrp: 0,
     discount: 0,
+    quantity: 0,
     brand: "",
     modelName: "",
     warranty: "",
@@ -962,7 +963,7 @@ export default function ProductTable() {
                                   <Input
                                     type="number"
                                     placeholder={ramOptions.length > 0 ? "Auto" : "Enter quantity"}
-                                    value={field.value === 0 ? "" : field.value}
+                                    value={field.value || ""}
                                     onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                                     readOnly={ramOptions.length > 0}
                                     className={ramOptions.length > 0 ? "bg-gray-100 cursor-not-allowed" : ""}
@@ -1132,7 +1133,7 @@ export default function ProductTable() {
                                 <Input
                                   type="number"
                                   placeholder="Qty"
-                                  value={option.quantity === 0 ? "" : option.quantity}
+                                  value={option.quantity || ""}
                                   onChange={(e) => {
                                     const updated = [...ramOptions];
                                     updated[index].quantity = Number(e.target.value) || 0;
@@ -1195,7 +1196,7 @@ export default function ProductTable() {
                                 <Input
                                   type="number"
                                   placeholder="Qty"
-                                  value={option.quantity === 0 ? "" : option.quantity}
+                                  value={option.quantity || ""}
                                   onChange={(e) => {
                                     const updated = [...storageOptions];
                                     updated[index].quantity = Number(e.target.value) || 0;
