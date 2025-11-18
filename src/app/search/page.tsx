@@ -305,7 +305,7 @@ function SearchContent() {
                 No results found
               </h2>
               <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 px-4">
-                We couldn't find any products matching &quot;{query}&quot;. Try different keywords.
+                We couldn&apos;t find any products matching &quot;{query}&quot;. Try different keywords.
               </p>
               <Link 
                 href="/" 
