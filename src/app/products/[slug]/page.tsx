@@ -678,7 +678,7 @@ export default function ProductPage() {
 
         <div className="grid lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
           {/* Left: Images */}
-          <div className="lg:col-span-2 bg-white rounded-lg p-3 sm:p-4 lg:p-6 h-fit lg:sticky top-24 relative!mt-0  border border-gray-100">
+          <div className="lg:col-span-2 overflow-scroll bg-white rounded-lg p-3 sm:p-4 lg:p-6 h-fit lg:sticky top-24 relative!mt-0  border border-gray-100">
             <div 
               className="aspect-square bg-white-50 rounded-lg mb-3 sm:mb-4 overflow-visible relative group"
               onMouseEnter={() => setShowZoom(true)}
@@ -764,7 +764,7 @@ export default function ProductPage() {
             </div>
             
             {images.length > 1 && (
-              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2">
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-hidden">
                 {images.map((img, index) => (
                   <button
                     key={index}
@@ -1007,28 +1007,28 @@ export default function ProductPage() {
                   <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs sm:text-sm font-semibold text-gray-900">Free Delivery</div>
-                    <div className="text-xs text-gray-600 hidden sm:block">On orders above ₹500</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600 ">On orders above ₹500</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-green-50 rounded-lg">
                   <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs sm:text-sm font-semibold text-gray-900">7 Days Return</div>
-                    <div className="text-xs text-gray-600 hidden sm:block">Easy return policy</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600">Easy return policy</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-purple-50 rounded-lg">
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs sm:text-sm font-semibold text-gray-900">{product.warranty} Warranty</div>
-                    <div className="text-xs text-gray-600 hidden sm:block">{product.warrantyType} Warranty</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600">{product.warrantyType} Warranty</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-orange-50 rounded-lg">
                   <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs sm:text-sm font-semibold text-gray-900">Cash on Delivery (Delhi NCR)</div>
-                    <div className="text-xs text-gray-600 hidden sm:block">Pay on delivery</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600">Pay on delivery</div>
                   </div>
                 </div>
               </div>
@@ -1114,7 +1114,7 @@ export default function ProductPage() {
             </div>
             
             <h3 className="text-lg font-semibold mb-3">Key Features</h3>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-gray-700 text-xs sm:text-sm">
               <li className="flex gap-2"><span className="text-green-600">✓</span> High-quality build with premium materials for durability</li>
               <li className="flex gap-2"><span className="text-green-600">✓</span> Latest technology with advanced features and performance</li>
               <li className="flex gap-2"><span className="text-green-600">✓</span> Energy efficient design that saves power and reduces costs</li>
@@ -1204,7 +1204,7 @@ export default function ProductPage() {
             <h3 className="text-lg font-semibold mb-3 mt-6">What&apos;s in the Box</h3>
             <ol className="space-y-2 text-gray-700 list-decimal list-inside">
               {product.boxContents && product.boxContents.split('\n').map((line, index) => (
-                <li key={index} className="break-words !mb-0">{line}</li>
+                <li key={index} className="break-words !mb-0 text-sm">{line}</li>
               ))}
             </ol>
           </div>
@@ -1508,7 +1508,7 @@ export default function ProductPage() {
           )}
         </div>
         {images.length > 1 && (
-          <div className="flex gap-2 justify-center p-4 overflow-x-auto">
+          <div className="flex gap-2 sm:justify-center p-4 overflow-x-scroll scrollbar-hidden">
             {images.map((img, index) => (
               <button
                 key={index}

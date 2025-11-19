@@ -154,7 +154,7 @@ export default function CustomerReview() {
     <section className="py-6 bg-gray-50">
       <div className="mx-auto max-w-[1440px] px-3 sm:px-4 md:px-6 mb-4 sm:mb-6 md:mb-8">
         <div className="text-left leading-tight mb-4 sm:mx-2 lgtext:mx-7">
-          <h2 className="text-base sm:text-lg md:text-3xl font-bold text-gray-900 leading-snug">
+          <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 leading-snug">
             Customer Reviews
           </h2>
           <span className="text-xs sm:text-sm text-gray-600 leading-none">
