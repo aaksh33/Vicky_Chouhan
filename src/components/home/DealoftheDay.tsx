@@ -78,7 +78,7 @@ export default function DealoftheDay(){
           </div>
           <Link href="/section/deal-of-the-day" className="sm:px-4 sm:p-2 sm:bg-blue-100 rounded-full text-blue-600 hover:text-blue-700 font-semibold text-xs sm:text-sm whitespace-nowrap hover:underline">View All</Link>
         </div>
-         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-0 sm:gap-2">
+         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-1 md:gap-2">
           {loading ? (
             Array.from({ length: displayCount }).map((_, i) => (
               <div key={i} className="bg-white rounded-sm p-4 animate-pulse">
