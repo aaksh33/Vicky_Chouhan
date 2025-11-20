@@ -712,7 +712,7 @@ export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
                 </form>
 
                 {/* Suggestions */}
-                <div className="max-h-[60vh] overflow-y-auto">
+                <div className="max-h-[60vh] overflow-y-auto scrollbar-hidden">
                   {suggestions.length > 0 ? (
                     <motion.div
                       initial="hidden"
