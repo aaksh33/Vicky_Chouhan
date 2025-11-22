@@ -21,7 +21,8 @@ export default function WhatsAppFloat() {
 
   const handleWhatsAppClick = () => {
     if (!loading && contactSettings.phone) {
-      window.open(`https://wa.me/${contactSettings.phone}`, "_blank");
+      const cleanPhone = contactSettings.phone.replace(/\D/g, '');
+      window.open(`https://wa.me/${cleanPhone}`, "_blank");
     }
   };
 
