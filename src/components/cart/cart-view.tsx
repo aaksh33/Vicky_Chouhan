@@ -648,7 +648,7 @@ export default function CartView() {
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                   <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-                  <span>Free shipping on orders above ₹500</span>
+                  <span>Free shipping on orders above ₹1000</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                   <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
