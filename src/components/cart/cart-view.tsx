@@ -242,10 +242,10 @@ export default function CartView() {
                 Start Shopping
               </button>
               <button
-                onClick={() => router.push('/cart')}
+                onClick={() => router.push('/orders')}
                 className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3.5 bg-white text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 transition-all text-sm sm:text-base"
               >
-                View Cart
+                View Orders
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
