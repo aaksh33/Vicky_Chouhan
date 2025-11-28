@@ -11,7 +11,10 @@ export async function GET(request: Request) {
       return NextResponse.json([]);
     }
     
-    const query = q.trim().toLowerCase();
+    let query = q.trim().toLowerCase();
+    
+    // Normalize plural/singular forms
+    query = query.replace(/s\b/g, '').trim();
     
     // Extract price filter from query (e.g., "under 10000", "below 5000")
     const priceMatch = query.match(/(?:under|below|less than)\s*(\d+)/);

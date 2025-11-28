@@ -10,7 +10,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ suggestions: [] });
     }
     
-    const query = q.trim().toLowerCase();
+    let query = q.trim().toLowerCase();
+    query = query.replace(/s\b/g, '').trim();
     
     const results = await prisma.product.findMany({
       where: {
