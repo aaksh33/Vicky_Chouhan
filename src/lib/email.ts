@@ -158,14 +158,7 @@ export function getOrderNotificationTemplate(orderData: {
       </tr>
     `).join('')
 
-  const orderTime = new Date().toLocaleString('en-IN', { 
-    day: '2-digit', 
-    month: 'short', 
-    year: 'numeric', 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: true 
-  })
+  const orderTime = `${new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`
   
   return `
     <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
@@ -236,14 +229,7 @@ export function getOrderConfirmationTemplate(orderData: {
       </tr>
     `).join('')
 
-  const orderTime = new Date().toLocaleString('en-IN', { 
-    day: '2-digit', 
-    month: 'short', 
-    year: 'numeric', 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: true 
-  })
+  const orderTime = `${new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`
   
   return `
     <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
