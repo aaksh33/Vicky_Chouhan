@@ -9,7 +9,7 @@ export default function WhatsAppFloat() {
     phone: ''
   });
   const [loading, setLoading] = useState(true);
-  const [showText, setShowText] = useState(true);
+  const [showText, setShowText] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
@@ -22,6 +22,29 @@ export default function WhatsAppFloat() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (pathname === '/' && !loading) {
+      const hasSeenText = sessionStorage.getItem('whatsappTextSeen');
+      if (!hasSeenText) {
+        setShowText(true);
+        sessionStorage.setItem('whatsappTextSeen', 'true');
+      }
+    }
+  }, [pathname, loading]);
+
+  useEffect(() => {
+    if (showText) {
+      const timer = setTimeout(() => {
+        setIsClosing(true);
+        setTimeout(() => {
+          setShowText(false);
+          setIsClosing(false);
+        }, 300);
+      }, 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [showText]);
+
   const handleWhatsAppClick = () => {
     if (!loading && contactSettings.phone) {
       const cleanPhone = contactSettings.phone.replace(/\D/g, '');
@@ -33,7 +56,7 @@ export default function WhatsAppFloat() {
 
   if (loading) {
     return (
-      <div className="fixed bottom-18 right-4 sm:bottom-6 sm:right-6 z-50">
+      <div className="fixed bottom-16 right-4 md:bottom-6 md:right-6 z-50">
         <div className="w-14 h-14 bg-gray-300 rounded-full animate-pulse"></div>
       </div>
     );
@@ -42,7 +65,7 @@ export default function WhatsAppFloat() {
   if (!contactSettings.phone) return null;
 
   return (
-    <div className="fixed bottom-18 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-16 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-2">
       {(showText || isClosing) && (
         <div className={isClosing ? 'animate-slideDown' : 'animate-slideUp'}>
         <div className="bg-gradient-to-br from-green-50 to-white border border-green-200 rounded-2xl shadow-2xl p-4 max-w-xs relative">

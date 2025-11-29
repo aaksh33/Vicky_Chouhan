@@ -66,6 +66,7 @@ export default function ProductPage() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isButtonClick, setIsButtonClick] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
 const [relatedLoading, setRelatedLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -110,12 +111,18 @@ useEffect(() => {
   useEffect(() => {
     if (showMobileZoom) {
       document.body.style.overflow = 'hidden';
+      window.history.pushState(null, '', window.location.href);
+      const handlePopState = () => {
+        setShowMobileZoom(false);
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => {
+        document.body.style.overflow = 'unset';
+        window.removeEventListener('popstate', handlePopState);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [showMobileZoom]);
   const [selectedWarranty, setSelectedWarranty] = useState<{ duration: string; price: number } | null>(null);
 
@@ -830,12 +837,12 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
       <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Breadcrumb */}
         {/* <div className="bg-white rounded-lg px-2 sm:px-4 py-3 mb-4 my-2 shadow-sm"> */}
-          <div className="text-xs sm:text-sm text-gray-600 flex items-center my-4 sm:mt-2 sm:mb-3 flex-wrap gap-1">
-            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push('/')}>Home</span>
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push(`/category/${product.category.toLowerCase()}`)}>{product.category}</span>
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="text-black font-medium truncate max-w-[150px] sm:max-w-none">{product.name}</span>
+          <div className="text-xs sm:text-sm text-gray-600 items-center my-4 sm:mt-2 sm:mb-3 gap-1 hidden md:flex">
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors whitespace-nowrap" onClick={() => router.push('/')}>Home</span>
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors whitespace-nowrap" onClick={() => router.push(`/category/${product.category.toLowerCase()}`)}>{product.category}</span>
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            <span className="text-black font-medium truncate">{product.name}</span>
           </div>
         {/* </div> */}
 
@@ -1626,21 +1633,27 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           onTouchStart={(e) => {
             setTouchStart(e.targetTouches[0].clientX);
             setIsDragging(true);
+            setIsButtonClick(false);
           }}
           onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
           onTouchEnd={() => {
             setIsDragging(false);
-            if (images.length > 1 && touchStart - touchEnd > 50 && selectedImage < images.length - 1) {
+            if (!isButtonClick && images.length > 1 && touchStart - touchEnd > 50 && selectedImage < images.length - 1) {
               setSelectedImage(selectedImage + 1);
             }
-            if (images.length > 1 && touchStart - touchEnd < -50 && selectedImage > 0) {
+            if (!isButtonClick && images.length > 1 && touchStart - touchEnd < -50 && selectedImage > 0) {
               setSelectedImage(selectedImage - 1);
             }
             setTouchEnd(0);
+            setIsButtonClick(false);
           }}
         >
           {images.length > 1 && selectedImage > 0 && (
             <button
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                setIsButtonClick(true);
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(selectedImage - 1);
@@ -1675,6 +1688,10 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           </div>
           {images.length > 1 && selectedImage < images.length - 1 && (
             <button
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                setIsButtonClick(true);
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(selectedImage + 1);

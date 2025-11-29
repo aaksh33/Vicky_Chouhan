@@ -9,16 +9,20 @@ import TopBanner from './TopBanner'
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [showBanner, setShowBanner] = useState(true)
-  const [bannerHeight, setBannerHeight] = useState(38)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const updateHeight = () => {
-      setBannerHeight(window.innerWidth >= 768 ? 56 : 38)
+    setMounted(true)
+    const bannerClosed = sessionStorage.getItem('bannerClosed')
+    if (bannerClosed) {
+      setShowBanner(false)
     }
-    updateHeight()
-    window.addEventListener('resize', updateHeight)
-    return () => window.removeEventListener('resize', updateHeight)
   }, [])
+
+  const handleCloseBanner = () => {
+    setShowBanner(false)
+    sessionStorage.setItem('bannerClosed', 'true')
+  }
 
   if (pathname.startsWith('/admin')) {
     return <>{children}</>
@@ -28,9 +32,9 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {bannerVisible && <TopBanner onClose={() => setShowBanner(false)} />}
-      <Navbar offsetTop={bannerVisible ? `${bannerHeight}px` : '0px'} />
-      <div className={`pt-10 md:pt-14 pb-12 md:pb-0 ${bannerVisible ? 'mt-14' : ''}`}>
+      <Navbar offsetTop="0px" />
+      <div className={`${mounted ? 'pt-16' : 'pt-10 md:pt-16'} pb-12 md:pb-0 transition-all duration-500`}>
+        {bannerVisible && <TopBanner onClose={handleCloseBanner} />}
         {children}
       </div>
       <BottomNav />

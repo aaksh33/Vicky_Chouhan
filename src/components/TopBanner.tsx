@@ -1,40 +1,41 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X, Package } from "lucide-react";
 
 export default function TopBanner({ onClose }: { onClose: () => void }) {
-  return (
-    <div
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-700 to-indigo-600 text-white shadow-md"
-      role="region"
-      aria-label="Top announcement"
-    >
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-          <Package className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-          <p className="text-xs sm:text-sm md:text-base font-medium text-white truncate">
-            We also accept bulk orders — Contact us for wholesale pricing
-          </p>
+  const [isVisible, setIsVisible] = useState(false);
 
-          <div>
-            <Link
-              href="/contact"
-              className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-blue-700 rounded text-xs sm:text-sm font-semibold hover:bg-blue-50 transition-colors whitespace-nowrap"
-            >
-              Contact
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 500);
+  }, []);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(onClose, 500);
+  };
+
+  return (
+    <div className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-b-lg sm:-mb-2 p-4 shadow-md transition-all duration-500 ease-out ${
+      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+    }`}>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 flex-1">
+          <Package className="h-5 w-5 flex-shrink-0" />
+          <p className="text-sm font-medium">
+            We accept bulk orders with special wholesale pricing.{' '}
+            <Link href="/contact" className="underline font-semibold hover:text-blue-100">
+              Contact us
             </Link>
-          </div>
+          </p>
         </div>
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          <button
-            onClick={onClose}
-            aria-label="Close banner"
-            className="p-1 sm:p-1.5 hover:bg-white/20 rounded-full transition-colors flex-shrink-0 hover:cursor-pointer"
-          >
-            <X className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
-        </div>
+        <button
+          onClick={handleClose}
+          aria-label="Close"
+          className="hover:bg-white/20 rounded-full p-1 transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const HeaderSlider = () => {
   const [sliderData, setSliderData] = useState<any[]>([]);
@@ -10,6 +10,9 @@ const HeaderSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [transitioning, setTransitioning] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +55,14 @@ const HeaderSlider = () => {
     setCurrentSlide(index);
   };
 
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev === 0 ? sliderData.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => prev + 1);
+  };
+
   if (loading) {
     return (
       <div className="overflow-hidden relative w-full">
@@ -89,7 +100,22 @@ const HeaderSlider = () => {
   const slides = [...sliderData, sliderData[0]];
 
   return (
-    <div className="overflow-hidden relative w-full">
+    <div 
+      className="overflow-hidden relative w-full group" 
+      onMouseEnter={() => setIsHovered(true)} 
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+      onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+      onTouchEnd={() => {
+        if (touchStart - touchEnd > 50) {
+          handleNext();
+        }
+        if (touchStart - touchEnd < -50) {
+          handlePrev();
+        }
+        setTouchEnd(0);
+      }}
+    >
       <div
         ref={sliderRef}
         className={`flex ${
@@ -156,6 +182,23 @@ const HeaderSlider = () => {
           </Link>
         ))}
       </div>
+
+      <button
+        onClick={handlePrev}
+        className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${
+          isHovered ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <ChevronLeft className="h-6 w-6 text-gray-800" />
+      </button>
+      <button
+        onClick={handleNext}
+        className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${
+          isHovered ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <ChevronRight className="h-6 w-6 text-gray-800" />
+      </button>
 
       <div className="flex items-center justify-center gap-2 my-3 sm:my-4">
         {sliderData.map((_, index) => (
