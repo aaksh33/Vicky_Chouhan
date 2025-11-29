@@ -142,13 +142,13 @@ export function Footer({ className = "" }: FooterProps) {
             <p>© 2025 Future Of Gadgets. All rights reserved.</p>
             <p className="mt-1">
               Made by{' '}
-              <a href="https://www.linkedin.com/in/sonu-rai-r12/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
+              <Link href="https://www.linkedin.com/in/sonu-rai-r12/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
                 Sonu (Full Stack)
-              </a>
+              </Link>
               {' '}and{' '}
-              <a href="https://www.linkedin.com/in/aakash-singh-575205310/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
+              <Link href="https://www.linkedin.com/in/aakash-singh-575205310/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
                 Aakash (Frontend)
-              </a>
+              </Link>
             </p>
           </div>
 
