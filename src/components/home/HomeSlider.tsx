@@ -67,7 +67,7 @@ const HeaderSlider = () => {
     return (
       <div className="overflow-hidden relative w-full">
         <div
-          className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-5 sm:mt-10 md:!min-h-[350px] lg:!min-h-[400px] bg-gray-200 animate-pulse flex items-center sm:rounded-lg"
+          className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] bg-gray-200 animate-pulse flex items-center sm:rounded-lg"
           style={{ height: "240px" }}
         >
           <div className="relative z-10 max-w-2xl space-y-3 sm:space-y-4">
@@ -132,7 +132,7 @@ const HeaderSlider = () => {
             className="min-w-full block sm:rounded-lg overflow-hidden"
           >
             <div
-              className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-5 sm:mt-10 md:!min-h-[350px] lg:!min-h-[400px] cursor-pointer overflow-hidden flex items-center sm:rounded-lg"
+              className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] cursor-pointer overflow-hidden flex items-center sm:rounded-lg"
               style={{
                 backgroundImage: (slide as any).image
                   ? `url(${(slide as any).image})`

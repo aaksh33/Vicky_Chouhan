@@ -33,7 +33,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar offsetTop="0px" />
-      <div className={`${mounted ? 'pt-16' : 'pt-10 md:pt-16'} pb-12 md:pb-0 transition-all duration-500`}>
+      <div className={`${mounted ? 'pt-15' : 'pt-10 md:pt-16'} pb-12 md:pb-0 transition-all duration-500`}>
         {bannerVisible && <TopBanner onClose={handleCloseBanner} />}
         {children}
       </div>

@@ -357,7 +357,7 @@ export default function AdminOrdersPage() {
               className="pb-0 font-medium border-b-2 border-transparent text-gray-400"
             >
               {tab === "all" && "All orders"}
-              {tab === "pending" && "Pending"}
+              {tab === "pending" && "Pending/Paid"}
               {tab === "shipped" && "Shipped"}
               {tab === "out" && "Out of Delivery"}
               {tab === "delivered" && "Completed"}
@@ -367,47 +367,56 @@ export default function AdminOrdersPage() {
           ))}
         </div>
 
-        {/* Table Skeleton - show real table header but keep row placeholders for dynamic content */}
+        {/* Table Skeleton */}
         <div className="flex-1 p-0 overflow-auto">
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <div className="min-w-full">
-                {/* Table Header (static) */}
-                <div className="bg-gray-50 px-3 sm:px-6 py-4">
-                  <div className="grid grid-cols-7 gap-4 text-sm font-semibold text-gray-600">
-                    <div>Id</div>
-                    <div>Customer</div>
-                    <div className="hidden md:block">Address</div>
-                    <div className="hidden sm:block">Date</div>
-                    <div>Total</div>
-                    <div>Status</div>
-                    <div>Actions</div>
-                  </div>
-                </div>
-
-                {/* Table Rows (dynamic placeholders) */}
-                <div className="divide-y divide-gray-200">
+              <Table>
+                <TableHeader className="bg-gray-50">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Id</TableHead>
+                    <TableHead className="px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Customer</TableHead>
+                    <TableHead className="hidden md:table-cell px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Address</TableHead>
+                    <TableHead className="hidden sm:table-cell px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Date</TableHead>
+                    <TableHead className="px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Total</TableHead>
+                    <TableHead className="px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Status</TableHead>
+                    <TableHead className="px-3 sm:px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {[...Array(8)].map((_, i) => (
-                    <div key={i} className="px-3 sm:px-6 py-4">
-                      <div className="grid grid-cols-7 gap-4 items-center">
-                        <div className="h-4 bg-gray-200 shimmer rounded w-12"></div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-200 shimmer rounded-full"></div>
-                          <div className="space-y-1">
-                            <div className="h-3 bg-gray-200 shimmer rounded w-20"></div>
-                            <div className="h-2 bg-gray-200 shimmer rounded w-16 sm:hidden"></div>
+                    <TableRow key={i}>
+                      <TableCell className="px-3 sm:px-6 py-4">
+                        <div className="h-3 sm:h-4 bg-gray-200 rounded animate-pulse w-10 sm:w-12"></div>
+                      </TableCell>
+                      <TableCell className="px-3 sm:px-6 py-4">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-200 rounded-full animate-pulse flex-shrink-0"></div>
+                          <div className="space-y-1 sm:space-y-2 min-w-0">
+                            <div className="h-3 bg-gray-200 rounded animate-pulse w-16 sm:w-24"></div>
+                            <div className="h-2 bg-gray-200 rounded animate-pulse w-12 sm:hidden"></div>
                           </div>
                         </div>
-                        <div className="h-4 bg-gray-200 shimmer rounded w-16 hidden md:block"></div>
-                        <div className="h-4 bg-gray-200 shimmer rounded w-12 hidden sm:block"></div>
-                        <div className="h-4 bg-gray-200 shimmer rounded w-16"></div>
-                        <div className="h-6 bg-gray-200 shimmer rounded-full w-16"></div>
-                        <div className="h-8 w-8 bg-gray-200 shimmer rounded"></div>
-                      </div>
-                    </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell px-3 sm:px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell px-3 sm:px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                      </TableCell>
+                      <TableCell className="px-3 sm:px-6 py-4">
+                        <div className="h-3 sm:h-4 bg-gray-200 rounded animate-pulse w-12"></div>
+                      </TableCell>
+                      <TableCell className="px-3 sm:px-6 py-4">
+                        <div className="h-5 sm:h-6 bg-gray-200 rounded-full animate-pulse w-14 sm:w-16"></div>
+                      </TableCell>
+                      <TableCell className="px-3 sm:px-6 py-4">
+                        <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
@@ -658,6 +667,7 @@ export default function AdminOrdersPage() {
         (statusFilter === "out" ? order.status === "out-for-delivery" : 
          statusFilter === "cancelled" ? order.status === "cancelled" : 
          statusFilter === "refund" ? (order.status === "delivered" && order.refundTransactionId) :
+         statusFilter === "pending" ? (order.status === "pending" || order.status === "paid") :
          order.status === statusFilter);
       const matchesSearch =
         searchQuery === "" ||
@@ -811,7 +821,7 @@ export default function AdminOrdersPage() {
             }`}
           >
             {tab === "all" && "All orders"}
-            {tab === "pending" && "Pending"}
+            {tab === "pending" && "Pending/Paid"}
             {tab === "shipped" && "Shipped"}
             {tab === "out" && "Out of Delivery"}
             {tab === "delivered" && "Completed"}

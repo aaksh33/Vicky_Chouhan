@@ -186,3 +186,8 @@
   animation: fadeOut 0.2s ease-out forwards;
 }
 
+/* Hide success icon in Sonner toasts */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  display: none !important;
+}
+
