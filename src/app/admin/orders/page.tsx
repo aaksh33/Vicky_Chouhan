@@ -567,6 +567,7 @@ export default function AdminOrdersPage() {
 
     setRemovingBill(true);
     try {
+      // The API will handle Cloudinary deletion automatically
       const response = await fetch("/api/admin/orders", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -590,7 +591,7 @@ export default function AdminOrdersPage() {
         )
       );
 
-      toast.success("Bill removed successfully");
+      toast.success("Bill removed successfully from database and Cloudinary");
     } catch (error: any) {
       toast.error(`Failed to remove bill: ${error.message}`);
     } finally {

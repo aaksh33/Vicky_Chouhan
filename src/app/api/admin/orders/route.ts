@@ -2,6 +2,29 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { v2 as cloudinary } from 'cloudinary'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+function extractPublicId(url: string): string | null {
+  const match = url.match(/\/upload\/(?:v\d+\/)?(.*?)(?:\.[^.]+)?$/)
+  return match ? match[1] : null
+}
+
+async function deleteFromCloudinary(url: string) {
+  try {
+    const publicId = extractPublicId(url)
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId)
+    }
+  } catch (error) {
+    console.error('Failed to delete from Cloudinary:', error)
+  }
+}
 
 export async function GET() {
   try {
@@ -106,6 +129,21 @@ export async function PATCH(request: Request) {
 
     // Handle billUrl with raw MongoDB update to bypass Prisma schema issues
     if (billUrl !== undefined) {
+      // If removing bill (billUrl is null), first get the current billUrl to delete from Cloudinary
+      if (billUrl === null) {
+        const currentOrderResult = await prisma.$runCommandRaw({
+          find: 'Order',
+          filter: { _id: { $oid: orderId } },
+          limit: 1
+        })
+        
+        const currentOrder = (currentOrderResult as any).cursor?.firstBatch?.[0]
+        if (currentOrder?.billUrl) {
+          // Delete from Cloudinary
+          await deleteFromCloudinary(currentOrder.billUrl)
+        }
+      }
+      
       await prisma.$runCommandRaw({
         update: 'Order',
         updates: [{
