@@ -1,16 +1,22 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://futureofgadgets.in'
   
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
+        disallow: ['/api/', '/admin/', '/profile/', '/orders/', '/checkout/', '/auth/'],
+      },
+      {
+        userAgent: 'Googlebot',
+        allow: '/',
         disallow: ['/api/', '/admin/', '/profile/', '/orders/', '/checkout/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   }
 }

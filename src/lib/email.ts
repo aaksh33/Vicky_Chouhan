@@ -85,7 +85,7 @@ export function getVerificationEmailTemplate(code: string, email: string): strin
 
   <p style="font-size: 16px; margin: 0 0 20px 0;">
     For additional help, contact Future of Gadgets Support:<br>
-    <a href="https://electronic-web.vercel.app/contact" style="color: #1a73e8; text-decoration: none;">
+    <a href="https://futureofgadgets.in/contact" style="color: #1a73e8; text-decoration: none;">
       Click here
     </a>
   </p>
@@ -123,7 +123,7 @@ export function getPasswordResetEmailTemplate(code: string, email: string): stri
 
   <p style="font-size: 16px; margin: 0 0 20px 0;">
     For additional help, contact Future of Gadgets Support:<br>
-    <a href="https://electronic-web.vercel.app/contact" style="color: #1a73e8; text-decoration: none;">
+    <a href="https://futureofgadgets.in/contact" style="color: #1a73e8; text-decoration: none;">
       Click here
     </a>
   </p>

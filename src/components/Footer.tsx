@@ -52,25 +52,25 @@ export function Footer({ className = "" }: FooterProps) {
               {socialLinks.youtube && (
                 <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 flex items-center justify-center transition-all duration-300 transform hover:scale-110">
-                  <img src="/share/youtube.png" className="w-6 h-6" />
+                  <img src="/share/youtube.png" alt="YouTube" className="w-6 h-6" />
                 </a>
               )}
               {socialLinks.twitter && (
                 <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 flex items-center justify-center transition-all duration-300 transform hover:scale-110">
-                  <img src="/share/twitter.png" className="w-6 h-6" />
+                  <img src="/share/twitter.png" alt="Twitter" className="w-6 h-6" />
                 </a>
               )}
               {socialLinks.instagram && (
                 <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 flex items-center justify-center transition-all duration-300 transform hover:scale-110">
-                  <img src="/share/instagram.png" className="w-6 h-6" />
+                  <img src="/share/instagram.png" alt="Instagram" className="w-6 h-6" />
                 </a>
               )}
               {socialLinks.facebook && (
                 <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 flex items-center justify-center transition-all duration-300 transform hover:scale-110">
-                  <img src="/share/facebook.png" className="w-6 h-6" />
+                  <img src="/share/facebook.png" alt="Facebook" className="w-6 h-6" />
                 </a>
               )}
             </div>

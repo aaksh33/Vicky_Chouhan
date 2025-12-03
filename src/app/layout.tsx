@@ -7,7 +7,7 @@ import WhatsAppFloat from "@/components/WhatsAppFloat";
 import CookieConsent from "@/components/CookieConsent";
 import Script from "next/script";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://futureofgadgets.in";
 
 export const viewport: Viewport = {
   width: 'device-width',

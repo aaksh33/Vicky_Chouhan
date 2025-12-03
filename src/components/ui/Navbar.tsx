@@ -135,10 +135,13 @@ export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
             >
               <>
                 <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-                  <img
+                  <Image
                     src="/logo.png"
-                    alt="Store logo"
-                    className="h-8 sm:h-10 w-full rounded bg-transparent"
+                    alt="Future of Gadgets Logo"
+                    width={40}
+                    height={40}
+                    className="h-8 sm:h-10 w-8 sm:w-10 rounded bg-transparent object-contain"
+                    priority
                   />
                 </div>
 
