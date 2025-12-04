@@ -16,7 +16,7 @@ export default function TopBanner({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-b-lg sm:-mb-2 p-4 shadow-md transition-all duration-500 ease-out ${
+    <div className={`bg-gradient-to-r from-blue-600 to-indigo-600 text-white sm:rounded-b-lg sm:-mb-2 p-4 shadow-md transition-all duration-500 ease-out ${
       isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
     }`}>
       <div className="flex items-center justify-between gap-4">

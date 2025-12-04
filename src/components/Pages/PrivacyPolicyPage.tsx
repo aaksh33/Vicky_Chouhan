@@ -28,9 +28,9 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-12 mt-5 sm:mt-2">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-12 mt-0">
         {/* Header */}
-        <div className="text-left mb-8 sm:mb-12">
+        <div className="text-center sm:text-left mb-8 sm:mb-12">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Privacy Policy</h1>
           <p className="text-sm sm:text-base text-gray-600">Last updated: November 2025</p>
         </div>
