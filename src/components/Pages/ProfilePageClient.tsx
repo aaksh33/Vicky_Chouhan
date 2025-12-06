@@ -322,23 +322,23 @@ export default function ProfilePageClient() {
                   ))}
                 </div>
               ) : orders.length > 0 ? (
-                orders.map((order) => (
-                  <div key={order.id} className="border border-gray-200 rounded-lg p-2.5 sm:p-4 hover:bg-gray-50 transition-all">
-                    <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                 orders.map((order) => (
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-2 sm:p-3 hover:bg-gray-50 transition-all">
+                    <div className="flex justify-between items-start">
                       <div className="min-w-0 flex-1">
                         <p className="text-xs sm:text-base font-medium text-gray-900 truncate">Order #{order.id.slice(-8)}</p>
                         <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} items</p>
                       </div>
-                      <div className="text-right ml-2">
+                      <div className="text-center ml-2">
                         <p className="text-xs sm:text-base font-semibold text-gray-900">₹{order.total}</p>
                         <span className={`text-[9px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap ${
-                          order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'delivered' ? (order.refundTransactionId ? 'bg-orange-100 text-orange-800' : 'bg-purple-100 text-purple-800') :
                           order.status === 'out-for-delivery' ? 'bg-orange-100 text-orange-800' :
                           order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
                           order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                           'bg-green-100 text-green-800'
                         }`}>
-                          {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status === 'delivered' ? (order.refundTransactionId ? 'Refunded' : 'Delivered') : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       </div>
                     </div>
