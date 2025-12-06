@@ -8,56 +8,56 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto  pt-12">
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-10 sm:py-12">
         
 
         {/* Hero Section */}
-        <div className="text-center sm:text-left mb-16 px-4 xl:px-0">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">Future Of Gadgets</h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl">
+        <div className="text-center sm:text-left mb-12 sm:mb-16">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-2 sm:mb-3">Future Of Gadgets</h1>
+          <p className="text-base sm:text-lg text-slate-500 max-w-2xl">
             Your trusted destination for quality electronics and cutting-edge technology in India. 
             We&apos;re committed to making the latest innovations accessible to everyone.
           </p>
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 px-4 xl:px-0">
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 mb-12 sm:mb-16">
+          <div className="rounded-xl border border-slate-200 bg-white/90 p-5 sm:p-6 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
             <div className="text-3xl font-bold text-blue-600 mb-2">10K+</div>
-            <div className="text-gray-600">Happy Customers</div>
+            <div className="text-slate-600 text-sm sm:text-base">Happy Customers</div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+          <div className="rounded-xl border border-slate-200 bg-white/90 p-5 sm:p-6 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
             <div className="text-3xl font-bold text-green-600 mb-2">500+</div>
-            <div className="text-gray-600">Products</div>
+            <div className="text-slate-600 text-sm sm:text-base">Products</div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+          <div className="rounded-xl border border-slate-200 bg-white/90 p-5 sm:p-6 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
             <div className="text-3xl font-bold text-purple-600 mb-2">{new Date().getFullYear() - 2015}</div>
-            <div className="text-gray-600">Years Experience</div>
+            <div className="text-slate-600 text-sm sm:text-base">Years Experience</div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+          <div className="rounded-xl border border-slate-200 bg-white/90 p-5 sm:p-6 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
             <div className="text-3xl font-bold text-orange-600 mb-2">24/7</div>
-            <div className="text-gray-600">Support</div>
+            <div className="text-slate-600 text-sm sm:text-base">Support</div>
           </div>
         </div>
 
         {/* Story Section */}
-        <div className="text-center sm:text-left mb-12 px-4 xl:px-0">
+        <div className="text-center sm:text-left mb-10 sm:mb-12">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                Founded in <span className="font-bold text-gray-900">{new Date().getFullYear() - (new Date().getFullYear() - 2015)}</span> with a simple vision: to make cutting-edge technology accessible 
-                to everyone in <span className="font-bold text-gray-900">India</span>. What started as a small electronics store has grown into a trusted 
+              <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-6">Our Story</h2>
+              <p className="text-slate-600 leading-relaxed mb-4">
+                Founded in <span className="font-semibold text-slate-900">{new Date().getFullYear() - (new Date().getFullYear() - 2015)}</span> with a simple vision: to make cutting-edge technology accessible 
+                to everyone in <span className="font-semibold text-slate-900">India</span>. What started as a small electronics store has grown into a trusted 
                 online destination for tech enthusiasts across the country.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                We carefully curate our product selection, partnering with <span className="font-bold text-gray-900">leading brands</span> to 
-                ensure quality and value. Our team of <span className="font-bold text-gray-900">tech experts</span> tests every product to meet 
+              <p className="text-slate-600 leading-relaxed mb-4">
+                We carefully curate our product selection, partnering with <span className="font-semibold text-slate-900">leading brands</span> to 
+                ensure quality and value. Our team of <span className="font-semibold text-slate-900">tech experts</span> tests every product to meet 
                 our high standards before it reaches your doorstep.
               </p>
-              <p className="text-gray-600 leading-relaxed">
-                Today, we&apos;re proud to serve <span className="font-bold text-gray-900">thousands of customers</span> across India, offering everything 
+              <p className="text-slate-600 leading-relaxed">
+                Today, we&apos;re proud to serve <span className="font-semibold text-slate-900">thousands of customers</span> across India, offering everything 
                 from laptops and smart devices to smart home devices and gaming accessories.
               </p>
             </div>
@@ -74,37 +74,37 @@ export default function AboutPage() {
         </div>
 
         {/* Values Section */}
-        <div className="mb-12 px-4 xl:px-0 ">
-          <h2 className="text-3xl font-bold text-gray-900 text-center sm:text-left mb-8">Our Values</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+        <div className="mb-10 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 text-center sm:text-left mb-6 sm:mb-8">Our Values</h2>
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="rounded-xl border border-slate-200 bg-white/90 p-6 sm:p-8 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
                 <Target className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Our Mission</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Our Mission</h3>
+              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 To democratize technology across India by providing cutting-edge electronics with unmatched 
                 quality, competitive pricing, and exceptional customer service.
               </p>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+            <div className="rounded-xl border border-slate-200 bg-white/90 p-6 sm:p-8 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
                 <Shield className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Quality Promise</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Quality Promise</h3>
+              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 Every product undergoes rigorous testing and quality checks. We stand behind 
                 our products with comprehensive warranties and hassle-free returns.
               </p>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+            <div className="rounded-xl border border-slate-200 bg-white/90 p-6 sm:p-8 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-6">
                 <Truck className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Fast & Secure</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Fast & Secure</h3>
+              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 Lightning-fast shipping with secure packaging ensures your products arrive 
                 safely and quickly. Track your order every step of the way.
               </p>
@@ -114,16 +114,16 @@ export default function AboutPage() {
 
         {/* Sustainability & Environment */}
         <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center sm:text-left mb-8">Our Environmental Commitment</h2>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 text-center sm:text-left mb-6 sm:mb-8">Our Environmental Commitment</h2>
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div className="bg-white rounded-lg p-6">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
                   <span className="text-2xl">🌱</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Eco-Friendly Packaging</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900">Eco-Friendly Packaging</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-slate-600 text-sm sm:text-base">
                 We use 100% recyclable packaging materials and minimize waste in our shipping process.
               </p>
             </div>
@@ -133,9 +133,9 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
                   <span className="text-2xl">♻️</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">E-Waste Recycling</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900">E-Waste Recycling</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-slate-600 text-sm sm:text-base">
                 Partner with certified recycling centers to responsibly dispose of electronic waste.
               </p>
             </div>
@@ -145,9 +145,9 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
                   <span className="text-2xl">⚡</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Carbon Neutral Shipping</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900">Carbon Neutral Shipping</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-slate-600 text-sm sm:text-base">
                 Offset carbon emissions from shipping through renewable energy investments.
               </p>
             </div>
@@ -157,28 +157,28 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
                   <span className="text-2xl">🇮🇳</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Local Impact</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-slate-900">Local Impact</h3>
               </div>
-              <p className="text-gray-600">
+              <p className="text-slate-600 text-sm sm:text-base">
                 Supporting environmental initiatives and clean technology development across India.
               </p>
             </div>
           </div>
           
           <div className="text-center bg-white rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Our Green Goals for {new Date().getFullYear()}</h3>
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Our Green Goals for {new Date().getFullYear()}</h3>
             <div className="grid md:grid-cols-3 gap-4 mt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">50%</div>
-                <div className="text-sm text-gray-600">Packaging Reduction</div>
+                <div className="text-sm text-slate-600">Packaging Reduction</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">100%</div>
-                <div className="text-sm text-gray-600">Renewable Energy</div>
+                <div className="text-sm text-slate-600">Renewable Energy</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">1M+</div>
-                <div className="text-sm text-gray-600">Trees Planted</div>
+                <div className="text-sm text-slate-600">Trees Planted</div>
               </div>
             </div>
           </div>
@@ -186,37 +186,37 @@ export default function AboutPage() {
 
 
         {/* Features Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8 bg-white rounded-lg p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 rounded-2xl border border-slate-200 bg-white/90 p-6 sm:p-8 shadow-sm">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
               <img src="/about/globe-free-img.png" alt="Pan India Shipping" className="w-12 h-12" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Pan India Shipping</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">We Are Committed To Delivering Your Order Accurately, In Good Condition, And Always On Time.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Pan India Shipping</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We Are Committed To Delivering Your Order Accurately, In Good Condition, And Always On Time.</p>
           </div>
           
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
               <img src="/about/pngwing.com_.png" alt="Best Quality" className="w-12 h-12" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Best Quality</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">We promise our customers to give them the best quality laptop with a guarantee.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Best Quality</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We promise our customers to give them the best quality laptop with a guarantee.</p>
           </div>
           
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
               <img src="/about/tag-free-img.png" alt="Best Offers" className="w-12 h-12" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Best Offers</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">We give our customers the best offer on Everything we have and customer happiness is our mission.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Best Offers</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We give our customers the best offer on Everything we have and customer happiness is our mission.</p>
           </div>
           
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 mb-4">
               <img src="/about/lock-free-img.png" alt="Secure Payments" className="w-12 h-12" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Secure Payments</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">We have all the payment options with secure & security. Feel free to buy anything with future of gadgets.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Secure Payments</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We have all the payment options with secure & security. Feel free to buy anything with future of gadgets.</p>
           </div>
         </div>
       </div>

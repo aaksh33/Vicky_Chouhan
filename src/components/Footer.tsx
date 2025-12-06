@@ -28,7 +28,7 @@ export function Footer({ className = "" }: FooterProps) {
 
   return (
     <footer className={`bg-gradient-to-b from-gray-900 to-black text-white ${className}`}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:pt-16">
 
         {/* UPDATED GRID: md = 4 columns, lg = 5 */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-10">
@@ -82,13 +82,13 @@ export function Footer({ className = "" }: FooterProps) {
             <ul className="space-y-2.5 text-sm">
               {[
                 { href: '/search?q=laptops', label: 'Laptops' },
+                { href: '/search?q=Open%20Box%20Laptop%27s', label: 'Open Box Laptops' },
                 { href: '/search?q=refurbished%20laptops', label: 'Refurbished Laptops' },
-                { href: '/search?q=mouse', label: 'Mouse' },
                 { href: '/search?q=desktops', label: 'Monitors' },
                 { href: '/category', label: 'All Categories' }
               ].map(link => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Link href={link.href} onClick={() => window.scrollTo(0, 0)} className="text-gray-400 hover:text-blue-400 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -107,7 +107,7 @@ export function Footer({ className = "" }: FooterProps) {
                 { href: '/contact', label: 'FAQ' }
               ].map(link => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Link href={link.href} onClick={() => window.scrollTo(0, 0)} className="text-gray-400 hover:text-blue-400 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -126,7 +126,7 @@ export function Footer({ className = "" }: FooterProps) {
                 { href: '/profile', label: 'My Account' }
               ].map(link => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-gray-400 hover:text-blue-400 transition-colors">
+                  <Link href={link.href} onClick={() => window.scrollTo(0, 0)} className="text-gray-400 hover:text-blue-400 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -152,13 +152,14 @@ export function Footer({ className = "" }: FooterProps) {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6">
             {[
               { href: '/privacy-policy', label: 'Privacy Policy' },
               { href: '/terms-of-service', label: 'Terms of Service' },
+              { href: '/refund-policy', label: 'Refund Policy' },
               { href: '/cookie-policy', label: 'Cookie Policy' }
             ].map(link => (
-              <Link key={link.href} href={link.href}
+              <Link key={link.href} href={link.href} onClick={() => window.scrollTo(0, 0)}
                 className="text-sm text-gray-400 hover:text-blue-400 transition-colors">
                 {link.label}
               </Link>
