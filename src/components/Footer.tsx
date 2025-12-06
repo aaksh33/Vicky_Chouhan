@@ -82,7 +82,7 @@ export function Footer({ className = "" }: FooterProps) {
             <ul className="space-y-2.5 text-sm">
               {[
                 { href: '/search?q=laptops', label: 'Laptops' },
-                { href: '/search?q=refurbishedlaptops', label: 'Refurbished Laptops' },
+                { href: '/search?q=refurbished%20laptops', label: 'Refurbished Laptops' },
                 { href: '/search?q=mouse', label: 'Mouse' },
                 { href: '/search?q=desktops', label: 'Monitors' },
                 { href: '/category', label: 'All Categories' }
