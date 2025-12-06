@@ -96,7 +96,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
-      <body className="antialiased bg-transparent scrollbar-hidden">
+      <body className="antialiased bg-transparent">
         <Script
           id="json-ld"
           type="application/ld+json"

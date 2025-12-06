@@ -122,15 +122,10 @@
 }
 
 /* Hide scrollbar */
-.scrollbar-hidden::-webkit-scrollbar,
-*:has(.scrollbar-hidden)::-webkit-scrollbar,
-.overflow-x-auto::-webkit-scrollbar,
-.overflow-y-auto::-webkit-scrollbar {
+.scrollbar-hidden::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hidden,
-.overflow-x-auto,
-.overflow-y-auto {
+.scrollbar-hidden {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
