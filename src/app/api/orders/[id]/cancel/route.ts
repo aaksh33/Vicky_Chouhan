@@ -57,13 +57,36 @@ export async function POST(
     for (const item of items) {
       const product = await prisma.product.findUnique({ where: { id: item.productId } })
       if (product) {
-        await prisma.product.update({
-          where: { id: item.productId },
-          data: {
-            quantity: { increment: item.qty },
-            stock: { increment: item.qty }
+        // Restore RAM/Storage option quantities if applicable
+        if (item.selectedRam && product.ramOptions) {
+          const updatedRamOptions = (product.ramOptions as any[]).map((opt: any) => 
+            opt.size === item.selectedRam ? { ...opt, quantity: (opt.quantity || 0) + item.qty } : opt
+          )
+          let updatedStorageOptions = product.storageOptions
+          if (item.selectedStorage && product.storageOptions) {
+            updatedStorageOptions = (product.storageOptions as any[]).map((opt: any) => 
+              opt.size === item.selectedStorage ? { ...opt, quantity: (opt.quantity || 0) + item.qty } : opt
+            )
           }
-        })
+          const totalQty = updatedRamOptions.reduce((sum: number, opt: any) => sum + (opt.quantity || 0), 0)
+          await prisma.product.update({
+            where: { id: item.productId },
+            data: {
+              ramOptions: updatedRamOptions,
+              storageOptions: updatedStorageOptions,
+              quantity: totalQty,
+              stock: totalQty
+            } as any
+          })
+        } else {
+          await prisma.product.update({
+            where: { id: item.productId },
+            data: {
+              quantity: { increment: item.qty },
+              stock: { increment: item.qty }
+            }
+          })
+        }
       }
     }
 

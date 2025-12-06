@@ -338,7 +338,7 @@ export default function ProfilePageClient() {
                           order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                           'bg-green-100 text-green-800'
                         }`}>
-                          {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status === 'delivered' ? (order.refundTransactionId ? 'Refunded' : 'Delivered') : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {order.status === 'out-for-delivery' ? 'Out For Delivery' : order.status === 'delivered' ? (order.refundTransactionId ? 'Refunded' : 'Delivered') : order.status === 'pending' ? 'Confirmed' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       </div>
                     </div>

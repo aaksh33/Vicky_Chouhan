@@ -160,11 +160,18 @@ export async function POST(request: Request) {
         const updatedRamOptions = (product.ramOptions as any[]).map((opt: any) => 
           opt.size === it.selectedRam ? { ...opt, quantity: Math.max(0, (opt.quantity || 0) - orderItem.qty) } : opt
         )
+        let updatedStorageOptions = product.storageOptions
+        if (it.selectedStorage && product.storageOptions) {
+          updatedStorageOptions = (product.storageOptions as any[]).map((opt: any) => 
+            opt.size === it.selectedStorage ? { ...opt, quantity: Math.max(0, (opt.quantity || 0) - orderItem.qty) } : opt
+          )
+        }
         const totalQty = updatedRamOptions.reduce((sum: number, opt: any) => sum + (opt.quantity || 0), 0)
         await prisma.product.update({
           where: { id: product.id },
           data: { 
             ramOptions: updatedRamOptions,
+            storageOptions: updatedStorageOptions,
             quantity: totalQty,
             stock: totalQty
           } as any
