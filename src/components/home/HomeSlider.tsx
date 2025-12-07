@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight, ChevronLeft } from "lucide-react";
@@ -7,13 +7,10 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 const HeaderSlider = () => {
   const [sliderData, setSliderData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const [transitioning, setTransitioning] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-
+  const touchStartX = useRef(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,50 +23,48 @@ const HeaderSlider = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Auto slide every 3s
+  const goToNext = useCallback(() => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
+  }, [isTransitioning]);
+
+  const goToPrev = useCallback(() => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev - 1);
+  }, [isTransitioning]);
+
   useEffect(() => {
-    if (sliderData.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => prev + 1);
-    }, 3000);
-
+    if (sliderData.length === 0 || isHovered) return;
+    const interval = setInterval(goToNext, 3000);
     return () => clearInterval(interval);
-  }, [sliderData.length]);
+  }, [sliderData.length, isHovered, goToNext]);
 
-  // Infinite effect
-  useEffect(() => {
-    if (currentSlide === sliderData.length) {
-      // reached clone, disable transition and reset to first
-      const timeout = setTimeout(() => {
-        setTransitioning(false);
-        setCurrentSlide(0);
-      }, 700); // match transition duration
-      return () => clearTimeout(timeout);
-    } else {
-      setTransitioning(true);
+  const handleTransitionEnd = () => {
+    setIsTransitioning(false);
+    if (currentIndex === 0) {
+      setCurrentIndex(sliderData.length);
+    } else if (currentIndex === sliderData.length + 1) {
+      setCurrentIndex(1);
     }
-  }, [currentSlide, sliderData.length]);
-
-  const handleSlideChange = (index: number) => {
-    setCurrentSlide(index);
   };
 
-  const handlePrev = () => {
-    setCurrentSlide((prev) => (prev === 0 ? sliderData.length - 1 : prev - 1));
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
   };
 
-  const handleNext = () => {
-    setCurrentSlide((prev) => prev + 1);
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? goToNext() : goToPrev();
+    }
   };
 
   if (loading) {
     return (
       <div className="overflow-hidden relative w-full">
-        <div
-          className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] bg-gray-200 animate-pulse flex items-center sm:rounded-lg"
-          style={{ height: "240px" }}
-        >
+        <div className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] bg-gray-200 animate-pulse flex items-center sm:rounded-lg" style={{ height: "240px" }}>
           <div className="relative z-10 max-w-2xl space-y-3 sm:space-y-4">
             <div className="h-4 sm:h-5 bg-gray-300 rounded w-32 sm:w-48"></div>
             <div className="space-y-2">
@@ -83,11 +78,8 @@ const HeaderSlider = () => {
           </div>
         </div>
         <div className="flex items-center justify-center gap-2 my-3 sm:my-4">
-          {[0, 1, 2].map((index) => (
-            <div
-              key={index}
-              className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-gray-300"
-            ></div>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-gray-300"></div>
           ))}
         </div>
       </div>
@@ -96,121 +88,92 @@ const HeaderSlider = () => {
 
   if (sliderData.length === 0) return null;
 
-  // clone first slide at end for infinite loop
-  const slides = [...sliderData, sliderData[0]];
+  const slides = [sliderData[sliderData.length - 1], ...sliderData, sliderData[0]];
+  const realIndex = currentIndex === 0 ? sliderData.length - 1 : currentIndex === sliderData.length + 1 ? 0 : currentIndex - 1;
 
   return (
     <div 
       className="overflow-hidden relative w-full group" 
       onMouseEnter={() => setIsHovered(true)} 
       onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
-      onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
-      onTouchEnd={() => {
-        if (touchStart - touchEnd > 50) {
-          handleNext();
-        }
-        if (touchStart - touchEnd < -50) {
-          handlePrev();
-        }
-        setTouchEnd(0);
-      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div
         ref={sliderRef}
-        className={`flex ${
-          transitioning ? "transition-transform duration-700 ease-in-out" : ""
-        }`}
+        className="flex"
         style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
+          transform: `translateX(-${currentIndex * 100}%)`,
+          transition: isTransitioning ? 'transform 0.5s ease-in-out' : 'none',
         }}
+        onTransitionEnd={handleTransitionEnd}
       >
         {slides.map((slide, index) => (
-          <Link
-            href={(slide as any).link || "/products"}
-            key={index}
-            className="min-w-full block sm:rounded-lg overflow-hidden"
-          >
-            <div
-              className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] cursor-pointer overflow-hidden flex items-center sm:rounded-lg"
-              style={{
-                backgroundImage: (slide as any).image
-                  ? `url(${(slide as any).image})`
-                  : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundColor: "#E6E9F2",
-                minHeight: "240px",
-              }}
-            >
-              {(slide as any).image && !loadedImages.has(slide.id) && (
-                <div className="absolute inset-0 bg-gray-300 animate-pulse" />
-              )}
-              {(slide as any).image && (
-                <Image
-                  fetchPriority="high"
-                  fill
-                  src={(slide as any).image}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover sm:rounded-lg"
-                  onLoad={() =>
-                    setLoadedImages((prev) => new Set(prev).add(slide.id))
-                  }
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/10 to-transparent z-[1]"></div>
-              <div className="relative z-10 max-w-xl text-white px-4 sm:px-0">
-                <p className="text-[10px] sm:text-sm text-orange-400 pb-1 sm:pb-2 font-bold uppercase tracking-wide">
-                  {slide.offer}
-                </p>
-                <h1 className="text-base sm:text-3xl md:text-4xl font-extrabold mb-2 sm:mb-5 leading-tight">
-                  {slide.title}
-                </h1>
-                <div className="flex flex-row items-center gap-2 sm:gap-3 ">
-                  <div className="text-[10px] sm:text-sm px-3 text-center sm:px-8 py-1.5 sm:py-2.5 bg-orange-600 hover:bg-orange-700 rounded-full text-white font-semibold shadow-lg hover:shadow-xl transition-all">
-                    {slide.buttonText1}
-                  </div>
-                  <div className="group flex items-center gap-1 text-center sm:gap-1.5 text-[10px] sm:text-sm px-3 sm:px-7 py-1.5 sm:py-2.5 font-semibold bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full transition-all">
-                    {slide.buttonText2}
-                    <span className="group-hover:translate-x-1 transition-transform">
-                      <ChevronRight className="h-4 -left-1" />
-                    </span>
+          <div key={index} className="min-w-full flex-shrink-0">
+            <Link href={slide.link || "/products"} className="block">
+              <div className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] flex items-center sm:rounded-lg overflow-hidden" style={{ minHeight: "240px", backgroundColor: "#E6E9F2" }}>
+                {slide.image && (
+                  <Image
+                    src={slide.image}
+                    alt={slide.title || ""}
+                    fill
+                    priority={index === 1}
+                    className="object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/10 to-transparent z-[1]"></div>
+                <div className="relative z-10 max-w-xl text-white px-4 sm:px-0">
+                  <p className="text-[10px] sm:text-sm text-orange-400 pb-1 sm:pb-2 font-bold uppercase tracking-wide">
+                    {slide.offer}
+                  </p>
+                  <h1 className="text-base sm:text-3xl md:text-4xl font-extrabold mb-2 sm:mb-5 leading-tight">
+                    {slide.title}
+                  </h1>
+                  <div className="flex flex-row items-center gap-2 sm:gap-3">
+                    <div className="text-[10px] sm:text-sm px-3 text-center sm:px-8 py-1.5 sm:py-2.5 bg-orange-600 hover:bg-orange-700 rounded-full text-white font-semibold shadow-lg hover:shadow-xl transition-all">
+                      {slide.buttonText1}
+                    </div>
+                    <div className="group flex items-center gap-1 text-center sm:gap-1.5 text-[10px] sm:text-sm px-3 sm:px-7 py-1.5 sm:py-2.5 font-semibold bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-full transition-all">
+                      {slide.buttonText2}
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        <ChevronRight className="h-4" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         ))}
       </div>
 
       <button
-        onClick={handlePrev}
-        className={`absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}
+        onClick={goToPrev}
+        className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
       >
-        <ChevronLeft className="h-6 w-6 text-gray-800" />
+        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-800" />
       </button>
       <button
-        onClick={handleNext}
-        className={`absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}
+        onClick={goToNext}
+        className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
       >
-        <ChevronRight className="h-6 w-6 text-gray-800" />
+        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-800" />
       </button>
 
       <div className="flex items-center justify-center gap-2 my-3 sm:my-4">
         {sliderData.map((_, index) => (
-          <div
+          <button
             key={index}
-            onClick={() => handleSlideChange(index)}
-            className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full cursor-pointer transition-all ${
-              currentSlide % sliderData.length === index
-                ? "bg-orange-600 w-6 sm:w-8"
-                : "bg-gray-400 hover:bg-gray-500"
+            onClick={() => {
+              if (!isTransitioning) {
+                setIsTransitioning(true);
+                setCurrentIndex(index + 1);
+              }
+            }}
+            className={`h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full transition-all ${
+              realIndex === index ? "bg-orange-600 w-6 sm:w-8" : "bg-gray-400 hover:bg-gray-500"
             }`}
-          ></div>
+          />
         ))}
       </div>
     </div>
