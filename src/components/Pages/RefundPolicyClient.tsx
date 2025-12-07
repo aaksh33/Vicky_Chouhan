@@ -301,7 +301,7 @@ export default function RefundPolicyPage() {
           </div>
         </main>
 
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between">
           <Link
             href="/"
             className="text-sm font-semibold text-blue-700 hover:underline"

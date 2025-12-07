@@ -137,7 +137,7 @@ export function Footer({ className = "" }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
           <div className="text-sm text-gray-400 text-center sm:text-left">
             <p>© 2025 Future Of Gadgets. All rights reserved.</p>
             <p className="mt-1">
