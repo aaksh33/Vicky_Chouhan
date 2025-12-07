@@ -14,8 +14,8 @@ export default function TrendingNow(){
 
   useEffect(() => {
     const updateCount = () => {
-      if (window.innerWidth < 640) setDisplayCount(4);
-      else if (window.innerWidth < 768) setDisplayCount(6);
+       if (window.innerWidth < 620) setDisplayCount(4);
+      else if (window.innerWidth < 1024) setDisplayCount(6);
       else setDisplayCount(8);
     };
     updateCount();

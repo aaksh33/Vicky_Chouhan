@@ -29,9 +29,8 @@ export default function NewArrivals(){
 
   useEffect(() => {
     const updateCount = () => {
-      if (window.innerWidth < 640) setDisplayCount(4);
-      else if (window.innerWidth < 768) setDisplayCount(6);
-      // else if (window.innerWidth < 1024) setDisplayCount(8);
+     if (window.innerWidth < 620) setDisplayCount(4);
+      else if (window.innerWidth < 1024) setDisplayCount(6);
       else setDisplayCount(8);
     };
     updateCount();
