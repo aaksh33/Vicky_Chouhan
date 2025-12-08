@@ -138,9 +138,7 @@ export async function POST(request: Request) {
         if (storageOption?.price) itemPrice += storageOption.price
       }
       
-      if (it.warranty?.price) {
-        itemPrice += it.warranty.price
-      }
+
       
       const orderItem: any = {
         productId: product.id,
@@ -151,7 +149,6 @@ export async function POST(request: Request) {
       if (it.color) orderItem.color = it.color
       if (it.selectedRam) orderItem.selectedRam = it.selectedRam
       if (it.selectedStorage) orderItem.selectedStorage = it.selectedStorage
-      if (it.warranty) orderItem.warranty = it.warranty
       orderItems.push(orderItem)
       total += orderItem.price * orderItem.qty
       

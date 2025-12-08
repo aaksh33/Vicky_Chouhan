@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Loading from "../loading"
 import { indianStates, getCitiesByState, isCODAvailable } from "@/lib/indian-locations"
 
-type CartItem = { productId: string; qty: number; title?: string; price?: number; image?: string; color?: string; selectedRam?: string; selectedStorage?: string; warranty?: { duration: string; price: number } }
+type CartItem = { productId: string; qty: number; title?: string; price?: number; image?: string; color?: string; selectedRam?: string; selectedStorage?: string }
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -133,7 +133,6 @@ export default function CheckoutPage() {
             color: it.color,
             selectedRam: it.selectedRam,
             selectedStorage: it.selectedStorage,
-            warranty: it.warranty,
           }
         })
         // console.log('Normalized items:', normalized) // TESTING
@@ -261,7 +260,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((it) => ({ productId: String(it.productId), qty: Number(it.qty || 1), color: it.color, selectedRam: it.selectedRam, selectedStorage: it.selectedStorage, warranty: it.warranty })),
+          items: items.map((it) => ({ productId: String(it.productId), qty: Number(it.qty || 1), color: it.color, selectedRam: it.selectedRam, selectedStorage: it.selectedStorage })),
           address: { fullName: data.fullName, phone: data.phone, line1: data.line1, line2: data.line2, state: data.state, city: data.city,  zip: data.zip },
           paymentMethod,
           deliveryDate: new Date(data.deliveryDate).toISOString(),
@@ -630,7 +629,6 @@ export default function CheckoutPage() {
                             {/* {it.color && <span className="text-xs text-gray-500">Color: {it.color}</span>} */}
                             {(it as any).selectedRam && <span className="text-xs text-gray-500">RAM: {(it as any).selectedRam}{ramPrice !== 0 && ` (+₹${ramPrice.toLocaleString()})`}</span>}
                             {(it as any).selectedStorage && <span className="text-xs text-gray-500">Storage: {(it as any).selectedStorage}{storagePrice !== 0 && ` (+₹${storagePrice.toLocaleString()})`}</span>}
-                            {it.warranty && <span className="text-xs text-gray-600">Ext Warranty: {it.warranty.duration} (+₹{it.warranty.price.toLocaleString()})</span>}
                           </div>
                           <p className="text-sm font-semibold text-gray-900 mt-1">₹{(it.price || 0).toLocaleString()}</p>
                         </div>

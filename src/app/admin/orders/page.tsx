@@ -130,7 +130,6 @@ type Order = {
     color?: string;
     selectedRam?: string;
     selectedStorage?: string;
-    warranty?: { duration: string; price: number };
   }[];
   total: number;
   status: string;
@@ -1145,11 +1144,7 @@ export default function AdminOrdersPage() {
                                 Storage: {(item as any).selectedStorage}
                               </p>
                             )}
-                            {(item as any).warranty && (
-                              <p className="text-sm text-gray-600">
-                                Ext Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})
-                              </p>
-                            )}
+
                             <p className="text-sm text-gray-600">
                               Unit Price: ₹{item.price.toLocaleString()}
                             </p>

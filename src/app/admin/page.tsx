@@ -503,13 +503,13 @@ export default function AdminDashboardPage() {
                       <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">₹{order.total?.toLocaleString()}</td>
                       <td className="px-3 sm:px-4 py-2 sm:py-3">
                         <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs rounded-full ${
-                          order.status === 'delivered' ? (order.refundTransactionId ? 'bg-orange-100 text-orange-800' : 'bg-purple-100 text-purple-800') :
+                          order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
                           order.status === 'out-for-delivery' ? 'bg-orange-100 text-orange-800' :
                           order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
                           order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'
+                          'bg-green-100 text-green-800'
                         }`}>
-                          {order.status === 'out-for-delivery' ? 'Out for delivery' : order.status === 'pending' ? 'Pending' : order.status === 'delivered' ? (order.refundTransactionId ? 'Refunded' : 'Delivered') : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          {order.status === 'out-for-delivery' ? 'Out for delivery' : order.status === 'pending' ? 'Order confirmed' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                       </td>
                     </tr>

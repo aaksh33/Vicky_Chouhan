@@ -28,18 +28,16 @@ type Product = {
   images?: string[];
   coverImage?: string;
   updatedAt: string;
-  screenSize?: string;
-  cpuModel?: string;
-  operatingSystem?: string;
-  graphics?: string;
-  color?: string;
-  modelName?:string;
+  modelName?: string;
   warranty?: string;
-  warrantyType?: string;
   ramOptions?: { size: string; price: number; quantity: number }[];
-  storageOptions?: { size: string; price: number; quantity: number }[];
   warrantyOptions?: { duration: string; price: number }[];
-  boxContents?:string;
+  boxContents?: string;
+  availableColors?: string;
+  fabric?: string;
+  fitType?: string;
+  occasion?: string;
+  sizes?: string;
 };
 
 export default function ProductPage() {
@@ -50,8 +48,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState<string>("");
+
   const [selectedRam, setSelectedRam] = useState<{ size: string; price: number; quantity: number } | null>(null);
   const [selectedStorage, setSelectedStorage] = useState<{ size: string; price: number; quantity: number } | null>(null);
   const [availableStock, setAvailableStock] = useState(0);
@@ -66,7 +63,6 @@ export default function ProductPage() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [isButtonClick, setIsButtonClick] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
 const [relatedLoading, setRelatedLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -111,23 +107,66 @@ useEffect(() => {
   useEffect(() => {
     if (showMobileZoom) {
       document.body.style.overflow = 'hidden';
-      window.history.pushState(null, '', window.location.href);
-      const handlePopState = () => {
-        setShowMobileZoom(false);
-      };
-      window.addEventListener('popstate', handlePopState);
-      return () => {
-        document.body.style.overflow = 'unset';
-        window.removeEventListener('popstate', handlePopState);
-      };
     } else {
       document.body.style.overflow = 'unset';
     }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [showMobileZoom]);
   const [selectedWarranty, setSelectedWarranty] = useState<{ duration: string; price: number } | null>(null);
 
-  // These handlers are for the ProductCard items (list view) and won't alter the full product page state
-const handleAddToCartFromList = (e: React.MouseEvent, p: Product) => {
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]");
+    const cartQty = cart.reduce((sum: number, item: any) => 
+      item.id === product.id ? sum + (item.qty || 1) : sum, 0
+    );
+
+    if (cartQty >= product.stock) {
+      toast.error("Cannot add more", { description: `Only ${product.stock} items available in stock.` });
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: finalPrice + (selectedWarranty?.price || 0),
+      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg"
+    });
+
+    window.dispatchEvent(new Event("v0-cart-updated"));
+    toast.success("Added to Cart", { description: `${product.name} added to your cart.` });
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]");
+    const cartQty = cart.reduce((sum: number, item: any) => 
+      item.id === product.id ? sum + (item.qty || 1) : sum, 0
+    );
+
+    if (cartQty >= product.stock) {
+      toast.error("Cannot add more", { description: `Only ${product.stock} items available in stock.` });
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: finalPrice + (selectedWarranty?.price || 0),
+      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg"
+    });
+
+    window.dispatchEvent(new Event("v0-cart-updated"));
+    router.push("/cart");
+  };
+
+  const handleAddToCartFromList = (e: React.MouseEvent, p: Product) => {
   e.preventDefault();
   e.stopPropagation();
   const currentQty = p.quantity !== undefined ? p.quantity : (p.stock || 0);
@@ -180,128 +219,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
 
 
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    if (availableStock === 0) {
-      toast.error("Out of Stock", {
-        description: "This configuration is currently unavailable.",
-      });
-      return;
-    }
-    
-    if (quantity > availableStock) {
-      toast.error("Insufficient Stock", {
-        description: `Only ${availableStock} items available for this configuration.`,
-      });
-      return;
-    }
-    
-    const itemPrice = finalPrice + (selectedWarranty?.price || 0);
-    
-    for (let i = 0; i < quantity; i++) {
-      addToCart({
-        id: product.id,
-        slug: product.slug,
-        name: product.name,
-        price: itemPrice,
-        image: product.frontImage || product.image || product.coverImage || "/placeholder.svg",
-        color: selectedColor || product.color,
-        selectedRam: selectedRam?.size || undefined,
-        selectedStorage: selectedStorage?.size || undefined,
-        warranty: selectedWarranty || undefined
-      });
-    }
-    
-    if (product.ramOptions && product.ramOptions.length > 0) {
-      // Handle RAM-based products
-      if (selectedRam && selectedStorage) {
-        const updatedRamOptions = product.ramOptions?.map(r => 
-          r.size === selectedRam.size ? { ...r, quantity: r.quantity - quantity } : r
-        );
-        const updatedStorageOptions = product.storageOptions?.map(s => 
-          s.size === selectedStorage.size ? { ...s, quantity: s.quantity - quantity } : s
-        );
-        setProduct({ ...product, ramOptions: updatedRamOptions, storageOptions: updatedStorageOptions });
-        
-        // Update selectedRam reference to reflect new quantity
-        const updatedSelectedRam = updatedRamOptions?.find(r => r.size === selectedRam.size);
-        if (updatedSelectedRam) {
-          setSelectedRam(updatedSelectedRam);
-        }
-      }
-    } else {
-      // Handle products without RAM options - update total quantity
-      const updatedProduct = { ...product, quantity: product.quantity - quantity };
-      setProduct(updatedProduct);
-    }
-    
-    setAvailableStock(availableStock - quantity);
-    setQuantity(1);
-    
-    toast.success("Added to Cart", {
-      description: `${quantity} x ${product.name} added to your cart.`,
-    });
-  };
 
-  const handleBuyNow = () => {
-    if (!product) return;
-    
-    if (availableStock === 0) {
-      toast.error("Out of Stock", {
-        description: "This configuration is currently unavailable.",
-      });
-      return;
-    }
-    
-    if (quantity > availableStock) {
-      toast.error("Insufficient Stock", {
-        description: `Only ${availableStock} items available for this configuration.`,
-      });
-      return;
-    }
-    
-    const itemPrice = finalPrice + (selectedWarranty?.price || 0);
-    
-    for (let i = 0; i < quantity; i++) {
-      addToCart({
-        id: product.id,
-        slug: product.slug,
-        name: product.name,
-        price: itemPrice,
-        image: product.frontImage || product.image || product.coverImage || "/placeholder.svg",
-        color: selectedColor || product.color,
-        selectedRam: selectedRam?.size || undefined,
-        selectedStorage: selectedStorage?.size || undefined,
-        warranty: selectedWarranty || undefined
-      });
-    }
-    
-    if (product.ramOptions && product.ramOptions.length > 0) {
-      // Handle RAM-based products
-      if (selectedRam && selectedStorage) {
-        const updatedRamOptions = product.ramOptions?.map(r => 
-          r.size === selectedRam.size ? { ...r, quantity: r.quantity - quantity } : r
-        );
-        const updatedStorageOptions = product.storageOptions?.map(s => 
-          s.size === selectedStorage.size ? { ...s, quantity: s.quantity - quantity } : s
-        );
-        setProduct({ ...product, ramOptions: updatedRamOptions, storageOptions: updatedStorageOptions });
-        
-        // Update selectedRam reference to reflect new quantity
-        const updatedSelectedRam = updatedRamOptions?.find(r => r.size === selectedRam.size);
-        if (updatedSelectedRam) {
-          setSelectedRam(updatedSelectedRam);
-        }
-      }
-    } else {
-      // Handle products without RAM options - update total quantity
-      const updatedProduct = { ...product, quantity: product.quantity - quantity };
-      setProduct(updatedProduct);
-    }
-    
-    router.push("/cart");
-  };
 
   // const handleWishlist = () => {
   //   toast.success("Added to Wishlist", {
@@ -393,13 +311,10 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           const cartQty = cart.reduce((sum: number, item: any) => 
             item.id === found.id ? sum + (item.qty || 1) : sum, 0
           )
-          found.quantity = Math.max(0, found.quantity - cartQty)
+          found.quantity = Math.max(0, (found.stock || found.quantity) - cartQty)
           setIsWishlisted(isInWishlist(found.id));
           setProduct(found);
-          if (found.color) {
-            const colors = found.color.split(',').map((c: string) => c.trim());
-            setSelectedColor(colors[0]);
-          }
+
           
           // Set default RAM and storage (first available option)
           if (found.ramOptions && found.ramOptions.length > 0) {
@@ -439,34 +354,14 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
   // Calculate final price and available stock based on selected options
   useEffect(() => {
     if (product) {
-      let price = product.price;
-      if (selectedRam) price += selectedRam.price;
-      if (selectedStorage) price += selectedStorage.price;
-      setFinalPrice(price);
-      
-      // Calculate available stock based on selected configuration
-      if (product.ramOptions && product.ramOptions.length > 0) {
-        // Use RAM/storage based stock calculation
-        if (selectedRam && selectedStorage) {
-          const stock = Math.min(selectedRam.quantity, selectedStorage.quantity);
-          setAvailableStock(Math.max(0, stock));
-        } else if (selectedRam) {
-          setAvailableStock(Math.max(0, selectedRam.quantity));
-        }
-      } else {
-        // Use total product quantity when no RAM options
-        setAvailableStock(Math.max(0, product.quantity));
-      }
-      
-      // Auto-select next available RAM if current is out of stock
-      if (selectedRam && selectedRam.quantity === 0 && product.ramOptions) {
-        const nextAvailableRam = product.ramOptions.find((r: any) => r.quantity > 0 && r.size !== selectedRam.size);
-        if (nextAvailableRam) {
-          setSelectedRam(nextAvailableRam);
-        }
-      }
+      const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]");
+      const cartQty = cart.reduce((sum: number, item: any) => 
+        item.id === product.id ? sum + (item.qty || 1) : sum, 0
+      );
+      setFinalPrice(product.price);
+      setAvailableStock(Math.max(0, product.stock - cartQty));
     }
-  }, [product, selectedRam, selectedStorage]);
+  }, [product]);
 
   // Listen for cart updates to refresh stock
   useEffect(() => {
@@ -500,7 +395,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                 const cartQty = cart.reduce((sum: number, item: any) => 
                   item.id === found.id ? sum + (item.qty || 1) : sum, 0
                 )
-                found.quantity = Math.max(0, found.quantity - cartQty)
+                found.quantity = Math.max(0, (found.stock || found.quantity) - cartQty)
               }
               setProduct(found);
               if (selectedRam) {
@@ -523,7 +418,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
     <div className="min-h-screen bg-gray-50/50">
       <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Breadcrumb skeleton */}
-        <div className="hidden md:flex items-center my-4 sm:mt-2 sm:mb-3 gap-1">
+        <div className="flex items-center my-4 sm:mt-2 sm:mb-3 gap-1">
           <div className="h-3 w-12 bg-gray-200 shimmer rounded"></div>
           <div className="w-3 h-3 bg-gray-200 shimmer rounded"></div>
           <div className="h-3 w-16 bg-gray-200 shimmer rounded"></div>
@@ -538,7 +433,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             <div className="aspect-square bg-gray-100 shimmer rounded-lg mb-3 sm:mb-4 relative">
               <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-2">
                 <div className="w-8 h-8 bg-gray-200 shimmer rounded-full"></div>
-                <div className="w-8 h-8 bg-gray-200 shimmer rounded-full"></div>
+                <div className="w-8 h-8 bg-gray-200 shimmer rounded-full sm:hidden"></div>
               </div>
             </div>
             
@@ -547,6 +442,11 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 shimmer rounded-lg"></div>
               ))}
+            </div>
+
+            {/* Share button skeleton */}
+            <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
+              <div className="flex-1 h-10 bg-gray-200 shimmer rounded-lg"></div>
             </div>
           </div>
 
@@ -566,6 +466,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               {/* Rating skeleton */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="h-6 w-12 bg-gray-200 shimmer rounded"></div>
+                <div className="h-4 w-20 bg-gray-200 shimmer rounded"></div>
               </div>
 
               {/* Price skeleton */}
@@ -639,7 +540,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             </div>
 
             {/* Extended Warranty skeleton */}
-            <div className="bg-white rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm border-2 border-blue-100">
+            <div className="bg-white rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm border-2 border-gray-100">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-5 h-5 bg-gray-200 shimmer rounded"></div>
                 <div className="h-5 w-32 bg-gray-200 shimmer rounded"></div>
@@ -647,6 +548,22 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               <div className="space-y-2">
                 {Array.from({ length: 2 }).map((_, i) => (
                   <div key={i} className="h-12 bg-gray-200 shimmer rounded-lg"></div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Why Buy skeleton */}
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-5 h-5 bg-gray-200 shimmer rounded"></div>
+                <div className="h-5 w-24 bg-gray-200 shimmer rounded"></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gray-200 shimmer rounded"></div>
+                    <div className="h-3 bg-gray-200 shimmer rounded flex-1"></div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -702,7 +619,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           <div className="h-6 w-32 bg-gray-200 shimmer rounded mb-4"></div>
           <div className="flex gap-4 overflow-x-auto pb-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 w-70 md:w-86">
+              <div key={i} className="flex-shrink-0 w-64">
                 <div className="bg-white border rounded-lg overflow-hidden">
                   <div className="aspect-square bg-gray-200 shimmer"></div>
                   <div className="p-3 space-y-2">
@@ -815,12 +732,12 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
       <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Breadcrumb */}
         {/* <div className="bg-white rounded-lg px-2 sm:px-4 py-3 mb-4 my-2 shadow-sm"> */}
-          <div className="text-xs sm:text-sm text-gray-600 items-center my-4 sm:mt-2 sm:mb-3 gap-1 hidden md:flex">
-            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors whitespace-nowrap" onClick={() => router.push('/')}>Home</span>
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors whitespace-nowrap" onClick={() => router.push(`/category/${product.category.toLowerCase()}`)}>{product.category}</span>
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-            <span className="text-black font-medium truncate">{product.name}</span>
+          <div className="text-xs sm:text-sm text-gray-600 flex items-center my-4 sm:mt-2 sm:mb-3 flex-wrap gap-1">
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push('/')}>Home</span>
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hover:text-blue-600 cursor-pointer hover:underline transition-colors" onClick={() => router.push(`/category/${product.category.toLowerCase()}`)}>{product.category}</span>
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="text-black font-medium truncate max-w-[150px] sm:max-w-none">{product.name}</span>
           </div>
         {/* </div> */}
 
@@ -904,7 +821,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                     e.stopPropagation();
                     handleShare();
                   }}
-                  className="p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
+                  className="p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform sm:hidden"
                 >
                   <Share2 className="w-4 h-4 text-gray-600" />
                 </button>
@@ -938,12 +855,12 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             )}
 
             {/* Action Icons */}
-            {/* <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
+            <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
               <button onClick={handleShare} className="flex-1 py-2 sm:py-2.5 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 sm:gap-2 transition-all font-medium">
                 <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="text-xs sm:text-sm">Share</span>
               </button>
-            </div> */}
+            </div>
           </div>
 
           {/* Right: Details */}
@@ -1004,133 +921,50 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                   )}
                 </div>
                 
-                {availableStock > 0 && (
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-700">Quantity:</span>
-                    <div className="flex items-center border border-gray-300 rounded-lg">
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3 py-1.5 hover:bg-gray-100 transition-colors"
-                      >
-                        -
-                      </button>
-                      <span className="px-4 py-1.5 border-x border-gray-300 min-w-[50px] text-center font-medium">{quantity}</span>
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
-                        className="px-3 py-1.5 hover:bg-gray-100 transition-colors"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                )}
+
                 
-                {product.color && (
+                {product.sizes && (
                   <div>
-                    <span className="text-sm font-medium text-gray-700 block mb-2">Color:</span>
+                    <span className="text-sm font-medium text-gray-700 block mb-2">Available Sizes:</span>
                     <div className="flex gap-2 flex-wrap">
-                      {product.color.split(',').map((color: string) => {
-                        const trimmedColor = color.trim();
+                      {product.sizes.split(',').map((size: string) => {
+                        const trimmedSize = size.trim();
                         return (
-                          <button
-                            key={trimmedColor}
-                            type="button"
-                            onClick={() => setSelectedColor(trimmedColor)}
-                            className={`px-4 py-2 rounded-lg font-medium border-2 transition-all flex items-center gap-2 bg-white ${
-                              selectedColor === trimmedColor
-                                ? 'border-blue-600 text-gray-800'
-                                : 'border-gray-300 hover:border-blue-600 hover:bg-blue-50/40'
-                            }`}
+                          <div
+                            key={trimmedSize}
+                            className="px-4 py-2 rounded-lg font-medium border-2 border-gray-300 bg-white text-gray-800"
                           >
-                            <div className="h-5 w-5 rounded-full border border-gray-400" style={{ backgroundColor: trimmedColor.toLowerCase() === 'silver' || trimmedColor.toLowerCase() === 'sliver' ? '#C0C0C0' : trimmedColor.toLowerCase() }}></div>
-                            {trimmedColor.charAt(0).toUpperCase() + trimmedColor.slice(1).toLowerCase()}
-                          </button>
+                            {trimmedSize}
+                          </div>
                         );
                       })}
                     </div>
                   </div>
                 )}
                 
-                {/* RAM Options */}
-                {product.ramOptions && product.ramOptions.length > 0 && (
+                {product.availableColors && (
                   <div>
-                    <span className="text-sm font-medium text-gray-700 block mb-2">RAM:</span>
+                    <span className="text-sm font-medium text-gray-700 block mb-2">Available Colors:</span>
                     <div className="flex gap-2 flex-wrap">
-                      {product.ramOptions.map((ram, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => setSelectedRam(ram)}
-                          disabled={ram.quantity === 0}
-                          className={`px-4 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
-                            ram.quantity === 0
-                              ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
-                              : selectedRam?.size === ram.size
-                              ? 'border-blue-600 text-gray-800'
-                              : 'border-gray-300 bg-white hover:border-blue-600 hover:bg-blue-50/40'
-                          }`}
-                        >
-                          <div className="flex flex-col items-center">
-                            <span>{ram.size}</span>
-                            {ram.price !== 0 && (
-                              <span className="text-xs mt-0.5">
-                                {ram.price > 0 ? `+₹${ram.price.toLocaleString()}` : `₹${ram.price.toLocaleString()}`}
-                              </span>
-                            )}
-                            {ram.quantity === 0 && (
-                              <span className="text-xs text-red-500 mt-0.5">Out of Stock</span>
-                            )}
+                      {product.availableColors.split(',').map((color: string) => {
+                        const trimmedColor = color.trim();
+                        return (
+                          <div
+                            key={trimmedColor}
+                            className="px-4 py-2 rounded-lg font-medium border-2 border-gray-300 bg-white text-gray-800"
+                          >
+                            {trimmedColor}
                           </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Storage Options */}
-                {product.storageOptions && product.storageOptions.length > 0 && (
-                  <div>
-                    <span className="text-sm font-medium text-gray-700 block mb-2">Storage:</span>
-                    <div className="flex gap-2 flex-wrap">
-                      {product.storageOptions.map((storage, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => setSelectedStorage(storage)}
-                          disabled={selectedRam?.quantity === 0 || storage.quantity === 0}
-                          className={`px-4 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
-                            selectedRam?.quantity === 0 || storage.quantity === 0
-                              ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
-                              : selectedStorage?.size === storage.size
-                              ? 'border-blue-600 text-gray-800'
-                              : 'border-gray-300 bg-white hover:border-blue-600 hover:bg-blue-50/40'
-                          }`}
-                        >
-                          <div className="flex flex-col items-center">
-                            <span>{storage.size}</span>
-                            {storage.price !== 0 && (
-                              <span className="text-xs mt-0.5">
-                                {storage.price > 0 ? `+₹${storage.price.toLocaleString()}` : `₹${storage.price.toLocaleString()}`}
-                              </span>
-                            )}
-                            {storage.quantity === 0 && (
-                              <span className="text-xs text-red-500 mt-0.5">Out of Stock</span>
-                            )}
-                          </div>
-                        </button>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Buttons */}
-              {availableStock === 0 ? (
-                <div></div>
-              ) : (
-                <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
+              {availableStock > 0 && (
+                <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mb-4">
                   <button 
                     type="button"
                     onClick={handleAddToCart}
@@ -1168,8 +1002,8 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-purple-50 rounded-lg">
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="text-xs sm:text-sm font-semibold text-gray-900">{product.warranty} Warranty</div>
-                    <div className="text-[10px] sm:text-xs text-gray-600">{product.warrantyType} Warranty</div>
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900">{product.warranty}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600">Quality Assured</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-orange-50 rounded-lg">
@@ -1226,6 +1060,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
        
 
        {/* Description & Specifications */}
+        {/* Description & Specifications */}
         <div className="mt-4 sm:mt-6 grid lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {/* Description */}
           <div className="lg:col-span-2 bg-white rounded-lg p-3 py-4 sm:p-4 lg:p-6 shadow-sm">
@@ -1265,62 +1100,31 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                   <span className="font-medium text-right break-words">{product.modelName}</span>
                 </div>
               )}
-              {product.screenSize && (
+              {product.availableColors && (
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Screen Size</span>
-                  <span className="font-medium text-right">{product.screenSize}</span>
+                  <span className="text-gray-600">Available Colors</span>
+                  <span className="font-medium text-right">{product.availableColors}</span>
                 </div>
               )}
-              {product.cpuModel && (
+              {product.fabric && (
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Processor</span>
-                  <span className="font-medium text-right">{product.cpuModel}</span>
+                  <span className="text-gray-600">Fabric</span>
+                  <span className="font-medium text-right">{product.fabric}</span>
                 </div>
               )}
-              {selectedRam && (
-                <div className="flex justify-between py-2 border-b ">
-                  <span className="text-gray-600">RAM</span>
-                  <span className="font-medium text-right">
-                    {selectedRam.size}
-                  </span>
-                </div>
-              )}
-              {selectedStorage && (
+
+              {product.occasion && (
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Storage</span>
-                  <span className="font-medium text-right">
-                    {selectedStorage.size}
-                  </span>
+                  <span className="text-gray-600">Occasion</span>
+                  <span className="font-medium text-right">{product.occasion}</span>
                 </div>
               )}
-              {product.graphics && (
+              {product.fitType && (
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Graphics</span>
-                  <span className="font-medium text-right">{product.graphics}</span>
+                  <span className="text-gray-600">Fit Type</span>
+                  <span className="font-medium text-right">{product.fitType}</span>
                 </div>
               )}
-              {product.operatingSystem && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Operating System</span>
-                  <span className="font-medium text-right">{product.operatingSystem}</span>
-                </div>
-              )}
-              {product.warranty && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Warranty</span>
-                  <span className="font-medium text-right">{product.warranty}</span>
-                </div>
-              )}
-              {product.warrantyType && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Warranty Type</span>
-                  <span className="font-medium text-right">{product.warrantyType}</span>
-                </div>
-              )}
-              <div className="flex justify-between py-2">
-                <span className="text-gray-600">Certification</span>
-                <span className="font-medium text-right">ISI Certified</span>
-              </div>
             </div>
 
             
@@ -1611,27 +1415,21 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           onTouchStart={(e) => {
             setTouchStart(e.targetTouches[0].clientX);
             setIsDragging(true);
-            setIsButtonClick(false);
           }}
           onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
           onTouchEnd={() => {
             setIsDragging(false);
-            if (!isButtonClick && images.length > 1 && touchStart - touchEnd > 50 && selectedImage < images.length - 1) {
+            if (images.length > 1 && touchStart - touchEnd > 50 && selectedImage < images.length - 1) {
               setSelectedImage(selectedImage + 1);
             }
-            if (!isButtonClick && images.length > 1 && touchStart - touchEnd < -50 && selectedImage > 0) {
+            if (images.length > 1 && touchStart - touchEnd < -50 && selectedImage > 0) {
               setSelectedImage(selectedImage - 1);
             }
             setTouchEnd(0);
-            setIsButtonClick(false);
           }}
         >
           {images.length > 1 && selectedImage > 0 && (
             <button
-              onTouchStart={(e) => {
-                e.stopPropagation();
-                setIsButtonClick(true);
-              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(selectedImage - 1);
@@ -1666,10 +1464,6 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           </div>
           {images.length > 1 && selectedImage < images.length - 1 && (
             <button
-              onTouchStart={(e) => {
-                e.stopPropagation();
-                setIsButtonClick(true);
-              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(selectedImage + 1);

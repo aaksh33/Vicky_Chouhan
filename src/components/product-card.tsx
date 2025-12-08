@@ -20,7 +20,7 @@ type Product = {
   mrp?: number;
   quantity?: number;
   stock?: number;
-  color?: string;
+  availableColors?: string;
   rating?: number;
   ratingCount?: number;
   ramOptions?: { size: string; price: number; quantity: number }[];
@@ -222,7 +222,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
                 <div className="hidden gap-2 mt-2">
                   <button
                     onClick={(e) => {
-                      const defaultColor = product.color ? product.color.split(',')[0].trim() : undefined;
+                      const defaultColor = product.availableColors ? product.availableColors.split(',')[0].trim() : undefined;
                       onAddToCart(e, { ...product, selectedColor: defaultColor });
                     }}
                     disabled={availableQty === 0}
@@ -232,7 +232,7 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
                   </button>
                   <button
                     onClick={(e) => {
-                      const defaultColor = product.color ? product.color.split(',')[0].trim() : undefined;
+                      const defaultColor = product.availableColors ? product.availableColors.split(',')[0].trim() : undefined;
                       onBuyNow(e, { ...product, selectedColor: defaultColor });
                     }}
                     disabled={availableQty === 0}

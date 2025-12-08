@@ -45,17 +45,14 @@ model Product {
   quantity      Int      @default(0)
   status        String   @default("active")
   modelName     String?
-  warranty      String?
-  warrantyType  String?
-  screenSize    String?
-  cpuModel      String?
-  operatingSystem String?
-  graphics      String?
+  availableColors String?
+  fabric        String?
+  fitType       String?
+  occasion      String?
   offers        String?
-  color         String?
+  sizes         String?
   ramOptions    Json?
   storageOptions Json?
-  warrantyOptions Json?
   boxContents   String?
   rating        Float?   @default(0)
   ratingCount   Float?   @default(0)
@@ -90,7 +87,6 @@ type OrderItem {
   color     String?
   selectedRam String?
   selectedStorage String?
-  warranty    Json?
 }
 
 type UserAddress {

@@ -49,14 +49,12 @@ export async function POST(req: Request) {
       }
     }
     
-    // Calculate quantity from RAM options if provided
+    // Use quantity directly from form
     let calculatedQty = Number(data.quantity) || 0;
-    if (data.ramOptions && Array.isArray(data.ramOptions) && data.ramOptions.length > 0) {
-      calculatedQty = data.ramOptions.reduce((sum: number, opt: any) => sum + (Number(opt.quantity) || 0), 0);
-    }
+    console.log('Received quantity:', data.quantity, 'Calculated:', calculatedQty);
     
     // Prepare product data
-    const productData = {
+    const productData: any = {
       name: String(data.name).trim(),
       slug: String(data.slug || '').trim(),
       category: String(data.category).trim(),
@@ -69,27 +67,22 @@ export async function POST(req: Request) {
       quantity: calculatedQty,
       brand: String(data.brand || '').trim(),
       modelName: String(data.modelName || '').trim(),
-      warranty: String(data.warranty || '').trim(),
-      warrantyType: String(data.warrantyType || '').trim(),
-      screenSize: String(data.screenSize || '').trim(),
-      cpuModel: String(data.cpuModel || '').trim(),
-      operatingSystem: String(data.operatingSystem || '').trim(),
-      graphics: String(data.graphics || '').trim(),
-      color: String(data.color || '').trim(),
+      availableColors: String(data.availableColors || '').trim(),
+      fabric: String(data.fabric || '').trim(),
+      fitType: String(data.fitType || '').trim(),
+      occasion: String(data.occasion || '').trim(),
+      sizes: String(data.sizes || '').trim(),
       boxContents: String(data.boxContents || '').trim(),
       status: String(data.status || 'active').trim(),
       sku: String(data.sku || `SKU-${Date.now()}`).trim(),
       rating: Number(data.rating) || 0,
-      ratingCount: parseFloat(data.ratingCount) || 0,
+      ratingCount: Number(data.ratingCount) || 0,
       ramOptions: data.ramOptions || [],
-      storageOptions: data.storageOptions || [],
-      warrantyOptions: data.warrantyOptions || []
+      storageOptions: data.storageOptions || []
     };
     
-    // console.log('Creating product with data:', JSON.stringify(productData, null, 2));
-    
     const product = await prisma.product.create({
-      data: productData as any
+      data: productData
     });
     
     // console.log('Product created successfully:', product.id);

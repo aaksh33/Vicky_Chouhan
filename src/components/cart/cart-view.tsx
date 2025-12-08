@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import LoadingButton from "@/components/ui/loading-button"
 import { toast } from "sonner"
-import { getCart, updateQty, removeFromCart, clearCart, updateWarranty, clearPromoCode } from "@/lib/cart"
+import { getCart, updateQty, removeFromCart, clearCart, clearPromoCode } from "@/lib/cart"
 import { useSession } from "next-auth/react"
 import { AuthDialog } from "@/components/auth-dialog"
 import Link from "next/link"
@@ -27,7 +27,6 @@ type CartItem = {
   color?: string
   selectedRam?: string
   selectedStorage?: string
-  warranty?: { duration: string; price: number }
 }
 type Product = { 
   id: string; 
@@ -50,8 +49,6 @@ export default function CartView() {
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; description: string } | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [availablePromos, setAvailablePromos] = useState<any[]>([])
-  const [warrantyDialogOpen, setWarrantyDialogOpen] = useState(false)
-  const [selectedCartItem, setSelectedCartItem] = useState<CartItem | null>(null)
 
   useEffect(() => {
     setItems(getCart())
@@ -132,29 +129,6 @@ export default function CartView() {
     const hasIssue = items.some(item => {
       const product = products.find(p => p.id === item.id)
       if (!product) return true
-      
-      if (item.selectedStorage && product.storageOptions && product.storageOptions.length > 0) {
-        const storageOption = (product as any).storageOptions?.find((s: any) => s.size === item.selectedStorage)
-        if (!storageOption) return true
-        
-        const totalStorageUsage = items
-          .filter(cartItem => cartItem.id === item.id && cartItem.selectedStorage === item.selectedStorage)
-          .reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0)
-        
-        return storageOption.quantity < totalStorageUsage
-      }
-      
-      if (item.selectedRam && product.ramOptions && product.ramOptions.length > 0) {
-        const ramOption = (product as any).ramOptions?.find((r: any) => r.size === item.selectedRam)
-        if (!ramOption) return true
-        
-        const totalRamUsage = items
-          .filter(cartItem => cartItem.id === item.id && cartItem.selectedRam === item.selectedRam)
-          .reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0)
-        
-        return ramOption.quantity < totalRamUsage
-      }
-      
       return product.quantity < (item.qty || 1)
     })
     
@@ -301,23 +275,13 @@ export default function CartView() {
                   let availableStock = 0
                   let totalUsage = 0
                   if (product) {
-                    if (i.selectedStorage && product.storageOptions && product.storageOptions.length > 0) {
-                      const storageOption = product.storageOptions?.find((s: any) => s.size === i.selectedStorage)
-                      availableStock = storageOption ? storageOption.quantity : 0
-                      totalUsage = items.filter(c => c.id === i.id && c.selectedStorage === i.selectedStorage).reduce((s, c) => s + (c.qty || 1), 0)
-                    } else if (i.selectedRam && product.ramOptions && product.ramOptions.length > 0) {
-                      const ramOption = product.ramOptions?.find((r: any) => r.size === i.selectedRam)
-                      availableStock = ramOption ? ramOption.quantity : 0
-                      totalUsage = items.filter(c => c.id === i.id && c.selectedRam === i.selectedRam).reduce((s, c) => s + (c.qty || 1), 0)
-                    } else {
-                      availableStock = product.quantity
-                      totalUsage = i.qty || 1
-                    }
+                    availableStock = product.quantity
+                    totalUsage = i.qty || 1
                   }
                   
                   const isOutOfStock = availableStock < (i.qty || 1)
                   const canAddMore = totalUsage < availableStock
-                  const uniqueKey = `${i.id}-${i.color || ''}-${i.selectedRam || ''}-${i.selectedStorage || ''}-${i.warranty?.duration || ''}-${idx}`
+                  const uniqueKey = `${i.id}-${i.color || ''}-${i.selectedRam || ''}-${i.selectedStorage || ''}-${idx}`
                   
                   return (
                     <li key={uniqueKey} className={`p-3 sm:p-4 hover:bg-white transition-colors ${isOutOfStock ? 'bg-gray-50' : ''}`}>
@@ -363,9 +327,7 @@ export default function CartView() {
                               </p>
                             )
                           })()}
-                          {i.warranty && (
-                            <p className="text-xs text-gray-600 mb-1">Ext Warranty: {i.warranty.duration} (+₹{i.warranty.price.toLocaleString()})</p>
-                          )}
+
                           {isOutOfStock ? (
                             <p className="text-xs sm:text-sm text-red-600 font-semibold mb-2">Out of Stock</p>
                           ) : (
@@ -382,11 +344,11 @@ export default function CartView() {
                               onClick={() => {
                                 const currentQty = i.qty || 1
                                 if (currentQty === 1) {
-                                  removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.warranty ?? undefined)
+                                  removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
                                   setItems(getCart())
                                   toast.success('Removed from cart')
                                 } else {
-                                  updateQty(i.id, currentQty - 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.warranty ?? undefined)
+                                  updateQty(i.id, currentQty - 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
                                   setItems(getCart())
                                 }
                               }}
@@ -401,41 +363,13 @@ export default function CartView() {
                               onClick={() => {
                                 const product = products.find(p => p.id === i.id)
                                 const currentQty = i.qty || 1
-                                let originalStock = 0
                                 if (product) {
-                                  if (i.selectedStorage && product.storageOptions && product.storageOptions.length > 0) {
-                                    const storageOption = product.storageOptions?.find((s: any) => s.size === i.selectedStorage)
-                                    originalStock = storageOption ? storageOption.quantity : 0
-                                    
-                                    const totalStorageUsage = items
-                                      .filter(cartItem => cartItem.id === i.id && cartItem.selectedStorage === i.selectedStorage)
-                                      .reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0)
-                                    
-                                    if (totalStorageUsage >= originalStock) {
-                                      toast.error('Cannot add more', { description: `Only ${originalStock} items available for ${i.selectedStorage} storage.` })
-                                      return
-                                    }
-                                  } else if (i.selectedRam && product.ramOptions && product.ramOptions.length > 0) {
-                                    const ramOption = product.ramOptions?.find((r: any) => r.size === i.selectedRam)
-                                    originalStock = ramOption ? ramOption.quantity : 0
-                                    
-                                    const totalRamUsage = items
-                                      .filter(cartItem => cartItem.id === i.id && cartItem.selectedRam === i.selectedRam)
-                                      .reduce((sum, cartItem) => sum + (cartItem.qty || 1), 0)
-                                    
-                                    if (totalRamUsage >= originalStock) {
-                                      toast.error('Cannot add more', { description: `Only ${originalStock} items available for ${i.selectedRam} RAM.` })
-                                      return
-                                    }
-                                  } else {
-                                    originalStock = product.quantity
-                                    if (currentQty >= originalStock) {
-                                      toast.error('Cannot add more', { description: `Only ${originalStock} items available in stock.` })
-                                      return
-                                    }
+                                  if (currentQty >= product.quantity) {
+                                    toast.error('Cannot add more', { description: `Only ${product.quantity} items available in stock.` })
+                                    return
                                   }
                                 }
-                                updateQty(i.id, currentQty + 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.warranty ?? undefined)
+                                updateQty(i.id, currentQty + 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
                                 setItems(getCart())
                               }}
                               disabled={!canAddMore}
@@ -446,7 +380,7 @@ export default function CartView() {
                           </div>
                           <button
                             onClick={() => {
-                              removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.warranty ?? undefined)
+                              removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
                               setItems(getCart())
                               toast.success('Removed from cart')
                             }}
@@ -456,16 +390,6 @@ export default function CartView() {
                             <span className="hidden sm:inline">Remove</span>
                           </button>
                         </div>
-
-                        <button 
-                            onClick={() => {
-                              setSelectedCartItem(i)
-                              setWarrantyDialogOpen(true)
-                            }}
-                            className="text-xs sm:text-sm p-2 rounded-sm text-white bg-blue-600 hover:bg-blue-700 font-medium hover:cursor-pointer"
-                          >
-                            Extended Warranty
-                          </button>
                            </div>
                       </div>
                       </div>
@@ -672,65 +596,6 @@ export default function CartView() {
         </div>
       )}
       <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} mode={authMode} />
-      
-      {/* Extended Warranty Dialog */}
-      <Dialog open={warrantyDialogOpen} onOpenChange={setWarrantyDialogOpen}>
-        <DialogContent className="max-w-[95%] sm:max-w-md p-5 sm:p-6">
-          {selectedCartItem && (() => {
-            const product = products.find(p => p.id === selectedCartItem.id)
-            const warrantyOptions = product?.warrantyOptions || []
-            
-            return (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-blue-600" />
-                    Extended Warranty
-                  </DialogTitle>
-                  <DialogDescription className={`text-xs sm:text-sm text-gray-600 text-left ${warrantyOptions.length === 0 ? 'mt-4' : ''}`}>
-                    {warrantyOptions.length === 0 
-                      ? "No extended warranty options available for this product."
-                      : "Choose an extended warranty plan for your selected product"}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3">
-                  {warrantyOptions.length === 0 ? null : (
-                      <div className="space-y-2 text-xs sm:text-sm">
-                        {warrantyOptions.map((warranty: any, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              const isSelected = selectedCartItem.warranty?.duration === warranty.duration
-                              updateWarranty(
-                                selectedCartItem.id,
-                                isSelected ? undefined : warranty,
-                                selectedCartItem.color,
-                                selectedCartItem.selectedRam,
-                                selectedCartItem.selectedStorage,
-                                selectedCartItem.warranty
-                              )
-                              setItems(getCart())
-                              toast.success(isSelected ? 'Warranty removed' : 'Warranty updated')
-                              setWarrantyDialogOpen(false)
-                            }}
-                            className={`w-full flex items-center justify-between p-2 sm:p-3 rounded-lg border-2 transition-all text-left ${
-                              selectedCartItem.warranty?.duration === warranty.duration
-                                ? 'border-blue-600 bg-blue-50'
-                                : 'border-gray-200 hover:border-blue-400'
-                            }`}
-                          >
-                            <span className="font-medium">{warranty.duration} Extended Warranty</span>
-                            <span className="font-bold text-blue-600">₹{warranty.price.toLocaleString()}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </>
-              )
-            })()}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

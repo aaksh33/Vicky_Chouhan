@@ -134,14 +134,11 @@ export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
               aria-label="Go to homepage"
             >
               <>
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center">
-                  <Image
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <img
                     src="/logo.png"
-                    alt="Future of Gadgets Logo"
-                    width={40}
-                    height={40}
-                    className="h-8 sm:h-10 w-8 sm:w-10 rounded bg-transparent object-contain"
-                    priority
+                    alt="Store logo"
+                    className="h-8 sm:h-10 w-full rounded bg-transparent"
                   />
                 </div>
 
@@ -149,10 +146,10 @@ export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
 
                 <div className="flex flex-col leading-[1rem] -space-y-1 ">
       <span className="text-xs md:text-sm font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-        Future of
+        Premium Menswear
       </span>
       <span className="text-sm leading-5 md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-        Gadgets
+        Fashion
       </span>
     </div>
               </>
@@ -162,8 +159,8 @@ export function Navbar({ offsetTop = '0px' }: { offsetTop?: string }) {
             {/* Desktop nav */}
 <div className="hidden md:flex items-center gap-1 xl:ml-2">
   {[
-    { href: "/category/laptops", label: "Laptops" },
-    { href: "/category/accessories", label: "Accessories" },
+    { href: "/", label: "Home" },
+    { href: "/category", label: "Category" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Support" },
   ].map((link) => (

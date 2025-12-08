@@ -72,18 +72,15 @@ type Item = {
   modelName?: string;
   sku?: string;
   updatedAt: string;
-  screenSize?: string;
-  cpuModel?: string;
-  operatingSystem?: string;
-  graphics?: string;
-  color?: string;
-  warranty?: string;
-  warrantyType?: string;
+  availableColors?: string;
+  fabric?: string;
+  fitType?: string;
+  occasion?: string;
+  sizes?: string;
   rating?: number;
   ratingCount?: number;
   ramOptions?: { size: string; price: number; quantity?: number }[];
   storageOptions?: { size: string; price: number; quantity?: number }[];
-  warrantyOptions?: { duration: string; price: number }[];
 };
 
 const itemSchema = z.object({
@@ -96,18 +93,15 @@ const itemSchema = z.object({
   quantity: z.number().min(0).optional(),
   brand: z.string().optional(),
   modelName: z.string().optional(),
-  warranty: z.string().optional(),
-  warrantyType: z.string().optional(),
-  screenSize: z.string().optional(),
-  cpuModel: z.string().optional(),
-  operatingSystem: z.string().optional(),
-  graphics: z.string().optional(),
-  color: z.string().optional(),
+  availableColors: z.string().optional(),
+  fabric: z.string().optional(),
+  fitType: z.string().optional(),
+  occasion: z.string().optional(),
+  sizes: z.string().optional(),
   rating: z.number().min(0).max(5).optional(),
   ratingCount: z.number().min(0).optional(),
   ramOptions: z.array(z.object({ size: z.string(), price: z.number() })).optional(),
   storageOptions: z.array(z.object({ size: z.string(), price: z.number() })).optional(),
-  warrantyOptions: z.array(z.object({ duration: z.string(), price: z.number() })).optional(),
 });
 
 type ItemFormValues = z.infer<typeof itemSchema>;
@@ -149,18 +143,15 @@ export default function ProductTable() {
     quantity: 0,
     brand: "",
     modelName: "",
-    warranty: "",
-    warrantyType: "",
-    screenSize: "",
-    cpuModel: "",
-    operatingSystem: "",
-    graphics: "",
-    color: "",
+    availableColors: "",
+    fabric: "",
+    fitType: "",
+    occasion: "",
+    sizes: "",
     rating: 0,
     ratingCount: 0,
     ramOptions: [],
     storageOptions: [],
-    warrantyOptions: [],
   };
 
   const form = useForm<ItemFormValues>({
@@ -181,13 +172,7 @@ export default function ProductTable() {
     }
   }, [mrp, price]);
 
-  // Auto-calculate quantity from RAM options only if RAM options exist
-  useEffect(() => {
-    if (ramOptions.length > 0) {
-      const totalQty = ramOptions.reduce((sum, opt) => sum + (opt.quantity || 0), 0);
-      form.setValue("quantity", totalQty);
-    }
-  }, [ramOptions]);
+  // Removed auto-calculate quantity - allow manual entry
 
   useEffect(() => {
     cachedFetch<any[]>("/api/products", { cache: "no-store" }, 10000)
@@ -213,18 +198,15 @@ export default function ProductTable() {
             modelName: p.modelName ?? "",
             sku: p.sku ?? `SKU-${Date.now()}`,
             updatedAt: p.updatedAt ?? p.createdAt ?? new Date().toISOString(),
-            screenSize: p.screenSize ?? "",
-            cpuModel: p.cpuModel ?? "",
-            operatingSystem: p.operatingSystem ?? "",
-            graphics: p.graphics ?? "",
-            color: p.color ?? "",
-            warranty: p.warranty ?? "",
-            warrantyType: p.warrantyType ?? "",
+            availableColors: p.availableColors ?? "",
+            fabric: p.fabric ?? "",
+            fitType: p.fitType ?? "",
+            occasion: p.occasion ?? "",
+            sizes: p.sizes ?? "",
             rating: p.rating ?? 0,
             ratingCount: p.ratingCount ?? 0,
             ramOptions: p.ramOptions || [],
             storageOptions: p.storageOptions || [],
-            warrantyOptions: p.warrantyOptions || [],
           };
         });
         setData(items);
@@ -271,7 +253,7 @@ export default function ProductTable() {
 
   useEffect(() => {
     if (open && !editId) {
-      // console.log('Resetting form for create mode');
+      console.log('Resetting form for create mode');
       form.reset(defaultValues);
       setDescriptionLines([""]);
       setBoxContents([""]);
@@ -281,12 +263,11 @@ export default function ProductTable() {
       setCurrentImages([]);
       setRamOptions([]);
       setStorageOptions([]);
-      setWarrantyOptions([]);
       
       // Force form to be valid initially
       setTimeout(() => {
         form.clearErrors();
-        // console.log('Form state after reset:', form.formState);
+        console.log('Form state after reset:', form.formState);
       }, 100);
     }
     if (!open) {
@@ -317,13 +298,11 @@ export default function ProductTable() {
       quantity: item.quantity || 0,
       brand: item.brand || "",
       modelName: item.modelName || "",
-      warranty: item.warranty || "",
-      warrantyType: item.warrantyType || "",
-      screenSize: item.screenSize || "",
-      cpuModel: item.cpuModel || "",
-      operatingSystem: item.operatingSystem || "",
-      graphics: item.graphics || "",
-      color: item.color || "",
+      availableColors: item.availableColors || "",
+      fabric: item.fabric || "",
+      fitType: item.fitType || "",
+      occasion: item.occasion || "",
+      sizes: item.sizes || "",
       rating: item.rating || 0,
       ratingCount: item.ratingCount || 0,
       ramOptions: item.ramOptions || [],
@@ -335,7 +314,6 @@ export default function ProductTable() {
     setCurrentImages(item.images || []);
     setRamOptions((item.ramOptions || []).map(opt => ({ ...opt, quantity: (opt as any).quantity || 0 })));
     setStorageOptions((item.storageOptions || []).map(opt => ({ ...opt, quantity: (opt as any).quantity || 0 })));
-    setWarrantyOptions(item.warrantyOptions || []);
     setDescriptionLines(item.description ? item.description.split('\n').filter(line => line.trim()) : [""]);
     setBoxContents(item.boxContents ? item.boxContents.split('\n').filter(line => line.trim()) : [""]);
     setOpen(true);
@@ -548,16 +526,13 @@ export default function ProductTable() {
         quantity: values.quantity || 0,
         brand: values.brand,
         modelName: values.modelName,
-        warranty: values.warranty,
-        warrantyType: values.warrantyType,
-        screenSize: values.screenSize,
-        cpuModel: values.cpuModel,
-        operatingSystem: values.operatingSystem,
-        graphics: values.graphics,
-        color: values.color,
+        availableColors: values.availableColors,
+        fabric: values.fabric,
+        fitType: values.fitType,
+        occasion: values.occasion,
+        sizes: values.sizes,
         ramOptions: ramOptions,
         storageOptions: storageOptions,
-        warrantyOptions: warrantyOptions,
         rating: values.rating || 0,
         ratingCount: values.ratingCount || 0,
         status: "active",
@@ -596,20 +571,17 @@ export default function ProductTable() {
           quantity: productData.quantity,
           brand: productData.brand || "",
           modelName: productData.modelName || "",
-          warranty: productData.warranty || "",
-          warrantyType: productData.warrantyType || "",
           sku: productData.sku,
           updatedAt: new Date().toISOString(),
-          screenSize: productData.screenSize || "",
-          cpuModel: productData.cpuModel || "",
-          operatingSystem: productData.operatingSystem || "",
-          graphics: productData.graphics || "",
-          color: productData.color || "",
+          availableColors: productData.availableColors || "",
+          fabric: productData.fabric || "",
+          fitType: productData.fitType || "",
+          occasion: productData.occasion || "",
+          sizes: productData.sizes || "",
           rating: productData.rating || 0,
           ratingCount: productData.ratingCount || 0,
           ramOptions: productData.ramOptions || [],
           storageOptions: productData.storageOptions || [],
-          warrantyOptions: productData.warrantyOptions || [],
         };
 
         setData((prev) => prev.map((item) => (item.id === editId ? updatedItem : item)));
@@ -648,16 +620,15 @@ export default function ProductTable() {
           modelName: created.modelName ?? productData.modelName ?? "",
           sku: created.sku ?? productData.sku,
           updatedAt: created.updatedAt ?? created.createdAt ?? new Date().toISOString(),
-          screenSize: created.screenSize ?? productData.screenSize ?? "",
-          cpuModel: created.cpuModel ?? productData.cpuModel ?? "",
-          operatingSystem: created.operatingSystem ?? productData.operatingSystem ?? "",
-          graphics: created.graphics ?? productData.graphics ?? "",
-          color: created.color ?? productData.color ?? "",
+          availableColors: created.availableColors ?? productData.availableColors ?? "",
+          fabric: created.fabric ?? productData.fabric ?? "",
+          fitType: created.fitType ?? productData.fitType ?? "",
+          occasion: created.occasion ?? productData.occasion ?? "",
+          sizes: created.sizes ?? productData.sizes ?? "",
           rating: created.rating ?? productData.rating ?? 0,
           ratingCount: created.ratingCount ?? productData.ratingCount ?? 0,
           ramOptions: created.ramOptions ?? productData.ramOptions ?? [],
           storageOptions: created.storageOptions ?? productData.storageOptions ?? [],
-          warrantyOptions: created.warrantyOptions ?? productData.warrantyOptions ?? [],
         };
 
         setData((prev) => [newItem, ...prev]);
@@ -671,7 +642,6 @@ export default function ProductTable() {
       setAdditionalImages([]);
       setRamOptions([]);
       setStorageOptions([]);
-      setWarrantyOptions([]);
       setDescriptionLines([""]);
       setBoxContents([""]);
       setCurrentFrontImage("");
@@ -882,13 +852,13 @@ export default function ProductTable() {
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
-                  // console.log('Form validation errors:', errors);
+                  console.log('Form validation errors:', errors);
                   toast.error('Please fix form validation errors');
                 })} className="space-y-10">
                   <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
                     <div className="flex flex-col space-y-6 w-full lg:w-1/2">
-                      <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 pb-3">
-                        Product Details
+                      <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 border-blue-500 pb-3">
+                        📋 Basic Information
                       </h3>
                       <div className="space-y-6">
                         {/* Name */}
@@ -897,9 +867,9 @@ export default function ProductTable() {
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Title Name</FormLabel>
+                              <FormLabel>Product Name *</FormLabel>
                               <FormControl>
-                                <Input placeholder="Title Name" {...field} />
+                                <Input placeholder="e.g. Premium Wool Suit, Slim Fit Blazer" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -912,9 +882,9 @@ export default function ProductTable() {
                           name="brand"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Brand (Optional)</FormLabel>
+                              <FormLabel>Brand</FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g. ASUS, Dell, Samsung" {...field} />
+                                <Input placeholder="e.g. Armani, Hugo Boss, Gucci" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -927,9 +897,9 @@ export default function ProductTable() {
                           name="modelName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Model Name</FormLabel>
+                              <FormLabel>Style/Collection Name *</FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g. Vivobook 15, XPS 13" {...field} />
+                                <Input placeholder="e.g. Classic Collection, Executive Series" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -963,34 +933,58 @@ export default function ProductTable() {
                           </div>
                         </div>
 
-                        {/* Warranty */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="warranty"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Warranty</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g. 1 Year, 2 Years" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="warrantyType"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Warranty Type</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g. Onsite, Carry-in" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+
+
+                        {/* Size Options */}
+                        <div className="space-y-3">
+                          <FormLabel>Available Sizes</FormLabel>
+                          <div className="flex flex-wrap gap-2">
+                            {['All Sizes', 'S', 'M', 'L', 'XL', 'XXL', '3XL'].map((size) => (
+                              <Button
+                                key={size}
+                                type="button"
+                                variant={form.watch('sizes')?.includes(size) ? 'default' : 'outline'}
+                                className="px-4 py-2"
+                                onClick={() => {
+                                  const current = form.watch('sizes') || '';
+                                  const sizes = current.split(',').filter(s => s.trim());
+                                  if (sizes.includes(size)) {
+                                    form.setValue('sizes', sizes.filter(s => s !== size).join(','));
+                                  } else {
+                                    form.setValue('sizes', [...sizes, size].join(','));
+                                  }
+                                }}
+                              >
+                                {size}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Color Options */}
+                        <div className="space-y-3">
+                          <FormLabel>Available Colors</FormLabel>
+                          <div className="flex flex-wrap gap-2">
+                            {['All Colors', 'Black', 'Navy', 'Grey', 'Brown', 'Beige', 'White'].map((color) => (
+                              <Button
+                                key={color}
+                                type="button"
+                                variant={form.watch('availableColors')?.includes(color) ? 'default' : 'outline'}
+                                className="px-4 py-2"
+                                onClick={() => {
+                                  const current = form.watch('availableColors') || '';
+                                  const colors = current.split(',').filter(c => c.trim());
+                                  if (colors.includes(color)) {
+                                    form.setValue('availableColors', colors.filter(c => c !== color).join(','));
+                                  } else {
+                                    form.setValue('availableColors', [...colors, color].join(','));
+                                  }
+                                }}
+                              >
+                                {color}
+                              </Button>
+                            ))}
+                          </div>
                         </div>
 
                         {/* Category with dropdown */}
@@ -999,7 +993,7 @@ export default function ProductTable() {
                           name="category"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Category</FormLabel>
+                              <FormLabel>Product Category *</FormLabel>
                               <FormControl>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                   <SelectTrigger>
@@ -1085,11 +1079,9 @@ export default function ProductTable() {
                                 <FormControl>
                                   <Input
                                     type="number"
-                                    placeholder={ramOptions.length > 0 ? "Auto" : "Enter quantity"}
+                                    placeholder="Enter quantity"
                                     value={field.value || ""}
                                     onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                                    readOnly={ramOptions.length > 0}
-                                    className={ramOptions.length > 0 ? "bg-gray-100 cursor-not-allowed" : ""}
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -1101,7 +1093,7 @@ export default function ProductTable() {
                         {/* Description */}
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Product Description *</FormLabel>
                             <Button
                               type="button"
                               size="sm"
@@ -1114,7 +1106,7 @@ export default function ProductTable() {
                             <div key={index} className="flex gap-2 items-center">
                               <Textarea
                                 className="w-120"
-                                placeholder={`Description line ${index + 1}`}
+                                placeholder={`e.g. ${index === 0 ? 'Premium quality fabric with excellent durability' : index === 1 ? 'Perfect for formal occasions and business meetings' : index === 2 ? 'Available in multiple sizes and colors' : 'Professional tailoring with attention to detail'}`}
                                 value={line}
                                 onChange={(e) => {
                                   const updated = [...descriptionLines];
@@ -1140,31 +1132,102 @@ export default function ProductTable() {
                     <div className="w-full lg:w-1/2">
                       {/* Product Specification */}
                       <div className="flex-1 space-y-6">
-                        <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 pb-3">
-                          Product Specification
+                        <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 border-blue-500 pb-3">
+                          👔 Clothing Specifications
                         </h3>
+                        <p className="text-sm text-gray-600 italic">Add fabric, fit, and care details for your clothing products</p>
+
+                        {/* Fabric */}
                         <FormField
                           control={form.control}
-                          name="screenSize"
+                          name="fabric"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Screen Size (Optional)</FormLabel>
+                              <FormLabel>Fabric</FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g. 15.6 inches" {...field} />
+                                <Input placeholder="e.g. Wool, Cotton, Linen, Silk" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
+
+                        {/* Fit Type */}
+                        <FormField
+                          control={form.control}
+                          name="fitType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Fit Type</FormLabel>
+                              <FormControl>
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select fit type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Slim Fit">Slim Fit</SelectItem>
+                                    <SelectItem value="Regular Fit">Regular Fit</SelectItem>
+                                    <SelectItem value="Relaxed Fit">Relaxed Fit</SelectItem>
+                                    <SelectItem value="Tailored Fit">Tailored Fit</SelectItem>
+                                    <SelectItem value="Custom Fit">Custom Fit</SelectItem>
+                                    <SelectItem value="Oversized">Oversized</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Occasion */}
+                        <FormField
+                          control={form.control}
+                          name="occasion"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Occasion</FormLabel>
+                              <FormControl>
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select occasion" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Formal Events">Formal Events</SelectItem>
+                                    <SelectItem value="Business Meetings">Business Meetings</SelectItem>
+                                    <SelectItem value="Casual Outings">Casual Outings</SelectItem>
+                                    <SelectItem value="Weddings">Weddings</SelectItem>
+                                    <SelectItem value="Parties">Parties</SelectItem>
+                                    <SelectItem value="Daily Office Wear">Daily Office Wear</SelectItem>
+                                    <SelectItem value="Special Occasions">Special Occasions</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Sleeve & Wash Care */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
-                            name="cpuModel"
-                            render={({ field }) => (
+                            name="ramOptions"
+                            render={() => (
                               <FormItem>
-                                <FormLabel>CPU Model (Optional)</FormLabel>
+                                <FormLabel>Sleeve Type</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="e.g. Intel Core i5" {...field} />
+                                  <Input
+                                    placeholder="e.g. Full Sleeve, Half Sleeve"
+                                    value={ramOptions[0]?.size || ''}
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (value) {
+                                        setRamOptions([{ size: value, price: 0, quantity: 0 }]);
+                                      } else {
+                                        setRamOptions([]);
+                                      }
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -1172,238 +1235,46 @@ export default function ProductTable() {
                           />
                           <FormField
                             control={form.control}
-                            name="operatingSystem"
-                            render={({ field }) => (
+                            name="storageOptions"
+                            render={() => (
                               <FormItem>
-                                <FormLabel>Operating System (Optional)</FormLabel>
+                                <FormLabel>Wash Care</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="e.g. Windows 11" {...field} />
+                                  <Input
+                                    placeholder="e.g. Dry Clean Only, Machine Wash"
+                                    value={storageOptions[0]?.size || ''}
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (value) {
+                                        setStorageOptions([{ size: value, price: 0, quantity: 0 }]);
+                                      } else {
+                                        setStorageOptions([]);
+                                      }
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="graphics"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Graphics (Optional)</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g. Intel UHD Graphics" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="color"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Color (Optional)</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g. Black, Silver" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        {/* RAM Options */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <FormLabel>RAM Options (Optional)</FormLabel>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => setRamOptions([...ramOptions, { size: "", price: 0, quantity: 0 }])}
-                            >
-                              <Plus className="w-4 h-4 mr-1" /> Add RAM
-                            </Button>
-                          </div>
-                          {ramOptions.length > 0 && ramOptions.map((option, index) => (
-                            <div key={index} className="flex gap-2 items-end">
-                              <div className="flex-1">
-                                <Input
-                                  placeholder="e.g. 8GB DDR4"
-                                  value={option.size}
-                                  onChange={(e) => {
-                                    const updated = [...ramOptions];
-                                    updated[index].size = e.target.value;
-                                    setRamOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <Input
-                                  type="number"
-                                  placeholder={index === 0 ? "(default)" : "Additional price in ₹"}
-                                  value={option.price === 0 ? "" : option.price}
-                                  onChange={(e) => {
-                                    const updated = [...ramOptions];
-                                    updated[index].price = Number(e.target.value) || 0;
-                                    setRamOptions(updated);
-                                  }}
-                                  disabled={index === 0}
-                                  className={index === 0 ? "bg-gray-100" : ""}
-                                />
-                              </div>
-                              <div className="w-24">
-                                <Input
-                                  type="number"
-                                  placeholder="Qty"
-                                  value={option.quantity || ""}
-                                  onChange={(e) => {
-                                    const updated = [...ramOptions];
-                                    updated[index].quantity = Number(e.target.value) || 0;
-                                    setRamOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setRamOptions(ramOptions.filter((_, i) => i !== index))}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Storage Options */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Storage Options (Optional)</FormLabel>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => setStorageOptions([...storageOptions, { size: "", price: 0, quantity: 0 }])}
-                            >
-                              <Plus className="w-4 h-4 mr-1" /> Add Storage
-                            </Button>
-                          </div>
-                          {storageOptions.length > 0 && storageOptions.map((option, index) => (
-                            <div key={index} className="flex gap-2 items-end">
-                              <div className="flex-1">
-                                <Input
-                                  placeholder="e.g. 512GB SSD"
-                                  value={option.size}
-                                  onChange={(e) => {
-                                    const updated = [...storageOptions];
-                                    updated[index].size = e.target.value;
-                                    setStorageOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <Input
-                                  type="number"
-                                  placeholder={index === 0 ? "(default)" : "Additional price in ₹"}
-                                  value={option.price === 0 ? "" : option.price}
-                                  onChange={(e) => {
-                                    const updated = [...storageOptions];
-                                    updated[index].price = Number(e.target.value) || 0;
-                                    setStorageOptions(updated);
-                                  }}
-                                  disabled={index === 0}
-                                  className={index === 0 ? "bg-gray-100" : ""}
-                                />
-                              </div>
-                              <div className="w-24">
-                                <Input
-                                  type="number"
-                                  placeholder="Qty"
-                                  value={option.quantity || ""}
-                                  onChange={(e) => {
-                                    const updated = [...storageOptions];
-                                    updated[index].quantity = Number(e.target.value) || 0;
-                                    setStorageOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setStorageOptions(storageOptions.filter((_, i) => i !== index))}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Warranty Options */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Extended Warranty Options (Optional)</FormLabel>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => setWarrantyOptions([...warrantyOptions, { duration: "", price: 0 }])}
-                            >
-                              <Plus className="w-4 h-4 mr-1" /> Add Warranty
-                            </Button>
-                          </div>
-                          {warrantyOptions.map((option, index) => (
-                            <div key={index} className="flex gap-2 items-end">
-                              <div className="flex-1">
-                                <Input
-                                  placeholder="e.g. 3 months, 6 months, 12 months"
-                                  value={option.duration}
-                                  onChange={(e) => {
-                                    const updated = [...warrantyOptions];
-                                    updated[index].duration = e.target.value;
-                                    setWarrantyOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <Input
-                                  type="number"
-                                  placeholder="Price in ₹"
-                                  value={option.price === 0 ? "" : option.price}
-                                  onChange={(e) => {
-                                    const updated = [...warrantyOptions];
-                                    updated[index].price = Number(e.target.value) || 0;
-                                    setWarrantyOptions(updated);
-                                  }}
-                                />
-                              </div>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setWarrantyOptions(warrantyOptions.filter((_, i) => i !== index))}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))}
                         </div>
 
                         {/* Box Contents */}
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <FormLabel>What&apos;s in the Box</FormLabel>
+                            <FormLabel>Package Includes</FormLabel>
                             <Button
                               type="button"
                               size="sm"
                               onClick={() => setBoxContents([...boxContents, ""])}
                             >
-                              <Plus className="w-4 h-4 mr-1" /> Add box
+                              <Plus className="w-4 h-4 mr-1" /> Add Item
                             </Button>
                           </div>
                           {boxContents.map((line, index) => (
                             <div key={index} className="flex gap-2 items-center">
                               <Input
-                                placeholder={`Item ${index + 1}`}
+                                placeholder={`e.g. ${index === 0 ? 'Coat/Blazer' : index === 1 ? 'Matching Pants' : index === 2 ? 'Spare Buttons' : 'Garment Bag'}`}
                                 value={line}
                                 onChange={(e) => {
                                   const updated = [...boxContents];
@@ -1429,8 +1300,8 @@ export default function ProductTable() {
 
                   {/* Images Section */}
                   <div className="flex-1 space-y-6 mt-6">
-                    <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 pb-3">
-                      Product Images
+                    <h3 className="text-lg lg:text-xl font-semibold text-gray-900 border-b-2 border-blue-500 pb-3">
+                      📸 Product Images
                     </h3>
 
                     <div className="space-y-6">
