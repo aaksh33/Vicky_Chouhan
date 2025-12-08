@@ -345,8 +345,7 @@ export default function ContactPageClient() {
                     Do you offer warranty on products?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Yes, all products come with a 3 months store warranty.
-                    In case of product faults, customers will be assisted by the nearest authorized service center.
+                    Yes, all products come with a 3-month store warranty. Extended warranty plans are also available for purchase to provide additional coverage beyond the standard period. In case of product faults, customers will be assisted by the nearest authorized service center.
                   </AccordionContent>
                 </AccordionItem>
 
