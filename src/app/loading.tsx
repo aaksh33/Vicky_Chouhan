@@ -10,7 +10,7 @@ export default function Loading() {
       {/* Minimal rotating ring */}
       <div className="text-center text-gray-700">
         <span className="block text-2xl sm:text-3xl font-semibold text-gray-800 mb-4 tracking-wide ">
-          Future Of Gadgets
+          Premium Menswear Fashion
         </span>
 
         <div className="flex items-center justify-center gap-2">
@@ -23,7 +23,7 @@ export default function Loading() {
           </motion.div>
 
           <span className="text-gray-600 text-sm sm:text-base font-medium">
-            Future of Gadgets is loading...
+            Premium Menswear Fashion is loading...
           </span>
         </div>
       </div>
