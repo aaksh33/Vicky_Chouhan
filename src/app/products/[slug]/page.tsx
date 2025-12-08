@@ -523,7 +523,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
     <div className="min-h-screen bg-gray-50/50">
       <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Breadcrumb skeleton */}
-        <div className="flex items-center my-4 sm:mt-2 sm:mb-3 gap-1">
+        <div className="hidden md:flex items-center my-4 sm:mt-2 sm:mb-3 gap-1">
           <div className="h-3 w-12 bg-gray-200 shimmer rounded"></div>
           <div className="w-3 h-3 bg-gray-200 shimmer rounded"></div>
           <div className="h-3 w-16 bg-gray-200 shimmer rounded"></div>
@@ -538,7 +538,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             <div className="aspect-square bg-gray-100 shimmer rounded-lg mb-3 sm:mb-4 relative">
               <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex gap-2">
                 <div className="w-8 h-8 bg-gray-200 shimmer rounded-full"></div>
-                <div className="w-8 h-8 bg-gray-200 shimmer rounded-full sm:hidden"></div>
+                <div className="w-8 h-8 bg-gray-200 shimmer rounded-full"></div>
               </div>
             </div>
             
@@ -547,11 +547,6 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 shimmer rounded-lg"></div>
               ))}
-            </div>
-
-            {/* Share button skeleton */}
-            <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-              <div className="flex-1 h-10 bg-gray-200 shimmer rounded-lg"></div>
             </div>
           </div>
 
@@ -571,7 +566,6 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               {/* Rating skeleton */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="h-6 w-12 bg-gray-200 shimmer rounded"></div>
-                <div className="h-4 w-20 bg-gray-200 shimmer rounded"></div>
               </div>
 
               {/* Price skeleton */}
@@ -645,7 +639,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             </div>
 
             {/* Extended Warranty skeleton */}
-            <div className="bg-white rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm border-2 border-gray-100">
+            <div className="bg-white rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm border-2 border-blue-100">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-5 h-5 bg-gray-200 shimmer rounded"></div>
                 <div className="h-5 w-32 bg-gray-200 shimmer rounded"></div>
@@ -653,22 +647,6 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               <div className="space-y-2">
                 {Array.from({ length: 2 }).map((_, i) => (
                   <div key={i} className="h-12 bg-gray-200 shimmer rounded-lg"></div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Why Buy skeleton */}
-            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 lg:p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-5 h-5 bg-gray-200 shimmer rounded"></div>
-                <div className="h-5 w-24 bg-gray-200 shimmer rounded"></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-200 shimmer rounded"></div>
-                    <div className="h-3 bg-gray-200 shimmer rounded flex-1"></div>
-                  </div>
                 ))}
               </div>
             </div>
@@ -724,7 +702,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
           <div className="h-6 w-32 bg-gray-200 shimmer rounded mb-4"></div>
           <div className="flex gap-4 overflow-x-auto pb-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 w-64">
+              <div key={i} className="flex-shrink-0 w-70 md:w-86">
                 <div className="bg-white border rounded-lg overflow-hidden">
                   <div className="aspect-square bg-gray-200 shimmer"></div>
                   <div className="p-3 space-y-2">
@@ -926,7 +904,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                     e.stopPropagation();
                     handleShare();
                   }}
-                  className="p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform sm:hidden"
+                  className="p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:scale-110 transition-transform"
                 >
                   <Share2 className="w-4 h-4 text-gray-600" />
                 </button>
@@ -960,12 +938,12 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             )}
 
             {/* Action Icons */}
-            <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
+            {/* <div className="hidden sm:flex gap-2 sm:gap-3 mt-3 sm:mt-4">
               <button onClick={handleShare} className="flex-1 py-2 sm:py-2.5 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 sm:gap-2 transition-all font-medium">
                 <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="text-xs sm:text-sm">Share</span>
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Right: Details */}
