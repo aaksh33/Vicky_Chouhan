@@ -364,7 +364,7 @@ export default function ContactPageClient() {
                   </AccordionTrigger>
                   <AccordionContent>
                     We accept major debit / credit cards, UPI, net banking and select
-                    wallet options. COD may be available in supported pin codes. All payments are processed securely.
+                    wallet options. COD only available in Delhi NCR. All payments are processed securely.
                   </AccordionContent>
                 </AccordionItem>
 
