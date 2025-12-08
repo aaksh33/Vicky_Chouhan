@@ -319,16 +319,14 @@ export default function ContactPageClient() {
 
                 <AccordionItem value="item-2">
                   <AccordionTrigger className="text-left">
-                    What is your return policy?
+                    What is your return and refund policy?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Eligible items can be returned within the allowed period, in
-                    unused condition with original packaging and accessories.
-                    Please refer to our{' '}
+                    We follow an exchange-only policy. Products must be returned in original condition with all packaging and accessories. Issues must be reported within 24 hours of delivery. Orders in transit can be canceled at zero cost. For complete details, visit our{' '}
                     <Link href="/refund-policy" className="text-blue-600 hover:underline font-medium">
                       Return &amp; Refund Policy
                     </Link>{' '}
-                    page for full details.
+                    page.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -338,7 +336,7 @@ export default function ContactPageClient() {
                   </AccordionTrigger>
                   <AccordionContent>
                     Standard delivery typically takes 5–7 business days depending on
-                    your location. In some areas, express options may be available.
+                    your location. Shipping timelines are estimates and may vary based on courier delays or unforeseen circumstances.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -347,19 +345,17 @@ export default function ContactPageClient() {
                     Do you offer warranty on products?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Yes, all products are covered by the manufacturer&apos;s warranty.
-                    In some cases, you can also purchase extended warranty during checkout.
+                    Yes, all products come with a 3 months store warranty.
+                    In case of product faults, customers will be assisted by the nearest authorized service center.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-5">
                   <AccordionTrigger className="text-left">
-                    How do I cancel or modify my order?
+                    Can I cancel or modify my order?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Orders can usually be modified or cancelled within a short time
-                    after placement. Please contact our support team immediately
-                    with your order ID for assistance.
+                    Orders in transit can be canceled at zero cost. If an advance payment has been made and the order is canceled, the refund will be processed within 7 days. Please contact our support team immediately with your order ID for assistance.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -369,7 +365,29 @@ export default function ContactPageClient() {
                   </AccordionTrigger>
                   <AccordionContent>
                     We accept major debit / credit cards, UPI, net banking and select
-                    wallet options. COD may be available in supported pin codes.
+                    wallet options. COD may be available in supported pin codes. All payments are processed securely.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-7">
+                  <AccordionTrigger className="text-left">
+                    What if I receive a damaged or faulty product?
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    Issues such as damage, malfunction, or missing accessories must be reported within 24 hours of delivery. Products with broken seals or tampered packaging are non-returnable. In case of product faults, you will be assisted by the nearest authorized service center.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-8">
+                  <AccordionTrigger className="text-left">
+                    Where can I find your Terms of Service?
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    Our complete Terms of Service, including account registration, product information, orders, payments, and intellectual property policies, can be found on our{' '}
+                    <Link href="/terms-and-conditions" className="text-blue-600 hover:underline font-medium">
+                      Terms &amp; Conditions
+                    </Link>{' '}
+                    page.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
