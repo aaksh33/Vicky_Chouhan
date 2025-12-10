@@ -337,6 +337,7 @@ export default function OrdersPage() {
                                             const storagePrice = storageOption?.price || 0
                                             return <p className="text-xs sm:text-sm text-gray-600 mb-1">Storage: {(item as any).selectedStorage}{storagePrice !== 0 && ` (+₹${storagePrice.toLocaleString()})`}</p>
                                           })()}
+                                          {(item as any).selectedSize && <p className="text-xs sm:text-sm text-gray-600 mb-1">Size: {(item as any).selectedSize}</p>}
                                           {(item as any).warranty && <p className="text-xs sm:text-sm text-gray-600 mb-1">Ext Warranty: {(item as any).warranty.duration} (+₹{(item as any).warranty.price.toLocaleString()})</p>}
                                           <p className="text-base sm:text-lg font-semibold mb-2">₹{item.price.toLocaleString()}</p>
                                           {showReview && (

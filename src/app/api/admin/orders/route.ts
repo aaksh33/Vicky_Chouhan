@@ -102,6 +102,7 @@ export async function GET() {
       }
     }))
     
+    console.log('📊 Admin orders API response - First order user.name:', formattedOrders[0]?.user?.name)
     return NextResponse.json({ orders: formattedOrders })
   } catch (error: any) {
     console.error('Admin orders fetch error:', error)

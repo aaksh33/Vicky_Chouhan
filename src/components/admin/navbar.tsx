@@ -43,7 +43,7 @@ export function AdminNavbar() {
               </div>
               <div>
                 <h1 className="text-base font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Admin Panel</h1>
-                <p className="text-gray-500 text-xs">Future Of Gadgets</p>
+                <p className="text-gray-500 text-xs">Premium Menswear</p>
               </div>
             </Link>
           </div>

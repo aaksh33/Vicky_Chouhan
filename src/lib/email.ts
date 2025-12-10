@@ -68,7 +68,7 @@ export function getVerificationEmailTemplate(code: string, email: string): strin
   </p>
 
   <p style="font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
-    Please enter this code to verify your account and complete your sign-up to Future of Gadgets.
+    Please enter this code to verify your account and complete your sign-up to Premium Menswear.
   </p>
 
   <p style="font-size: 16px; margin: 0 0 10px 0;">
@@ -84,14 +84,14 @@ export function getVerificationEmailTemplate(code: string, email: string): strin
   </p>
 
   <p style="font-size: 16px; margin: 0 0 20px 0;">
-    For additional help, contact Future of Gadgets Support:<br>
+    For additional help, contact Premium Menswear Support:<br>
     <a href="https://futureofgadgets.in/contact" style="color: #1a73e8; text-decoration: none;">
       Click here
     </a>
   </p>
 
   <p style="font-size: 14px; line-height: 1.5; margin: 20px 0 0 0; color: #555;">
-    Future of Gadgets will never ask for your password, credit card, or banking details in an email.  
+    Premium Menswear will never ask for your password, credit card, or banking details in an email.  
     If you receive a suspicious message with a link to update your account, do not click it.
   </p>
 
@@ -106,7 +106,7 @@ export function getPasswordResetEmailTemplate(code: string, email: string): stri
   </p>
 
   <p style="font-size: 16px; line-height: 1.5; margin: 0 0 20px 0;">
-    Please enter this code to reset your password and complete your sign-in to Future of Gadgets.
+    Please enter this code to reset your password and complete your sign-in to Premium Menswear.
   </p>
 
   <p style="font-size: 16px; margin: 0 0 10px 0;">
@@ -122,14 +122,14 @@ export function getPasswordResetEmailTemplate(code: string, email: string): stri
   </p>
 
   <p style="font-size: 16px; margin: 0 0 20px 0;">
-    For additional help, contact Future of Gadgets Support:<br>
+    For additional help, contact Premium Menswear Support:<br>
     <a href="https://futureofgadgets.in/contact" style="color: #1a73e8; text-decoration: none;">
       Click here
     </a>
   </p>
 
   <p style="font-size: 14px; line-height: 1.5; margin: 20px 0 0 0; color: #555;">
-    Future of Gadgets will never ask for your password, credit card, or banking details in an email.  
+    Premium Menswear will never ask for your password, credit card, or banking details in an email.  
     If you receive a suspicious message with a link to update your account, do not click it.
   </p>
 
@@ -141,7 +141,7 @@ export function getOrderNotificationTemplate(orderData: {
   customerName: string
   customerPhone: string
   customerEmail?: string
-  items: Array<{ name: string; qty: number; price: number; color?: string }>
+  items: Array<{ name: string; qty: number; price: number; color?: string; selectedSize?: string }>
   total: number
   address: string
   paymentMethod: string
@@ -152,6 +152,7 @@ export function getOrderNotificationTemplate(orderData: {
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px;">
           ${item.name}
           ${item.color ? `<br><span style="color: #64748b; font-size: 12px;">Color: ${item.color}</span>` : ''}
+          ${item.selectedSize ? `<br><span style="color: #64748b; font-size: 12px; font-weight: 600;">Size: ${item.selectedSize}</span>` : ''}
         </td>
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 14px;">×${item.qty}</td>
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600;">₹${(item.price * item.qty).toLocaleString()}</td>
@@ -163,7 +164,7 @@ export function getOrderNotificationTemplate(orderData: {
   return `
     <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
       <h1 style="color: #2563eb; margin: 0 0 8px 0; font-size: 28px; font-weight: 600;">New Order</h1>
-      <p style="color: #64748b; margin: 0 0 12px 0; font-size: 15px;">Future of Gadgets</p>
+      <p style="color: #64748b; margin: 0 0 12px 0; font-size: 15px;">Premium Menswear</p>
       <p style="color: #94a3b8; margin: 0 0 40px 0; font-size: 13px;">${orderTime}</p>
       
       <div style="margin-bottom: 32px;">
@@ -203,7 +204,7 @@ export function getOrderNotificationTemplate(orderData: {
         <p style="color: #475569; margin: 0; font-size: 14px;">${orderData.paymentMethod.toUpperCase()}</p>
       </div>
       
-      <p style="color: #94a3b8; font-size: 12px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">Automated notification from Future of Gadgets</p>
+      <p style="color: #94a3b8; font-size: 12px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">Automated notification from Premium Menswear</p>
     </div>
   `
 }
@@ -211,7 +212,7 @@ export function getOrderNotificationTemplate(orderData: {
 export function getOrderConfirmationTemplate(orderData: {
   orderId: string
   customerName: string
-  items: Array<{ name: string; qty: number; price: number; color?: string }>
+  items: Array<{ name: string; qty: number; price: number; color?: string; selectedSize?: string }>
   total: number
   address: string
   paymentMethod: string
@@ -223,6 +224,7 @@ export function getOrderConfirmationTemplate(orderData: {
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px;">
           ${item.name}
           ${item.color ? `<br><span style="color: #64748b; font-size: 12px;">Color: ${item.color}</span>` : ''}
+          ${item.selectedSize ? `<br><span style="color: #64748b; font-size: 12px; font-weight: 600;">Size: ${item.selectedSize}</span>` : ''}
         </td>
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 14px;">×${item.qty}</td>
         <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600;">₹${(item.price * item.qty).toLocaleString()}</td>
@@ -234,7 +236,7 @@ export function getOrderConfirmationTemplate(orderData: {
   return `
     <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff;">
       <h1 style="color: #2563eb; margin: 0 0 8px 0; font-size: 28px; font-weight: 600;">Order Confirmed</h1>
-      <p style="color: #64748b; margin: 0 0 12px 0; font-size: 15px;">Future of Gadgets</p>
+      <p style="color: #64748b; margin: 0 0 12px 0; font-size: 15px;">Premium Menswear</p>
       <p style="color: #94a3b8; margin: 0 0 40px 0; font-size: 13px;">${orderTime}</p>
       
       <p style="color: #475569; margin: 0 0 32px 0; font-size: 15px; line-height: 1.6;">Hi ${orderData.customerName}, thank you for your order! We'll send you a shipping confirmation email as soon as your order ships.</p>
@@ -274,7 +276,7 @@ export function getOrderConfirmationTemplate(orderData: {
         <p style="color: #475569; margin: 0; font-size: 14px;">${orderData.paymentMethod.toUpperCase()}</p>
       </div>
       
-      <p style="color: #94a3b8; font-size: 12px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">Thank you for shopping with Future of Gadgets!</p>
+      <p style="color: #94a3b8; font-size: 12px; margin: 40px 0 0 0; border-top: 1px solid #e2e8f0; padding-top: 20px;">Thank you for shopping with Premium Menswear!</p>
     </div>
   `
 }

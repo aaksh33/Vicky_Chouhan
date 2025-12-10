@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import PrivacyPolicyPage from '@/components/Pages/PrivacyPolicyPage'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Future of Gadgets',
-  description: 'Read our privacy policy to understand how Future of Gadgets collects, uses, and protects your personal information.',
+  title: 'Privacy Policy - Premium Menswear',
+  description: 'Read our privacy policy to understand how Premium Menswear collects, uses, and protects your personal information.',
   keywords: ['privacy policy', 'data protection', 'personal information', 'privacy'],
 };
 

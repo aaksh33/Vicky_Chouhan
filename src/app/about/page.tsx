@@ -14,7 +14,7 @@ export default function AboutPage() {
 
         {/* Hero Section */}
         <div className="text-center sm:text-left mb-12 sm:mb-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-2 sm:mb-3">Future Of Gadgets</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-2 sm:mb-3">Premium Menswear</h1>
           <p className="text-base sm:text-lg text-slate-500 max-w-2xl">
             Your trusted destination for quality electronics and cutting-edge technology in India. 
             We&apos;re committed to making the latest innovations accessible to everyone.
@@ -216,7 +216,7 @@ export default function AboutPage() {
               <img src="/about/lock-free-img.png" alt="Secure Payments" className="w-12 h-12" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Secure Payments</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We have all the payment options with secure & security. Feel free to buy anything with future of gadgets.</p>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We have all the payment options with secure & security. Feel free to buy anything with Premium Menswear.</p>
           </div>
         </div>
       </div>

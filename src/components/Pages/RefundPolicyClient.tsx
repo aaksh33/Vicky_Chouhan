@@ -63,7 +63,7 @@ export default function RefundPolicyPage() {
             <div className="hidden sm:flex flex-col items-end gap-2">
               <div className="h-1.5 w-24 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500" />
               <p className="text-xs text-slate-500">
-                Future of Gadgets • Customer Protection
+                Premium Menswear • Customer Protection
               </p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function RefundPolicyPage() {
                 Introduction
               </h2>
               <p>
-                Products purchased from <span className="font-semibold text-slate-900">Future of Gadgets</span> may only be returned to the same outlet where they were originally delivered.
+                Products purchased from <span className="font-semibold text-slate-900">Premium Menswear</span> may only be returned to the same outlet where they were originally delivered.
                 All items must be returned in their <span className="font-semibold text-slate-900">original condition</span>. Products with opened seals, tampered packaging, or missing
                 accessories will not be eligible for return. Please note that we follow an <span className="font-semibold text-slate-900">exchange-only policy</span>, and refunds are not
                 provided unless specifically mentioned under applicable conditions.
@@ -238,7 +238,7 @@ export default function RefundPolicyPage() {
                 Additional Information
               </h2>
               <p>
-                Customers may visit the nearest <span className="font-semibold text-slate-900">Future of Gadgets outlet</span> for any queries regarding returns, exchanges, or service
+                Customers may visit the nearest <span className="font-semibold text-slate-900">Premium Menswear outlet</span> for any queries regarding returns, exchanges, or service
                 assistance.
               </p>
             </section>
@@ -253,7 +253,7 @@ export default function RefundPolicyPage() {
               </p>
               <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
                 <p className="text-sm">
-                  <strong className="text-slate-900">Company Name:</strong> Future of Gadgets
+                  <strong className="text-slate-900">Company Name:</strong> Premium Menswear
                 </p>
 
                 {loading ? (

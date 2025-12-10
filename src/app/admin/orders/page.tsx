@@ -130,6 +130,7 @@ type Order = {
     color?: string;
     selectedRam?: string;
     selectedStorage?: string;
+    selectedSize?: string;
   }[];
   total: number;
   status: string;
@@ -957,13 +958,8 @@ export default function AdminOrdersPage() {
                                 .toUpperCase()}
                             </div>
                           )}
-                          <div className="min-w-0">
-                            <div className="text-xs sm:text-sm font-medium truncate">
-                              {order.user.name || order.user.email}
-                            </div>
-                            <div className="text-xs text-gray-500 sm:hidden truncate">
-                              {order.address.city}
-                            </div>
+                          <div className="text-xs sm:text-sm font-medium truncate">
+                            {order.user.name || order.user.email}
                           </div>
                         </div>
                       </TableCell>
@@ -1144,6 +1140,11 @@ export default function AdminOrdersPage() {
                                 Storage: {(item as any).selectedStorage}
                               </p>
                             )}
+                            {(item as any).selectedSize && (
+                              <p className="text-sm text-gray-600 font-medium">
+                                Size: {(item as any).selectedSize}
+                              </p>
+                            )}
 
                             <p className="text-sm text-gray-600">
                               Unit Price: ₹{item.price.toLocaleString()}
@@ -1231,11 +1232,15 @@ export default function AdminOrdersPage() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
                         Delivery Details
                       </h3>
-                      <div className="space-y-0">
-                        <span className="text-sm text-gray-600">Name:</span>
-                        <span className="font-medium text-gray-900 ml-1 break-words">
-                          {selectedOrder.address.fullName}
-                        </span>
+                      <div className="space-y-3">
+                        {selectedOrder.address.fullName && (
+                          <div>
+                            <span className="text-sm text-gray-600">Name:</span>
+                            <span className="text-gray-900 ml-1 font-medium break-words">
+                              {selectedOrder.address.fullName}
+                            </span>
+                          </div>
+                        )}
                         <div>
                           <span className="text-sm text-gray-600">
                             Address:
@@ -1698,7 +1703,7 @@ export default function AdminOrdersPage() {
                       )}
                       
                       {/* Cancel Order Button */}
-                      {selectedOrder.status !== 'cancelled' && selectedOrder.status !== 'delivered' && (
+                      {selectedOrder.status === 'pending' && (
                         <div className="border-t pt-4">
                           <AlertDialog>
                             <AlertDialogTrigger asChild>

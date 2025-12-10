@@ -40,7 +40,7 @@ export function Footer({ className = "" }: FooterProps) {
                 <img src="/logo.png" alt="Logo" className="h-10 w-full rounded" />
               </div>
               <h3 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Future Of Gadgets
+                Premium Menswear
               </h3>
             </div>
 
@@ -81,10 +81,10 @@ export function Footer({ className = "" }: FooterProps) {
             <h4 className="text-base font-bold mb-4 text-white">Categories</h4>
             <ul className="space-y-2.5 text-sm">
               {[
-                { href: '/search?q=laptops', label: 'Laptops' },
-                { href: '/search?q=Open%20Box%20Laptop%27s', label: 'Open Box Laptops' },
-                { href: '/search?q=refurbished%20laptops', label: 'Refurbished Laptops' },
-                { href: '/search?q=desktops', label: 'Monitors' },
+                { href: '/category/coat-pant', label: 'Coat & Pant' },
+                { href: '/category/jackets', label: 'Jackets' },
+                { href: '/category/blazers', label: 'Blazers' },
+                { href: '/category/kurta-pajamas', label: 'Kurta & Pajamas' },
                 { href: '/category', label: 'All Categories' }
               ].map(link => (
                 <li key={link.href}>
@@ -139,7 +139,7 @@ export function Footer({ className = "" }: FooterProps) {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
           <div className="text-sm text-gray-400 text-center sm:text-left">
-            <p>© 2025 Future Of Gadgets. All rights reserved.</p>
+            <p>© 2025 Premium Menswear. All rights reserved.</p>
             <p className="mt-1">
               Made by{' '}
               <Link href="https://www.linkedin.com/in/sonu-rai-r12/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">

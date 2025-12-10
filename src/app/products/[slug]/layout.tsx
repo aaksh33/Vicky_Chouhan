@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           }],
           url: `${baseUrl}/products/${slug}`,
           type: 'website',
-          siteName: 'Future of Gadgets',
+          siteName: 'Premium Menswear',
         },
         twitter: {
           card: 'summary_large_image',
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   
   return {
-    title: 'Product - Future of Gadgets',
+    title: 'Product - Premium Menswear',
     description: 'Shop quality electronics and gadgets',
   }
 }

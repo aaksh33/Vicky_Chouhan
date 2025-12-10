@@ -166,7 +166,7 @@ export default function LaptopCarousel() {
                 }}
               >
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 bg-gray-200/50 border border-gray-200/50 rounded-full overflow-hidden transition-all duration-300">
-                  <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-3 overflow-hidden z-0">
+                  <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-3 overflow-hidden">
                     <Image
                       src={category.image}
                       alt={category.name}
@@ -174,11 +174,6 @@ export default function LaptopCarousel() {
                       height={90}
                       className="object-contain scale-130 group-hover:scale-140 transition-transform duration-300"
                     />
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/70 text-white text-center py-1 sm:py-1.5 px-1 text-[9px] sm:text-[10px] font-semibold leading-tight z-10">
-                    <span className="block mx-auto leading-tight break-words w-[62px]">
-                      {category.name}
-                    </span>
                   </div>
                 </div>
               </Link>

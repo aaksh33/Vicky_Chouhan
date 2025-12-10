@@ -70,11 +70,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               className="h-10 w-10 rounded bg-transparent"
             />
             <div className="flex flex-col leading-[1rem] -space-y-1 ">
-              <span className="text-xs md:text-sm font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Future of
-              </span>
               <span className="text-sm leading-5 md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Gadgets
+                Premium Menswear
               </span>
             </div>
           </Link>
@@ -204,11 +201,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               className="h-10 w-10 rounded bg-transparent"
             />
             <div className="flex flex-col leading-[1rem] -space-y-1 ">
-              <span className="text-xs md:text-sm font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Future of
-              </span>
               <span className="text-sm leading-5 md:text-lg font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Gadgets
+                Premium Menswear
               </span>
             </div>
           </Link>

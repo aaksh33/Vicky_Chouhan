@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Future of Gadgets - Electronics Store',
-    short_name: 'Future of Gadgets',
+    name: 'Premium Menswear - Electronics Store',
+    short_name: 'Premium Menswear',
     description: 'Modern e-commerce platform for electronics and tech products',
     start_url: '/',
     display: 'standalone',

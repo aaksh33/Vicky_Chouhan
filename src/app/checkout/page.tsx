@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Loading from "../loading"
 import { indianStates, getCitiesByState, isCODAvailable } from "@/lib/indian-locations"
 
-type CartItem = { productId: string; qty: number; title?: string; price?: number; image?: string; color?: string; selectedRam?: string; selectedStorage?: string }
+type CartItem = { productId: string; qty: number; title?: string; price?: number; image?: string; color?: string; selectedRam?: string; selectedStorage?: string; selectedSize?: string }
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -123,7 +123,6 @@ export default function CheckoutPage() {
         // console.log('Raw cart data:', parsed) // TESTING
         const cartItems = Array.isArray(parsed) ? parsed : (parsed?.items || [])
         const normalized: CartItem[] = cartItems.map((it: any) => {
-          // console.log('Cart item:', it) // TESTING
           return {
             productId: it.id || it.productId || it.slug,
             qty: Number(it.qty || it.quantity || 1),
@@ -133,6 +132,7 @@ export default function CheckoutPage() {
             color: it.color,
             selectedRam: it.selectedRam,
             selectedStorage: it.selectedStorage,
+            selectedSize: it.selectedSize || undefined,
           }
         })
         // console.log('Normalized items:', normalized) // TESTING
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
         key: keyId,
         amount,
         currency,
-        name: 'Future of Gadgets',
+        name: 'Premium Menswear',
         description: 'Order Payment',
         order_id: orderId,
         handler: async function (response: any) {
@@ -260,7 +260,14 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((it) => ({ productId: String(it.productId), qty: Number(it.qty || 1), color: it.color, selectedRam: it.selectedRam, selectedStorage: it.selectedStorage })),
+          items: items.map((it) => {
+            const item: any = { productId: String(it.productId), qty: Number(it.qty || 1) }
+            if (it.color) item.color = it.color
+            if (it.selectedRam) item.selectedRam = it.selectedRam
+            if (it.selectedStorage) item.selectedStorage = it.selectedStorage
+            if (it.selectedSize) item.selectedSize = it.selectedSize
+            return item
+          }),
           address: { fullName: data.fullName, phone: data.phone, line1: data.line1, line2: data.line2, state: data.state, city: data.city,  zip: data.zip },
           paymentMethod,
           deliveryDate: new Date(data.deliveryDate).toISOString(),

@@ -76,7 +76,7 @@ export default function TermsOfServicePage() {
             </p>
             <p className="mt-1 text-sm sm:text-base text-slate-700">
               Please read these Terms of Service carefully before using our website or placing any orders.
-              By accessing or using Future of Gadgets, you agree to be bound by these terms.
+              By accessing or using Premium Menswear, you agree to be bound by these terms.
             </p>
           </div>
         </section>
@@ -185,7 +185,7 @@ export default function TermsOfServicePage() {
             </h2>
             <p>
               All content on this website, including text, graphics, logos, icons, images, and
-              software, is owned by or licensed to Future of Gadgets and is protected by applicable
+              software, is owned by or licensed to Premium Menswear and is protected by applicable
               intellectual property laws. You may not reproduce, distribute, modify, or create
               derivative works without our prior written consent.
             </p>

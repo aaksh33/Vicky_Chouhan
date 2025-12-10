@@ -55,16 +55,44 @@ export default function TrendingNow(){
     fetch('/api/products')
       .then(res => res.json())
       .then(allProducts => {
-        const trending = allProducts
-          .filter((p: any) => p.mrp && p.mrp > p.price)
+        const cart = JSON.parse(localStorage.getItem("v0_cart") || "[]");
+        
+        // First, ensure all products have MRP set (if not, set it to 20% above price)
+        const productsWithMrp = allProducts.map((p: any) => ({
+          ...p,
+          mrp: p.mrp && Number(p.mrp) > 0 ? Number(p.mrp) : Number(p.price) * 1.2
+        }));
+        
+        const trending = productsWithMrp
+          .filter((p: any) => {
+            const hasMrp = p.mrp && Number(p.mrp) > 0;
+            const hasDiscount = hasMrp && Number(p.mrp) > Number(p.price);
+            return hasDiscount;
+          })
+          .map((p: any) => {
+            const cartQty = cart.reduce((sum: number, item: any) => 
+              item.id === p.id ? sum + (item.qty || 1) : sum, 0
+            );
+            const availableQty = Math.max(0, (p.quantity || p.stock || 0) - cartQty);
+            return {
+              ...p,
+              quantity: availableQty,
+              stock: availableQty
+            };
+          })
+          .filter((p: any) => p.quantity > 0)
           .sort((a: any, b: any) => {
             const discountA = ((a.mrp - a.price) / a.mrp) * 100
             const discountB = ((b.mrp - b.price) / b.mrp) * 100
             return discountB - discountA
           })
+        console.log('🔥 TrendingNow - Total products:', allProducts.length, 'After filtering:', trending.length);
         setProducts(trending)
       })
-      .catch(() => setProducts([]))
+      .catch((err) => {
+        console.error('Failed to fetch trending products:', err);
+        setProducts([])
+      })
       .finally(() => setLoading(false))
   }, [])
 

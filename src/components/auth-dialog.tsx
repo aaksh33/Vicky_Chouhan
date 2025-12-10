@@ -194,7 +194,7 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
           redirect: false,
         });
         if (result?.ok) {
-          toast.success('Welcome to Future Of Gadgets!');
+          toast.success('Welcome to Premium Menswear!');
           onOpenChange(false);
         } else {
           toast.error('Account created but sign in failed. Please sign in manually.');
@@ -301,8 +301,8 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
                   : isForgotPassword
                   ? "Enter your email to reset password"
                   : isSignUp
-                  ? "Sign up to get started with Future Of Gadgets"
-                  : "Sign in to your Future Of Gadgets account"}
+                  ? "Sign up to get started with Premium Menswear"
+                  : "Sign in to your Premium Menswear account"}
               </p>
             </DialogHeader>
             <div className="space-y-3 sm:space-y-6 p-1 sm:p-2">
@@ -713,7 +713,7 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
                 animate={{ opacity: 1, rotateX: 0 }}
                 transition={{ duration: 1, ease: "easeOut" }}
               >
-                Future of
+                Premium
               </motion.div>
               
               <motion.div
@@ -722,7 +722,7 @@ export function AuthDialog({ open, onOpenChange, mode }: AuthDialogProps) {
                 animate={{ opacity: 1, rotateX: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
               >
-                Gadgets
+                Menswear
               </motion.div>
             </div>
           </motion.div>

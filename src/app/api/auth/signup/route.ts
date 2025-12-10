@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     try {
       await sendEmail(
         email,
-        'Verify your email - Future Of Gadgets',
+        'Verify your email - Premium Menswear',
         getVerificationEmailTemplate(code, email)
       )
       // console.log('✅ Email sent to:', email) // TESTING

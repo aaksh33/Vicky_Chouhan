@@ -12,6 +12,7 @@ type CartItem = {
   color?: string
   selectedRam?: string
   selectedStorage?: string
+  selectedSize?: string
 }
 
 const KEY = "v0_cart"
@@ -46,7 +47,8 @@ export function addToCart(item: CartItem) {
     i.id === item.id && 
     i.color === item.color &&
     i.selectedRam === item.selectedRam &&
-    i.selectedStorage === item.selectedStorage
+    i.selectedStorage === item.selectedStorage &&
+    i.selectedSize === item.selectedSize
   )
   if (idx >= 0) {
     items[idx].qty = (items[idx].qty || 1) + 1
@@ -56,13 +58,14 @@ export function addToCart(item: CartItem) {
   write(items)
 }
 
-export function updateQty(id: string, qty: number, color?: string, selectedRam?: string, selectedStorage?: string) {
+export function updateQty(id: string, qty: number, color?: string, selectedRam?: string, selectedStorage?: string, selectedSize?: string) {
   const items = read()
   const idx = items.findIndex((i) => 
     i.id === id &&
     i.color === color &&
     i.selectedRam === selectedRam &&
-    i.selectedStorage === selectedStorage
+    i.selectedStorage === selectedStorage &&
+    i.selectedSize === selectedSize
   )
   if (idx >= 0) {
     if (qty <= 0) items.splice(idx, 1)
@@ -71,12 +74,13 @@ export function updateQty(id: string, qty: number, color?: string, selectedRam?:
   }
 }
 
-export function removeFromCart(id: string, color?: string, selectedRam?: string, selectedStorage?: string) {
+export function removeFromCart(id: string, color?: string, selectedRam?: string, selectedStorage?: string, selectedSize?: string) {
   const items = read().filter((i) => !(
     i.id === id &&
     i.color === color &&
     i.selectedRam === selectedRam &&
-    i.selectedStorage === selectedStorage
+    i.selectedStorage === selectedStorage &&
+    i.selectedSize === selectedSize
   ))
   write(items)
 }

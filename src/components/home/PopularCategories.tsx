@@ -5,12 +5,12 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const categoryData = [
-  { name: "Regular Use Laptop's", image: "/category/regular_laptop.jpg", href: "/search?q=regular-laptop" },
-  { name: "Office Use Laptop's", image: "/category/office_laptop.jpg", href: "/search?q=office-laptop" },
-  { name: "Premium Laptop's", image: "/category/pro_laptop.jpg", href: "/search?q=pro-laptop" },
-  { name: "Touch 4K Laptop's", image: "/category/touchscreen.png", href: "/search?q=touch-laptop" },
-  { name: "Gaming Laptop's", image: "/category/best-gaming-laptop.jpg", href: "/search?q=gaming-laptop" },
-  { name: "Light & Slim Laptop's", image: "/category/ultra_thin_laptop.jpg", href: "/search?q=slim-laptop" },
+  { name: "Formal Suits", image: "/category/regular_laptop.jpg", href: "/search?q=formal-suits" },
+  { name: "Business Blazers", image: "/category/office_laptop.jpg", href: "/search?q=business-blazers" },
+  { name: "Premium Coats", image: "/category/pro_laptop.jpg", href: "/search?q=premium-coats" },
+  { name: "Casual Jackets", image: "/category/touchscreen.png", href: "/search?q=casual-jackets" },
+  { name: "Wedding Collection", image: "/category/best-gaming-laptop.jpg", href: "/search?q=wedding-collection" },
+  { name: "Kurta & Pajamas", image: "/category/ultra_thin_laptop.jpg", href: "/search?q=kurta-pajamas" },
 ];
 
 
@@ -49,13 +49,13 @@ export default function PopularCategories() {
                 className="bg-[#f6f6f6] p-3 sm:p-5 rounded-lg hover:bg-[#e7e7e7] hover:shadow-md transition-all duration-300 group"
               >
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white  border-2 border-gray-200 flex items-center justify-center flex-shrink-0 rounded-lg">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white border-2 border-gray-200 flex items-center justify-center flex-shrink-0 rounded-lg overflow-hidden">
                     <Image
                       src={category.image}
                       alt={category.name}
-                      width={50}
-                      height={50}
-                      className="object-contain group-hover:scale-110 transition-transform duration-300"
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
 

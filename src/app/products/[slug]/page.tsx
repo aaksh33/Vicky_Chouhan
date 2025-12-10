@@ -66,6 +66,7 @@ export default function ProductPage() {
   const [related, setRelated] = useState<Product[]>([]);
 const [relatedLoading, setRelatedLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
 useEffect(() => {
   if (loading) return;
@@ -134,7 +135,8 @@ useEffect(() => {
       slug: product.slug,
       name: product.name,
       price: finalPrice + (selectedWarranty?.price || 0),
-      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg"
+      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg",
+      selectedSize: selectedSize || undefined
     });
 
     window.dispatchEvent(new Event("v0-cart-updated"));
@@ -159,7 +161,8 @@ useEffect(() => {
       slug: product.slug,
       name: product.name,
       price: finalPrice + (selectedWarranty?.price || 0),
-      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg"
+      image: product.frontImage || product.image || product.coverImage || "/placeholder.svg",
+      selectedSize: selectedSize || undefined
     });
 
     window.dispatchEvent(new Event("v0-cart-updated"));
@@ -925,20 +928,31 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                 
                 {product.sizes && (
                   <div>
-                    <span className="text-sm font-medium text-gray-700 block mb-2">Available Sizes:</span>
+                    <span className="text-sm font-medium text-gray-700 block mb-2">Select Size:</span>
                     <div className="flex gap-2 flex-wrap">
                       {product.sizes.split(',').map((size: string) => {
                         const trimmedSize = size.trim();
                         return (
-                          <div
+                          <button
                             key={trimmedSize}
-                            className="px-4 py-2 rounded-lg font-medium border-2 border-gray-300 bg-white text-gray-800"
+                            onClick={() => setSelectedSize(trimmedSize)}
+                            className={`px-4 py-2 rounded-lg font-medium border-2 transition-all ${
+                              selectedSize === trimmedSize
+                                ? 'border-blue-600 bg-blue-50 text-blue-600'
+                                : 'border-gray-300 bg-white text-gray-800 hover:border-blue-400'
+                            }`}
                           >
                             {trimmedSize}
-                          </div>
+                          </button>
                         );
                       })}
                     </div>
+                    {selectedSize && (
+                      <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
+                        <Check className="w-4 h-4" />
+                        Size {selectedSize} selected
+                      </p>
+                    )}
                   </div>
                 )}
                 
@@ -946,7 +960,7 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                   <div>
                     <span className="text-sm font-medium text-gray-700 block mb-2">Available Colors:</span>
                     <div className="flex gap-2 flex-wrap">
-                      {product.availableColors.split(',').map((color: string) => {
+                      {product.availableColors.split(',').filter((color: string) => color.trim() !== 'All Colors').map((color: string) => {
                         const trimmedColor = color.trim();
                         return (
                           <div
@@ -1003,7 +1017,8 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="text-xs sm:text-sm font-semibold text-gray-900">{product.warranty}</div>
-                    <div className="text-[10px] sm:text-xs text-gray-600">Quality Assured</div>
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900">Quality Assured</div>
+                    <div className="text-[10px] sm:text-xs text-gray-600">Expert-Verified Premium Quality</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-orange-50 rounded-lg">
@@ -1073,14 +1088,11 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
             
             <h3 className="text-lg font-semibold mb-3">Key Features</h3>
             <ul className="space-y-2 text-gray-700 text-xs sm:text-sm">
-              <li className="flex gap-2"><span className="text-green-600">✓</span> High-quality build with premium materials for durability</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Latest technology with advanced features and performance</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Energy efficient design that saves power and reduces costs</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Easy to use interface with intuitive controls</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Sleek and modern design that fits any workspace</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Reliable performance with consistent quality output</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Compatible with multiple devices and platforms</li>
-              <li className="flex gap-2"><span className="text-green-600">✓</span> Low maintenance with easy cleaning and care</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Soft, breathable and durable fabric for all-day comfort.</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Perfectly structured fit that enhances your overall style.</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Fine detailing with strong stitching for long-lasting durability.</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Maintain a fresh, crisp look even after multiple uses.</li>
+              <li className="flex gap-2"><span className="text-green-600">✓</span> Smooth movement and comfortable feel for any occasion.</li>
             </ul>
           </div>
 
@@ -1096,14 +1108,8 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
               )}
               {product.modelName && (
                 <div className="flex justify-between gap-2 py-2 border-b">
-                  <span className="text-gray-600 flex-shrink-0">Model Name</span>
+                  <span className="text-gray-600 flex-shrink-0">Style</span>
                   <span className="font-medium text-right break-words">{product.modelName}</span>
-                </div>
-              )}
-              {product.availableColors && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Available Colors</span>
-                  <span className="font-medium text-right">{product.availableColors}</span>
                 </div>
               )}
               {product.fabric && (
@@ -1112,28 +1118,25 @@ const handleBuyNowFromList = (e: React.MouseEvent, p: Product) => {
                   <span className="font-medium text-right">{product.fabric}</span>
                 </div>
               )}
-
-              {product.occasion && (
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Occasion</span>
-                  <span className="font-medium text-right">{product.occasion}</span>
-                </div>
-              )}
               {product.fitType && (
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-gray-600">Fit Type</span>
                   <span className="font-medium text-right">{product.fitType}</span>
                 </div>
               )}
+              {product.ramOptions && product.ramOptions.length > 0 && product.ramOptions[0].size && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Sleeve Type</span>
+                  <span className="font-medium text-right">{product.ramOptions[0].size}</span>
+                </div>
+              )}
+              {product.occasion && (
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-gray-600">Occasion</span>
+                  <span className="font-medium text-right">{product.occasion}</span>
+                </div>
+              )}
             </div>
-
-            
-            <h3 className="text-lg font-semibold mb-3 mt-6">What&apos;s in the Box</h3>
-            <ol className="space-y-2 text-gray-700 list-decimal list-inside">
-              {product.boxContents && product.boxContents.split('\n').map((line, index) => (
-                <li key={index} className="break-words !mb-0 text-sm">{line}</li>
-              ))}
-            </ol>
           </div>
           
 

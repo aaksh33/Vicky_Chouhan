@@ -86,8 +86,8 @@ export default function SettingsPage() {
   const [editingSection, setEditingSection] = useState<number | null>(null)
   const [sectionLoading, setSectionLoading] = useState<Record<number, boolean>>({})
   const [promotionalBanners, setPromotionalBanners] = useState([
-    { title: '', subtitle: '', description: '', link: '', bgColor: 'from-slate-900 to-slate-800', textColor: 'text-orange-400' },
-    { title: '', subtitle: '', description: '', link: '', bgColor: 'from-blue-600 to-blue-700', textColor: 'text-blue-100' }
+    { title: '', subtitle: '', description: '', link: '', buttonText: '', bgColor: 'from-slate-900 to-slate-800', textColor: 'text-orange-400' },
+    { title: '', subtitle: '', description: '', link: '', buttonText: '', bgColor: 'from-blue-600 to-blue-700', textColor: 'text-blue-100' }
   ])
   const [promotionalLoading, setPromotionalLoading] = useState(false)
 
@@ -627,6 +627,14 @@ export default function SettingsPage() {
                         updated[index].link = e.target.value
                         setPromotionalBanners(updated)
                       }} placeholder="e.g., /category/laptops" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Button Text</label>
+                      <Input value={banner.buttonText || ''} onChange={(e) => {
+                        const updated = [...promotionalBanners]
+                        updated[index].buttonText = e.target.value
+                        setPromotionalBanners(updated)
+                      }} placeholder="e.g., Shop Now" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>

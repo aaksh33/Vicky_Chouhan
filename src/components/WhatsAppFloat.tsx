@@ -82,9 +82,9 @@ export default function WhatsAppFloat() {
           aria-label="Contact us on WhatsApp"
         >
           <img 
-            src="/WhatsApp.svg" 
+            src="/share/whatsapp.png" 
             alt="WhatsApp" 
-            className="w-10 h-10" 
+            className="w-12 h-12" 
           />
         </button>
       </div>

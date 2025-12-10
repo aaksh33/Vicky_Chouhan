@@ -6,8 +6,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
   
   return {
-    title: `${categoryName} - Future of Gadgets`,
-    description: `Shop the best ${slug} at Future of Gadgets. Find top quality electronics and tech products with great prices.`,
+    title: `${categoryName} - Premium Menswear`,
+    description: `Shop the best ${slug} at Premium Menswear. Find top quality electronics and tech products with great prices.`,
     keywords: [slug, 'electronics', categoryName.toLowerCase(), 'tech products', 'gadgets'],
   };
 }

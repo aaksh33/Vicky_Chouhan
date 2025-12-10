@@ -15,7 +15,7 @@ export default function AlwaysWithYou() {
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-center h-full">
         <div className="text-white space-y-3 sm:space-y-4 text-left">
-          <p className="text-xs sm:text-lg opacity-80">Future of Gadgets is always with you</p>
+          <p className="text-xs sm:text-lg opacity-80">Premium Menswear is always with you</p>
           <h1 className="text-xl sm:text-3xl md:text-5xl font-bold leading-tight">We are here for you</h1>
           <p className="text-[10px] sm:text-[15px] md:text-base w-52 sm:w-72 md:w-full opacity-90 mx-0">
             Contact Us for more best deals, We will surely assist you with the best solutions.

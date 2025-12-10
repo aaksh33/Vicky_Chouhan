@@ -87,6 +87,7 @@ type OrderItem {
   color     String?
   selectedRam String?
   selectedStorage String?
+  selectedSize String?
 }
 
 type UserAddress {

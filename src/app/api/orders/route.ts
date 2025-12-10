@@ -126,6 +126,8 @@ export async function POST(request: Request) {
       const product = await prisma.product.findUnique({ where: { id: it.productId } })
       if (!product) return NextResponse.json({ error: `Product not found` }, { status: 400 })
       
+      console.log('📋 Processing item:', { productId: it.productId, qty: it.qty, color: it.color, selectedSize: it.selectedSize, selectedRam: it.selectedRam, selectedStorage: it.selectedStorage }) // DEBUG: Log all item fields
+      
       let itemPrice = product.price
       
       if (it.selectedRam && product.ramOptions) {
@@ -149,6 +151,7 @@ export async function POST(request: Request) {
       if (it.color) orderItem.color = it.color
       if (it.selectedRam) orderItem.selectedRam = it.selectedRam
       if (it.selectedStorage) orderItem.selectedStorage = it.selectedStorage
+      if (it.selectedSize) orderItem.selectedSize = it.selectedSize
       orderItems.push(orderItem)
       total += orderItem.price * orderItem.qty
       
@@ -186,6 +189,7 @@ export async function POST(request: Request) {
 
     let order
     try {
+      console.log('📦 Creating order with items:', JSON.stringify(orderItems, null, 2)) // DEBUG: Log items before save
       order = await prisma.order.create({
         data: {
           userId: user.id,
@@ -197,6 +201,7 @@ export async function POST(request: Request) {
           deliveryDate: new Date(deliveryDate)
         } as any
       })
+      console.log('✅ Order created successfully:', order.id) // DEBUG: Confirm order creation
     } catch (error) {
       // Restock items if order creation fails
       for (const it of items) {

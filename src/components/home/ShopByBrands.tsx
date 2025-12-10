@@ -8,6 +8,9 @@ const brands = [
   { name: "HP", image: "/brand/hp.png" },
   { name: "Lenovo", image: "/brand/lenovo.png" },
   { name: "Alian Ware", image: "/brand/alianware.png" },
+  { name: "Acer", image: "/brand/acer.png" },
+  { name: "Asus", image: "/brand/Asus.png" },
+  { name: "Samsung", image: "/brand/samsung.png" },
 ];
 
 export default function ShopByBrands() {
@@ -105,9 +108,9 @@ export default function ShopByBrands() {
                   <Image
                     src={brand.image}
                     alt={brand.name}
-                    width={100}
-                    height={70}
-                    className="w-12 h-9 sm:w-16 sm:h-12 object-contain transition-transform duration-300 pointer-events-none scale-120 group-hover:scale-130 hover:cursor-pointer"
+                    width={160}
+                    height={120}
+                    className="w-24 h-18 sm:w-32 sm:h-24 object-contain transition-transform duration-300 pointer-events-none scale-120 group-hover:scale-130 hover:cursor-pointer"
                     draggable={false}
                   />
                 </a>

@@ -965,7 +965,7 @@ export default function ProductTable() {
                         <div className="space-y-3">
                           <FormLabel>Available Colors</FormLabel>
                           <div className="flex flex-wrap gap-2">
-                            {['All Colors', 'Black', 'Navy', 'Grey', 'Brown', 'Beige', 'White'].map((color) => (
+                            {['All Colors Available - You can request any preferred color', 'Black', 'Navy', 'Grey', 'Brown', 'Beige', 'White'].map((color) => (
                               <Button
                                 key={color}
                                 type="button"

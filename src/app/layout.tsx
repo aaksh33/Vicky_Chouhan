@@ -19,14 +19,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Future of Gadgets - Best Electronics & Tech Products Online",
-    template: "%s | Future of Gadgets",
+    default: "Premium Menswear - Best Electronics & Tech Products Online",
+    template: "%s | Premium Menswear",
   },
-  description: "Shop the latest electronics and tech products at Future of Gadgets. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
+  description: "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
   keywords: ["electronics", "gadgets", "laptops", "desktops", "monitors", "keyboards", "headphones", "tech products", "online electronics store", "buy electronics online", "gaming laptops", "office laptops"],
-  authors: [{ name: "Future of Gadgets" }],
-  creator: "Future of Gadgets",
-  publisher: "Future of Gadgets",
+  authors: [{ name: "Premium Menswear" }],
+  creator: "Premium Menswear",
+  publisher: "Premium Menswear",
   alternates: {
     canonical: "/",
   },
@@ -34,24 +34,24 @@ export const metadata: Metadata = {
   type: "website",
   locale: "en_IN",
   url: siteUrl,
-  siteName: "Future of Gadgets",
-  title: "Future of Gadgets - Best Electronics & Tech Products Online",
+  siteName: "Premium Menswear",
+  title: "Premium Menswear - Best Electronics & Tech Products Online",
   description:
-    "Shop the latest electronics and tech products at Future of Gadgets. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
+    "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
   images: [
     {
       url: `${siteUrl}/logo.png`,
       width: 1200,
       height: 630,
-      alt: "Future of Gadgets",
+      alt: "Premium Menswear",
     },
   ],
 },
 
   twitter: {
     card: "summary_large_image",
-    title: "Future of Gadgets - Best Electronics & Tech Products Online",
-    description: "Shop the latest electronics and tech products at Future of Gadgets. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
+    title: "Premium Menswear - Best Electronics & Tech Products Online",
+    description: "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
     images: [`${siteUrl}/logo.png`],
   },
   robots: {
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Future of Gadgets',
+  name: 'Premium Menswear',
   url: siteUrl,
   description: 'Modern e-commerce platform for electronics and tech products',
   potentialAction: {

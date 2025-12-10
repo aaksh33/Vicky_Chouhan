@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import LoadingButton from "@/components/ui/loading-button"
 import { toast } from "sonner"
@@ -27,6 +27,7 @@ type CartItem = {
   color?: string
   selectedRam?: string
   selectedStorage?: string
+  selectedSize?: string
 }
 type Product = { 
   id: string; 
@@ -49,6 +50,17 @@ export default function CartView() {
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number; description: string } | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [availablePromos, setAvailablePromos] = useState<any[]>([])
+  const [colorInputs, setColorInputs] = useState<Record<string, string>>({})
+
+  const updateCartColor = useCallback((itemKey: string, color: string) => {
+    const cart = getCart()
+    const updatedCart = cart.map(item => {
+      const key = `${item.id}-${item.selectedSize || ''}-${item.selectedRam || ''}-${item.selectedStorage || ''}`
+      return key === itemKey ? { ...item, color } : item
+    })
+    localStorage.setItem('v0_cart', JSON.stringify(updatedCart))
+    setItems(updatedCart)
+  }, [])
 
   useEffect(() => {
     setItems(getCart())
@@ -299,16 +311,29 @@ export default function CartView() {
                           <Link href={`/products/${i.slug}`}>
                             <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-blue-600">{i.name}</h3>
                           </Link>
-                           {(i as any).color && (
-                              <p className="text-xs text-gray-600 flex items-center gap-1">
-                                Color:
-                                <span className="inline-block w-3 h-3 rounded-full border" style={{ backgroundColor: (i as any).color.toLowerCase() }}></span>
-                                 {(i as any).color}
-                              </p>
-                            )}
-                          {/* {i.color && (
-                            <p className="text-xs text-gray-600 mb-1">Color: {i.color}</p>
-                          )} */}
+                          {i.selectedSize && (
+                            <p className="text-xs text-gray-600 mb-2 font-medium">Size: {i.selectedSize}</p>
+                          )}
+                          <div className="mb-2">
+                            <Label className="text-xs text-gray-600 mb-1 block">Preferred Color:</Label>
+                            <Input
+                              type="text"
+                              placeholder="Enter your preferred color"
+                              value={colorInputs[uniqueKey] !== undefined ? colorInputs[uniqueKey] : ((i as any).color || '')}
+                              onChange={(e) => {
+                                const newColor = e.target.value
+                                setColorInputs(prev => ({ ...prev, [uniqueKey]: newColor }))
+                              }}
+                              onBlur={() => {
+                                const color = colorInputs[uniqueKey]
+                                if (color !== undefined) {
+                                  const itemKey = `${i.id}-${i.selectedSize || ''}-${i.selectedRam || ''}-${i.selectedStorage || ''}`
+                                  updateCartColor(itemKey, color)
+                                }
+                              }}
+                              className="h-8 text-xs"
+                            />
+                          </div>
                           {i.selectedRam && (() => {
                             const ramOption = product?.ramOptions?.find((r: any) => r.size === i.selectedRam)
                             const ramPrice = ramOption?.price || 0
@@ -344,11 +369,11 @@ export default function CartView() {
                               onClick={() => {
                                 const currentQty = i.qty || 1
                                 if (currentQty === 1) {
-                                  removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
+                                  removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.selectedSize ?? undefined)
                                   setItems(getCart())
                                   toast.success('Removed from cart')
                                 } else {
-                                  updateQty(i.id, currentQty - 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
+                                  updateQty(i.id, currentQty - 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.selectedSize ?? undefined)
                                   setItems(getCart())
                                 }
                               }}
@@ -369,7 +394,7 @@ export default function CartView() {
                                     return
                                   }
                                 }
-                                updateQty(i.id, currentQty + 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
+                                updateQty(i.id, currentQty + 1, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.selectedSize ?? undefined)
                                 setItems(getCart())
                               }}
                               disabled={!canAddMore}
@@ -380,7 +405,7 @@ export default function CartView() {
                           </div>
                           <button
                             onClick={() => {
-                              removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined)
+                              removeFromCart(i.id, i.color ?? undefined, i.selectedRam ?? undefined, i.selectedStorage ?? undefined, i.selectedSize ?? undefined)
                               setItems(getCart())
                               toast.success('Removed from cart')
                             }}

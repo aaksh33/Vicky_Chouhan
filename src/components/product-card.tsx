@@ -47,13 +47,8 @@ export default function ProductCard({ product, onAddToCart, onBuyNow }: ProductC
   }, [product.id]);
 
   useEffect(() => {
-    if (product.ramOptions && product.ramOptions.length > 0) {
-      const totalQty = product.ramOptions.reduce((sum, opt) => sum + (opt.quantity || 0), 0);
-      setAvailableQty(totalQty);
-    } else {
-      setAvailableQty(Number(product.quantity ?? product.stock ?? 0));
-    }
-  }, [product.quantity, product.stock, product.ramOptions]);
+    setAvailableQty(Number(product.quantity ?? product.stock ?? 0));
+  }, [product.quantity, product.stock]);
 
   const imageUrl = product.coverImage || product.frontImage || product.image || "/placeholder.svg";
   const mrp = Number(product.mrp) || 0;
