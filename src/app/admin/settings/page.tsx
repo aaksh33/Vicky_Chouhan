@@ -37,6 +37,7 @@ export default function SettingsPage() {
     dealOfTheDay: [] as string[],
     featuredSection: [] as string[],
     bestSeller: [] as string[],
+    topRatedProducts: [] as string[],
   })
 
   const [homeSettings, setHomeSettings] = useState({
@@ -101,9 +102,10 @@ export default function SettingsPage() {
   ]
 
   const sectionNames: Record<string, string> = {
-    dealOfTheDay: '',
-    featuredSection: '',
-    bestSeller: '',
+    dealOfTheDay: 'Deal of the Day',
+    featuredSection: 'Featured Section',
+    bestSeller: 'Best Seller',
+    topRatedProducts: 'Top Rated Products',
   }
 
   // ---------- helpers ----------
@@ -182,8 +184,7 @@ export default function SettingsPage() {
       if ((data as any).contact) setContactSettings((data as any).contact)
       if ((data as any).youtubeVideos) setYoutubeVideos((data as any).youtubeVideos.map((v: any) => ({ ...v, saved: true })))
       if ((data as any).sectionProducts) {
-        const { newArrivals, trendingNow, ...rest } = (data as any).sectionProducts
-        setSectionProducts(rest)
+        setSectionProducts((data as any).sectionProducts)
       }
       if ((data as any).customCategories) {
         setCustomCategories((data as any).customCategories)

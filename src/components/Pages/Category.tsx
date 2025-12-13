@@ -96,7 +96,7 @@ export default function CategoryPage() {
                                 alt={cat.name}
                                 width={90}
                                 height={90}
-                                className="object-contain group-hover:scale-110 transition-transform duration-300"
+                                className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300"
                               />
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-black/70 text-white text-center py-1 sm:py-1.5 px-1 text-[9px] sm:text-[10px] font-semibold">
