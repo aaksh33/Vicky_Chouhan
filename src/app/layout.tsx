@@ -19,25 +19,25 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Premium Menswear - Best Electronics & Tech Products Online",
+    default: "Premium Menswear",
     template: "%s | Premium Menswear",
   },
-  description: "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
-  keywords: ["electronics", "gadgets", "laptops", "desktops", "monitors", "keyboards", "headphones", "tech products", "online electronics store", "buy electronics online", "gaming laptops", "office laptops"],
+  description: "Shop premium men's fashion at Premium Menswear. Find suits, blazers, coats, jackets, kurta pajamas and more with fast delivery and great prices.",
+  keywords: ["menswear", "suits", "blazers", "coats", "jackets", "kurta pajamas", "formal wear", "men's fashion", "premium clothing", "tailored suits", "business attire", "wedding suits"],
   authors: [{ name: "Premium Menswear" }],
   creator: "Premium Menswear",
   publisher: "Premium Menswear",
   alternates: {
     canonical: "/",
   },
- openGraph: {
+  openGraph: {
   type: "website",
   locale: "en_IN",
   url: siteUrl,
   siteName: "Premium Menswear",
-  title: "Premium Menswear - Best Electronics & Tech Products Online",
+  title: "Premium Menswear",
   description:
-    "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
+    "Shop premium men's fashion at Premium Menswear. Find suits, blazers, coats, jackets, kurta pajamas and more with fast delivery and great prices.",
   images: [
     {
       url: `${siteUrl}/logo.png`,
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Premium Menswear - Best Electronics & Tech Products Online",
-    description: "Shop the latest electronics and tech products at Premium Menswear. Find laptops, desktops, monitors, keyboards, headphones and more with fast delivery and great prices.",
+    title: "Premium Menswear",
+    description: "Shop premium men's fashion at Premium Menswear. Find suits, blazers, coats, jackets, kurta pajamas and more with fast delivery and great prices.",
     images: [`${siteUrl}/logo.png`],
   },
   robots: {
@@ -75,7 +75,7 @@ const jsonLd = {
   '@type': 'WebSite',
   name: 'Premium Menswear',
   url: siteUrl,
-  description: 'Modern e-commerce platform for electronics and tech products',
+  description: 'Premium men\'s fashion destination for modern gentlemen',
   potentialAction: {
     '@type': 'SearchAction',
     target: `${siteUrl}/search?q={search_term_string}`,

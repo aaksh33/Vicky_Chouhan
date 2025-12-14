@@ -44,9 +44,11 @@ export function Footer({ className = "" }: FooterProps) {
               </h3>
             </div>
 
-            <p className="text-gray-400 text-sm mb-6 leading-relaxed max-w-sm">
-              Your trusted partner for cutting-edge electronics and innovative tech gadgets.
-            </p>
+            <div className="text-gray-400 text-sm mb-6 leading-relaxed max-w-sm">
+              <p>• Your trusted destination for premium men's fashion.</p>
+              <p>• Crafting elegance for the modern gentleman.</p>
+              <p>• Premium menswear, tailored for perfection.</p>
+            </div>
 
             <div className="flex space-x-3">
               {socialLinks.youtube && (
@@ -142,10 +144,6 @@ export function Footer({ className = "" }: FooterProps) {
             <p>© 2025 Premium Menswear. All rights reserved.</p>
             <p className="mt-1">
               Made by{' '}
-              <Link href="https://www.linkedin.com/in/sonu-rai-r12/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
-                Sonu
-              </Link>
-              {' '}and{' '}
               <Link href="https://www.linkedin.com/in/aakash-singh-575205310/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
                 Aakash
               </Link>

@@ -109,7 +109,7 @@ const HeaderSlider = () => {
         onTransitionEnd={handleTransitionEnd}
       >
         {slides.map((slide, index) => (
-          <div key={index} className="min-w-full flex-shrink-0">
+          <div key={index} className="w-full flex-shrink-0" style={{ minWidth: '100%' }}>
             <Link href={slide.link || "/products"} className="block">
               <div className="relative px-1 sm:py-16 md:py-20 sm:px-8 md:px-12 mt-0 sm:mt-5 lg:mt-10 md:!min-h-[350px] lg:!min-h-[400px] flex items-center sm:rounded-lg overflow-hidden" style={{ minHeight: "240px", backgroundColor: "#E6E9F2" }}>
                 {slide.image && (

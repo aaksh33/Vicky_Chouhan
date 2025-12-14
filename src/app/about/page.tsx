@@ -16,8 +16,8 @@ export default function AboutPage() {
         <div className="text-center sm:text-left mb-12 sm:mb-16">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-2 sm:mb-3">Premium Menswear</h1>
           <p className="text-base sm:text-lg text-slate-500 max-w-2xl">
-            Your trusted destination for quality electronics and cutting-edge technology in India. 
-            We&apos;re committed to making the latest innovations accessible to everyone.
+            Your trusted destination for premium men's fashion and elegant clothing in India. 
+            We&apos;re committed to crafting excellence for the modern gentleman.
           </p>
         </div>
 
@@ -47,18 +47,18 @@ export default function AboutPage() {
             <div>
               <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-6">Our Story</h2>
               <p className="text-slate-600 leading-relaxed mb-4">
-                Founded in <span className="font-semibold text-slate-900">{new Date().getFullYear() - (new Date().getFullYear() - 2015)}</span> with a simple vision: to make cutting-edge technology accessible 
-                to everyone in <span className="font-semibold text-slate-900">India</span>. What started as a small electronics store has grown into a trusted 
-                online destination for tech enthusiasts across the country.
+                Founded in <span className="font-semibold text-slate-900">{new Date().getFullYear() - (new Date().getFullYear() - 2015)}</span> with a simple vision: to make premium men's fashion accessible 
+                to every gentleman in <span className="font-semibold text-slate-900">India</span>. What started as a small tailoring shop has grown into a trusted 
+                online destination for fashion-conscious men across the country.
               </p>
               <p className="text-slate-600 leading-relaxed mb-4">
-                We carefully curate our product selection, partnering with <span className="font-semibold text-slate-900">leading brands</span> to 
-                ensure quality and value. Our team of <span className="font-semibold text-slate-900">tech experts</span> tests every product to meet 
-                our high standards before it reaches your doorstep.
+                We carefully curate our clothing collection, partnering with <span className="font-semibold text-slate-900">premium brands</span> and 
+                skilled artisans to ensure quality and style. Our team of <span className="font-semibold text-slate-900">fashion experts</span> inspects every garment to meet 
+                our high standards before it reaches your wardrobe.
               </p>
               <p className="text-slate-600 leading-relaxed">
                 Today, we&apos;re proud to serve <span className="font-semibold text-slate-900">thousands of customers</span> across India, offering everything 
-                from laptops and smart devices to smart home devices and gaming accessories.
+                from formal suits and blazers to casual jackets and traditional kurta pajamas.
               </p>
             </div>
             <div className="relative h-80 rounded-lg p-8 overflow-hidden">
@@ -83,7 +83,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Our Mission</h3>
               <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                To democratize technology across India by providing cutting-edge electronics with unmatched 
+                To redefine men's fashion across India by providing premium clothing with unmatched 
                 quality, competitive pricing, and exceptional customer service.
               </p>
             </div>
@@ -94,8 +94,8 @@ export default function AboutPage() {
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Quality Promise</h3>
               <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                Every product undergoes rigorous testing and quality checks. We stand behind 
-                our products with comprehensive warranties and hassle-free returns.
+                Every garment undergoes rigorous quality checks and craftsmanship inspection. We stand behind 
+                our clothing with comprehensive guarantees and hassle-free returns.
               </p>
             </div>
             
@@ -105,7 +105,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4">Fast & Secure</h3>
               <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                Lightning-fast shipping with secure packaging ensures your products arrive 
+                Lightning-fast shipping with secure packaging ensures your clothing arrives 
                 safely and quickly. Track your order every step of the way.
               </p>
             </div>
@@ -200,7 +200,7 @@ export default function AboutPage() {
               <img src="/about/pngwing.com_.png" alt="Best Quality" className="w-12 h-12" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-2">Best Quality</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We promise our customers to give them the best quality laptop with a guarantee.</p>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">We promise our customers to give them the best quality clothing with a guarantee.</p>
           </div>
           
           <div className="text-center">

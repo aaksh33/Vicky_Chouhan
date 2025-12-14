@@ -10,7 +10,7 @@ const categoryData = [
   { name: "Premium Coats", image: "/category/pro_laptop.jpg", href: "/search?q=premium-coats" },
   { name: "Casual Jackets", image: "/category/touchscreen.png", href: "/search?q=casual-jackets" },
   { name: "Wedding Collection", image: "/category/best-gaming-laptop.jpg", href: "/search?q=wedding-collection" },
-  { name: "Kurta & Pajamas", image: "/category/ultra_thin_laptop.jpg", href: "/search?q=kurta-pajamas" },
+  { name: "Suit", image: "/category/ultra_thin_laptop.jpg", href: "/search?q=suit" },
 ];
 
 

@@ -335,7 +335,7 @@ export default function ContactPageClient() {
                     How long does shipping take?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Standard delivery typically takes 5–7 business days depending on
+                    Standard delivery typically takes 10–15 business days depending on
                     your location. Shipping timelines are estimates and may vary based on courier delays or unforeseen circumstances.
                   </AccordionContent>
                 </AccordionItem>
@@ -345,7 +345,7 @@ export default function ContactPageClient() {
                     Do you offer warranty on products?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Yes, all products come with a 3-month store warranty. Extended warranty plans are also available for purchase to provide additional coverage beyond the standard period. In case of product faults, customers will be assisted by the nearest authorized service center.
+                    Yes, all clothing items come with a quality guarantee. We ensure premium fabric quality and craftsmanship. In case of manufacturing defects or quality issues, customers can exchange the product within our return policy period.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -373,7 +373,7 @@ export default function ContactPageClient() {
                     What if I receive a damaged or faulty product?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Issues such as damage, malfunction, or missing accessories must be reported within 24 hours of delivery. Products with broken seals or tampered packaging are non-returnable. In case of product faults, you will be assisted by the nearest authorized service center.
+                    Issues such as damage, stitching defects, or missing items must be reported within 24 hours of delivery. Products with removed tags or altered condition are non-returnable. In case of manufacturing defects, we will provide exchange or store credit as per our return policy.
                   </AccordionContent>
                 </AccordionItem>
 

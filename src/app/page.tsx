@@ -19,17 +19,7 @@ import AlwaysWithYou from "@/components/home/AlwaysWithYou";
 import YoutubeSection from "@/components/home/YoutubeSection";
 
 export default function HomePage() {
-  // TESTING: Artificial loading delay - Remove for production
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
-    return <Loading/>;
-  }
   
 
   return (
