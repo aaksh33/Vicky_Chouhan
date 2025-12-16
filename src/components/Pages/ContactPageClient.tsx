@@ -319,12 +319,12 @@ export default function ContactPageClient() {
 
                 <AccordionItem value="item-2">
                   <AccordionTrigger className="text-left">
-                    What is your return and refund policy?
+                    What is your return and exchange policy?
                   </AccordionTrigger>
                   <AccordionContent>
-                    We follow an exchange-only policy. Products must be returned in original condition with all packaging and accessories. Issues must be reported within 24 hours of delivery. Orders in transit can be canceled at zero cost. For complete details, visit our{' '}
+                    We follow an exchange-only policy. Clothing must be returned in original condition with all tags and packaging. Issues must be reported within 24 hours of delivery. Orders in transit can be canceled at zero cost. For complete details, visit our{' '}
                     <Link href="/refund-policy" className="text-blue-600 hover:underline font-medium">
-                      Return &amp; Refund Policy
+                      Return &amp; Exchange Policy
                     </Link>{' '}
                     page.
                   </AccordionContent>
@@ -342,10 +342,10 @@ export default function ContactPageClient() {
 
                 <AccordionItem value="item-4">
                   <AccordionTrigger className="text-left">
-                    Do you offer warranty on products?
+                    Do you offer size exchanges?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Yes, all clothing items come with a quality guarantee. We ensure premium fabric quality and craftsmanship. In case of manufacturing defects or quality issues, customers can exchange the product within our return policy period.
+                    Yes, we offer size exchanges for all clothing items. If the size doesn't fit properly, you can exchange it within our return policy period. The item must be in original condition with tags attached.
                   </AccordionContent>
                 </AccordionItem>
 
@@ -360,33 +360,28 @@ export default function ContactPageClient() {
 
                 <AccordionItem value="item-6">
                   <AccordionTrigger className="text-left">
-                    What payment methods do you accept?
+                    How do I choose the right size?
                   </AccordionTrigger>
                   <AccordionContent>
-                    We accept major debit / credit cards, UPI, net banking and select
-                    wallet options. COD only available in Delhi NCR. All payments are processed securely.
+                    We provide detailed size charts for each product. You can also contact our customer support for personalized size recommendations. We offer size exchanges if the fit isn't perfect.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-7">
                   <AccordionTrigger className="text-left">
-                    What if I receive a damaged or faulty product?
+                    What payment methods do you accept?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Issues such as damage, stitching defects, or missing items must be reported within 24 hours of delivery. Products with removed tags or altered condition are non-returnable. In case of manufacturing defects, we will provide exchange or store credit as per our return policy.
+                    We accept major debit/credit cards, UPI, net banking and select wallet options. Cash on Delivery (COD) is available only in Delhi NCR. All payments are processed securely through encrypted gateways.
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="item-8">
                   <AccordionTrigger className="text-left">
-                    Where can I find your Terms of Service?
+                    Do you offer custom tailoring services?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Our complete Terms of Service, including account registration, product information, orders, payments, and intellectual property policies, can be found on our{' '}
-                    <Link href="/terms-and-conditions" className="text-blue-600 hover:underline font-medium">
-                      Terms &amp; Conditions
-                    </Link>{' '}
-                    page.
+                    Currently, we offer ready-to-wear premium menswear in standard sizes. For alterations or custom fitting requirements, we recommend consulting with a local tailor. Our size charts help ensure the best fit for our standard sizes.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
